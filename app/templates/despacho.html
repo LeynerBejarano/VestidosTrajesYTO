@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Factura Losdelastogas</title>
+</head>
+<body>
+            <!-- Simple Invoice - START -->
+<header>
+<table id="table-head">
+    <tr>
+        <!-- <td>
+            <img src="{{path}}/static/img/logo.png" alt="Logo" width="70" height="80">
+        </td> -->
+        <td>
+            <h1>{{empresa.emp_razon2}}</h1> 
+            Alquiler de trajes para toda ocasión
+        </td>
+        <td>
+            <h2>ORDEN DE EMPAQUE<br>
+            <span>Pedido N° {{pedido.ped_numero}} - {{ det_despacho[0] }}</span>
+            </h2>
+        </td>
+        <td colspan="2" id="info-head">
+            {{ empresa.emp_direccion }} - {{ empresa.emp_barrio }} <br>
+            Teléfono fijo: {{ empresa.emp_telefono }} <br>
+            Celular: {{ empresa.emp_movil }} <br>
+            Correo electrónico: {{ empresa.emp_correo }} <br>
+        </td>
+    </tr>
+</table>
+</header>
+
+<table>
+    <tr>
+        <th colspan="2">Fecha y hora de Orden</th>
+        <td colspan="5">
+            {% if despacho.des_fecha %}
+                {{ det_despacho[3] }}
+            {% endif %}</td>
+        <th>Vendedor</th>
+        <td colspan="3"> {{ vendedor.usu_nombre }} {{ vendedor.usu_apellido }}</td>
+    </tr>
+    <tr>
+        <th>Institución</th>
+        <td colspan="8">
+            {% if institucion.ins_nombre and institucion.ins_nombre != 'uncaught' %}
+                {{ institucion.ins_nombre }}|{{ det_pedido.nivel }}|{{ det_pedido.jornada }}|{{ det_institucion.ciudad }} 
+            {% endif %}
+        </td>
+        <th>Pedido N°</th>
+        <td><strong>{{ pedido.ped_numero }}</strong></td>
+    </tr>
+</table> <br>
+
+<table>
+    <tr>
+        <th colspan="3">Fecha de Empaque</th>
+        <td colspan="4">
+            {{ det_despacho[4] }}
+        </td>
+        <th>Hora</th>
+        <td colspan="2">
+            {{ despacho.des_hora_entrega }}
+        </td>
+        <th colspan="3">Motivo de la Orden</th>
+        <td colspan="2">
+            {% if despacho.des_prestamo %}
+                {{ det_despacho[0] }} 
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+{% if tallas.all() %}
+    <table>
+        <tbody>
+            <tr>
+                <th>Tallas</th>
+                {% for talla in nom_tallas%}
+                    <td>Talla {{ talla.tal_nombre }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th>#Togas</th>
+                {% for talla in tallas %}
+                    <td>
+                        {{talla.tal_cantidad}}
+                    </td>
+                {% endfor%}
+            </tr>
+        </tbody>
+    </table>
+{% endif %}
+
+<table>
+    <tr>
+        <th>Presentación de cada toga</th>
+        <td>
+            {% if despacho.des_presindiv %}
+                {{ det_despacho[1] }}
+            {% endif %}
+        </td>
+        <th>Presentación general del pedido</th>
+        <td>
+            {% if despacho.des_prespedido %}
+                {{ det_despacho[2] }}
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+{% if detalles.all() %} 
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Color</th>
+                <th>Estilo</th>
+                <th>Detalle</th>
+                <th>Cantidad empacada</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set cla = 0 %}
+        {% set col = 0 %}
+        {% set est = 0 %}
+        {% for detalle in detalles %}
+            <tr>
+                <td>
+                    {%if detalle.det_clase %}
+                        {{clases[cla].cla_nombre}}
+                        {% set cla = cla + 1 %}
+                    {% endif %}
+                </td>
+                <td>
+                    {%if detalle.det_color %}
+                        {{colores[col].col_nombre}}
+                        {% set col = col + 1 %}
+                    {% endif %}
+                </td>
+                <td>
+                    {%if detalle.det_estilo %}
+                        {{estilos[est].est_nombre}}
+                        {% set est = est + 1 %}
+                    {% endif %}
+                </td>
+                <td>
+                    {%if detalle.det_detalle %}
+                        {{ detalle.det_detalle}}
+                    {% endif %}
+                </td>
+                <td>
+                    {%if total_empacada %}
+                        {{total_empacada}}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<table>
+    <tr>
+        <th colspan="4">Administración</th>
+        <td><em style="font-size: 0.7em">firma</em></td>
+        <td colspan="6"></td>
+        <td colspan="2"><em style="font-size: 0.7em">Fecha y hora</em></td>
+        <td colspan="6"></td>
+    </tr>
+    <tr>
+        <th colspan="4">Vendedor</th>
+        <td><em style="font-size: 0.7em">firma</em></td>
+        <td colspan="6"></td>
+        <td colspan="2"><em style="font-size: 0.7em">Fecha y hora</em></td>
+        <td colspan="6"></td>
+    </tr>
+    <tr>
+        <th colspan="4">Bodegero</th>
+        <td><em style="font-size: 0.7em">firma</em></td>
+        <td colspan="6"></td>
+        <td colspan="2"><em style="font-size: 0.7em">Fecha y hora</em></td>
+        <td colspan="6"></td>
+    </tr>
+    <tr>
+        <th colspan="4">Despachador</th>
+        <td><em style="font-size: 0.7em">firma</em></td>
+        <td colspan="6"></td>
+        <td colspan="2"><em style="font-size: 0.7em">Fecha y hora</em></td>
+        <td colspan="6"></td>
+    </tr>
+    <tr>
+        <th colspan="4">Planchadora</th>
+        <td><em style="font-size: 0.7em">firma</em></td>
+        <td colspan="6"></td>
+        <td colspan="2"><em style="font-size: 0.7em">Fecha y hora</em></td>
+        <td colspan="6"></td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th>Observaciones</th>
+        <td colspan="3">
+            {% if despacho.des_observaciones %}
+                {{despacho.des_observaciones}}
+            {% endif %}
+        </td>
+    </tr>
+</table>
+    
+ 
+<style>
+
+    body {
+      margin: 0 auto; 
+      color: #001028;
+      background: #FFFFFF; 
+      font-family: Arial, sans-serif; 
+      font-size: 11px; 
+      font-family: Arial;
+    }
+
+
+    header {
+      padding: 10px 0;
+      margin-bottom: 30px;
+    }
+
+
+    .sub-content {
+      /*float: left;*/
+      display: inline-block;
+      width: 33%;
+    }
+
+    .content{
+        display: flex;
+    }
+
+
+    
+    table { 
+        width: 100%; 
+        color: #333;
+        border-collapse: collapse;
+    } /* Make table wider */
+    td, th { 
+        padding-top: 3px;
+        border: 1px solid #CCC;
+    } /* Add borders to cells */
+
+    th {
+        background-color: #F3F3F3; /* Light grey background */
+        font-weight: bold; /* Make sure they're bold */
+    }
+
+    td {
+        background-color: #FAFAFA; /* Lighter grey background */
+        text-align: center; /* Center our text */
+    }
+
+    #table-head td{
+        border: none;
+        background-color: white;
+    }
+
+    #table-head td h2{
+        font-size: 24px;
+    }
+
+    #info-head{
+        font-size: 10px;
+        text-align: right;
+    }
+
+    </style>
+    <!-- Simple Invoice - END -->
+        
+    </body>
+</html>

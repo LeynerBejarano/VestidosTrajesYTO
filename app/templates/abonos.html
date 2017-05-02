@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container">
+    <div class="modal fade" id="modal_error" role="dialog" >
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button> <br>
+            <div class="alert alert-danger">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="modal_valor" role="dialog" >
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button> <br>
+          </div>
+          <div class="modal-body">
+              <p>Valor ingresado: <strong id="valor_moneda"></strong> - <strong id="valor_letra"></strong></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" id='confirmar'>Confirmar</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h2 class="panel-title">
+        Abonos
+        </h2>
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" method="post" name="input_abo" role="form" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
+          <div class="row">
+            <div class="col-lg-6 form-group">
+              {{ form.pedido.label(class="col-lg-2 control-label")}}
+              <div class="col-lg-10">
+                {{ form.pedido(class="form-control", placeholder="No. Pedido") }}
+                {% for error in form.pedido.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+            <div class="col-lg-6 form-group">
+              {{ form.valor.label(class="col-lg-2 control-label")}}
+              <div class="col-lg-10">
+                {{ form.valor(class="form-control", placeholder="Valor") }}
+                {% for error in form.valor.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 form-group">
+              {{ form.tipo.label(class="col-lg-2 control-label")}}
+              <div class="col-lg-10">
+                {{ form.tipo(class="form-control") }}
+                {% for error in form.tipo.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+            <div class="col-lg-6 form-group">
+              {{ form.fecha.label(class="col-lg-2 control-label")}}
+              <div class="col-lg-10">
+                {{ form.fecha(class="form-control", placeholder="Valor") }}
+                {% for error in form.fecha.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-12 form-group">
+                    <div class="col-lg-offset-1 col-md-11">
+                        {{form.observacion(class = "form-control", placeholder = "Observaciones")}} <br>
+                    </div>
+                </div>
+            </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12 form-group">
+              <div class="col-lg-offset-1 col-lg-10">
+                <button type="button" class="btn btn-primary" id="grabar">Grabar</button>
+                <a href="exportar_excel_abonos" target="_blank" class="btn btn-primary">Exportar abonos</a>
+                <button type="button" class="btn btn-primary" id="exportar_abonos">Exportar abonos/pedido</button>
+                <a href="recibo_blanco" class="btn btn-primary">Recibo en blanco</a> <br>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src='/static/js/abonos.js'></script>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h2 class="panel-title">
+        Accesorios
+        </h2>
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" method="post" name="input_pre" role="form">
+          {{ form.hidden_tag() }}
+          <div class="row">
+            <div class= "col-lg-6 form-group">
+              {{form.linea.label(class="col-lg-2 control-label")}}
+              <div class="col-lg-10">
+                {{form.linea(class="form-control selectpicker")}}
+                {% for error in form.linea.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+            <div class= "col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="clase">Clase<span class="obligatorio">*</span></label>
+              <div class="col-lg-10">
+                <select class="form-control" name="clase" id="clase" disabled="disabled">
+                </select> <br>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class= "col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="color">Color<span class="obligatorio">*</span></label>
+              <div class="col-lg-10">
+                <select class="form-control" name="color" id="color" disabled="disabled">
+                </select> 
+                {{ form.otro_color(class="form-control", placeholder="¿Cuál?")}}
+                {% for error in form.otro_color.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+            <div class= "col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="estilo">Estilo<span class="obligatorio">*</span></label>
+              <div class="col-lg-10">
+                <select class="form-control" name="estilo" id="estilo" disabled="disabled">
+                </select> <br>
+              </div>
+            </div>
+          </div>
+          <div class="row estola" style="display:none">
+            <div class= "col-lg-6 form-group">
+              <label class="col-lg-2 control-label">Doble faz</label>
+              <div class="col-lg-4">
+                {% for subfield in form.doble_faz %}
+                  {{ subfield }}
+                  {{ subfield.label }}
+                {% endfor %}
+              </div>
+              <label class="col-lg-2 control-label">Flequillo</label>
+              <div class="col-lg-4">
+                {% for subfield in form.flequillo %}
+                  {{ subfield }}
+                  {{ subfield.label }}
+                {% endfor %}
+              </div>
+            </div>
+            <div class="col-lg-6 form-group">
+              {{ form.tamano.label(class="col-lg-2 control-label")}}
+              <div class="col-lg-10">
+                {{ form.tamano(class="form-control") }}
+                {% for error in form.tamano.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>              
+            </div>
+          </div>
+          <div class="row estola">
+            <div class="col-lg-6 form-group">
+              {{ form.terminacion.label(class="col-lg-2 control-label")}}
+              <div class="col-lg-10">
+                {{ form.terminacion(class="form-control") }}
+                {% for error in form.terminacion.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>              
+            </div>
+            <div class="col-lg-6 form-group">
+              {{ form.presentacion.label(class="col-lg-2 control-label")}}
+              <div class="col-lg-10">
+                {{ form.presentacion(class="form-control") }}
+                {% for error in form.presentacion.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>              
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="nombre">Referencia<span class="obligatorio">*</span></label>
+              <div class="col-lg-10">
+                {{ form.nombre(class="form-control", placeholder = "Referencia") }}
+                {% for error in form.nombre.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+            <div class= "col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="cantidad">Cantidad<span class="obligatorio">*</span></label>
+              <div class="col-lg-10">
+                {{ form.cantidad(class="form-control", placeholder="Cantidad") }}
+                {% for error in form.cantidad.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class= "col-lg-6 form-group">
+              {{ form.val_unitario.label(class="col-lg-2 control-label") }}
+              <div class="col-lg-10">
+                {{ form.val_unitario(class = "form-control") }}
+                {% for error in form.val_unitario.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 form-group">
+              <div class="col-lg-offset-2 col-lg-10">
+                <input type="submit" value="Insertar" class="btn btn-primary"/> <br>
+              </div>
+            </div>
+            <div class="col-lg-6 form-group">
+              <div class="col-lg-12">
+                <div class="pull-right">
+                  <strong>Cargar Accesorio</strong>
+                  <a href="#" class="anterior"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                  <a href="#" class="siguiente"><span class="glyphicon glyphicon-triangle-right"></span></a>                
+                </div>
+              </div> 
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% for campo in form %}
+    {% if campo.type == 'SelectField' %}
+        {% if campo.data %}
+        <script type = "text/javascript">    
+            $('#{{campo.id}}').append('<option disabled>-</option>');
+        </script>
+        {% else %}
+        <script type = "text/javascript">    
+            $('#{{campo.id}}').append('<option selected disabled>-</option>');
+        </script>
+        {% endif %}
+    {% endif %}   
+  {% endfor %}
+  <script type="text/javascript">
+    var tipo = {{ tipo }};
+  </script>
+  <script src='/static/js/accesorios.js'></script>
+{% endblock %}

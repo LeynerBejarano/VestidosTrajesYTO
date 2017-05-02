@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Factura Losdelastogas</title>
+</head>
+<body>
+            <!-- Simple Invoice - START -->
+<header>
+<table id="table-head">
+    <tr>
+        <!-- <td>
+            <img src="{{path}}/static/img/logo.png" alt="Logo" width="70" height="80">
+        </td> -->
+        <td>
+            <h1>{{empresa.emp_razon2}}</h1> 
+            Alquiler de trajes para toda ocasión
+        </td>
+        <td>
+            <h2>PEDIDO DE TOGAS <br>
+            <span style="color: red">N° {{pedido.ped_numero}}</span>
+            </h2>
+        </td>
+        <td>
+            Pedido - {{det_pedido.estado_com}} <br>
+            Temporada {{det_pedido.temporada}}
+        </td>
+        <td id="info-head">
+            {{ empresa.emp_direccion }} - {{ empresa.emp_barrio }} <br>
+            Teléfono fijo: {{ empresa.emp_telefono }} <br>
+            Celular: {{ empresa.emp_movil }} <br>
+            Correo electrónico: {{ empresa.emp_correo }} <br>
+        </td>
+    </tr>
+</table>
+</header>
+<table>
+    <thead>
+        <tr class="nopadding">
+            <th colspan="10">DATOS DEL ENCARGADO</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th colspan="2">Fecha del pedido</th>
+            <td colspan="3">
+                {% if pedido.ped_fecha %}
+                    {{det_pedido.fecha}} 
+                {% endif %}
+            </td>
+            <th colspan="2">Cargo</th>
+            <td colspan="3">
+                {% if cliente.cli_cargo %}
+                    {{det_cliente.cargo}} 
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Nombres</th>
+            <td colspan="2">
+                {% if cliente.cli_nombre %}
+                    {{cliente.cli_nombre}} 
+                {% endif %}                
+            </td>
+            <th>Apellidos</th>
+            <td colspan="2">
+                {% if cliente.cli_apellido %}
+                    {{cliente.cli_apellido}} 
+                {% endif %}
+            </td>
+            <th>Cédula</th>
+            <td>
+                {% if cliente.cli_identificacion %}
+                    {{cliente.cli_identificacion}} 
+                {% endif %} 
+            </td>
+            <th>F de C</th>
+            <td>
+                {% if cliente.cli_nacido_dia %}
+                    {{cliente.cli_nacido_dia}} 
+                {% endif %} 
+                {% if det_cliente.mes %}
+                    {{ det_cliente.mes }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Celular</th>
+            <td colspan="2">
+                {% if cliente.cli_celular %}
+                    {{cliente.cli_celular}} 
+                {% endif %}
+            </td>
+            <th>Tel. fijo</th>
+            <td colspan="2">
+                {% if cliente.cli_telefono %}
+                    {{cliente.cli_telefono}} 
+                {% endif %}
+                {% if cliente.cli_extension %}
+                    ext. {{cliente.cli_extension}} 
+                {% endif %}
+            </td>
+            <th>e-mail</th>
+            <td colspan="3">
+                {% if cliente.cli_email %}
+                    {{cliente.cli_email}} 
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Dirección</th>
+            <td colspan="5">
+                {% if cliente.cli_direccion %}
+                    {{cliente.cli_direccion}} 
+                {% endif %}
+            </td>
+            <th>Barrio</th>
+            <td>
+                {% if cliente.cli_barrio %}
+                    {{cliente.cli_barrio}} 
+                {% endif %}  
+            </td>
+            <th>Municipio</th>
+            <td>
+                {% if cliente.cli_ciudad %}
+                    {{det_cliente.ciudad}} 
+                {% endif %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table>
+    <thead>
+        <th colspan="10">DATOS DE LA INSTITUCIÓN</th>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Institución</th>
+            <td colspan="6">
+                {% if institucion.ins_nombre and institucion.ins_nombre != 'uncaught' %}
+                    {{institucion.ins_nombre}}
+                    {% if pedido.ped_jornada %}
+                        |{{det_pedido.jornada}} 
+                    {% endif %}
+                    {% if pedido.ped_nivel %}
+                        |{{det_pedido.nivel}} 
+                    {% endif %}
+                {% endif %}
+            </td>
+            <th>Nit</th>
+            <td colspan="2">
+                {% if institucion.ins_nit %}
+                    {{institucion.ins_nit}} 
+                {% endif %} 
+            </td>
+        </tr>
+        <tr>
+            <th>Municipio</th>
+            <td colspan="2">
+                {% if institucion.ins_ciudad %}
+                    {{det_institucion.ciudad}} 
+                    {% if det_institucion.metro == 1 %}
+                        - AM
+                    {% else %}
+                        - FAM
+                    {% endif %}
+                {% endif %}
+            </td>
+            <th>Nivel Edu.</th>
+            <td colspan="3">
+                {% if pedido.ped_nivel %}
+                    {{det_pedido.nivel}} 
+                {% endif %}
+            </td>
+            <th>Jornada</th>
+            <td colspan="2">
+                {% if pedido.ped_jornada %}
+                    {{det_pedido.jornada}} 
+                {% endif %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table>
+    <thead>
+        <th colspan="6">DATOS DEL PEDIDO</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="2">
+                {% if pedido.ped_poblacion %}
+                    {% if pedido.ped_poblacion == 1 %}
+                        Adultos
+                    {% else %}
+                        Niños
+                    {% endif %}
+                {% endif %}
+            </td>
+            <th colspan="2">Tipo de evento</th>
+            <td colspan="2">
+                {% if pedido.ped_evento %}
+                    {{det_pedido.evento}} 
+                {% endif %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% if detalles.all() %}
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Color</th>
+                <th>Estilo</th>
+                <th colspan="2">Detalles</th>
+                <th>Pedidas</th>
+                {% if cortesias != 0 %}
+                    <th>Cortesias</th>
+                {% endif %}
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set cla = 0 %}
+        {% set col = 0 %}
+        {% set est = 0 %}
+        {% for detalle in detalles %}
+            <tr>
+                <td>
+                    {%if detalle.det_clase %}
+                        {{clases[cla].cla_nombre}}
+                        {% set cla = cla + 1 %}
+                    {% endif %}
+                </td>
+                <td>
+                    {%if detalle.det_color %}
+                        {{colores[col].col_nombre}}
+                        {% set col = col + 1 %}
+                    {% endif %}
+                </td>
+                <td>
+                    {%if detalle.det_estilo %}
+                        {{estilos[est].est_nombre}}
+                        {% set est = est + 1 %}
+                    {% endif %}
+                </td>
+                    {% if detalle.det_clase == 4 and tipo_estola is not none %}
+                        <td>
+                            {%if detalle.det_detalle %}
+                                {{detalle.det_detalle}}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if estola %}
+                                <strong>{{ tipo_estola }}</strong>
+                            {% endif %}
+                        </td>
+                    {% else %}    
+                        <td colspan="2">
+                            {%if detalle.det_detalle %}
+                                {{detalle.det_detalle}}
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                <td>
+                    {%if detalle.det_pedida %}
+                        {{detalle.det_pedida}}
+                    {% endif %}
+                </td>
+                {% if cortesias != 0 %}
+                <td>
+                    {%if detalle.det_cortesia %}
+                        {{detalle.det_cortesia}}
+                    {% endif %}
+                </td>
+                {% endif %}
+                <td>
+                    {% if detalle.det_clase == 4 %}
+                        {{ tipo }}
+                    {% else %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+<table>
+    <tr>    
+        <th colspan="2">Valor Unitario</th>
+        <td>$ {{ resumen[0] }}</td>
+        <th>Abonos</th>
+        <td colspan="3">
+            {% if resumen[1] and resumen[1] != 'None' %}
+                $ {{ resumen[1] }}
+            {% else %}
+                No hay abono
+            {% endif %}
+        </td>
+        <th>Valor total</th>
+        <td colspan="2">$ {{resumen[2]}}</td>
+    </tr>
+    <tr>
+        <th colspan="2">Fecha del evento</th>
+        <td colspan="2">
+            {% if pedido.ped_fecha_evento %}
+                {{det_pedido.fecha_evento}} 
+            {% else %}
+                Pendiente
+            {% endif %}
+        </td>
+        <th>Hora</th>
+        <td>
+            {% if pedido.ped_hora_evento %}
+                {{pedido.ped_hora_evento}}
+            {% endif %}
+        </td>
+        <th>Vendedor</th>
+        <td colspan="3">
+            {% if pedido.ped_vendedor %}
+                {{det_pedido.vendedor}}
+            {% endif %}
+        </td>
+    </tr>
+</table>
+<strong>NOTAS/OBSERVACIONES: </strong>
+{% if not resumen[1] or resumen[1] == 'None' %}
+- Para activar este pedido debe abonar
+{% endif %}
+{% if not pedido.ped_fecha_evento %}
+- Para garantizar la cantidad pedida debe brindar una fecha de evento
+{% endif %}
+- Por cada día de retraso se cobrarán veinte mil pesos adicionales
+- Cualquier modificación a este pedido debe hacerse vía Email
+- Sus abonos se pueden realizar en el siguiente número de cuenta: 55134762020. Ahorros Bancolombia, a nombre de John Cardona
+- No hay devolución de dinero
+{% if pedido.ped_observacion %}
+- {{ pedido.ped_observacion }}
+{% endif %}
+- No hay devolución de dinero
+
+
+    <style>
+
+
+    body {
+      margin: 0 auto; 
+      color: #001028;
+      background: #FFFFFF; 
+      font-family: Arial, sans-serif; 
+      font-size: 11px; 
+      font-family: Arial;
+    }
+
+
+    header {
+      padding: 10px 0;
+      margin-bottom: 30px;
+    }
+
+
+    .sub-content {
+      /*float: left;*/
+      display: inline-block;
+      width: 33%;
+    }
+
+    .content{
+        display: flex;
+    }
+
+
+    
+    table { 
+        width: 100%; 
+        color: #333;
+        border-collapse: collapse;
+    } /* Make table wider */
+    td, th { 
+        padding-top: 3px;
+        border: 1px solid #CCC;
+    } /* Add borders to cells */
+
+    th {
+        background-color: #F3F3F3; /* Light grey background */
+        font-weight: bold; /* Make sure they're bold */
+    }
+
+    td {
+        background-color: #FAFAFA; /* Lighter grey background */
+        text-align: center; /* Center our text */
+    }
+
+    #table-head td{
+        border: none;
+        background-color: white;
+    }
+
+    #table-head td h2{
+        font-size: 24px;
+    }
+
+    #info-head{
+        font-size: 10px;
+        text-align: right;
+    }
+
+
+    @page {
+      margin: 0.2cm;
+    }
+    </style>
+    <!-- Simple Invoice - END -->
+        
+    </body>
+</html>

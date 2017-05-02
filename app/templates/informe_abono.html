@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Factura Losdelastogas</title>
+</head>
+<body>
+<table>
+    <tr><th colspan="4">INFORME DE ABONOS PEDIDO NO. {{ pedido.ped_numero }}</th></tr>
+    <tr>
+       <th>Abono No.</th>
+       <th>Valor</th>
+       <th>Fecha de pago</th>
+       <th>Fecha de ingreso</th>
+    </tr>
+    {% for abono in det_abono%}
+        <tr>
+            <td>{{abono[0]}}</td>
+            <td>$ {{abono[1]}}</td>
+            <td>
+                {% if abono[2] %}
+                    {{abono[2]}}
+                {% else %}
+                    No hay
+                {% endif %}
+            </td>
+            <td>{{abono[3]}}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <th>Total</th>
+        <td>{{total}}</td>
+        <th>Saldo del pedido</th>
+        <td>{{ det_pedido.saldo }}</td>
+    </tr>
+</table> <br>
+
+<style>
+
+    body {
+      color: #001028;
+      background: #FFFFFF; 
+      font-family: Arial, sans-serif; 
+      font-size: 11px; 
+      font-family: Arial;
+    }
+
+
+    header {
+      padding: 10px 0;
+      margin-bottom: 30px;
+    }
+
+
+    .sub-content {
+      /*float: left;*/
+      display: inline-block;
+      width: 33%;
+    }
+
+    .content{
+        display: flex;
+    }
+
+
+    
+    table { 
+        width: 100%; 
+        color: #333;
+        border-collapse: collapse;
+        margin: 20px;
+    } /* Make table wider */
+    td, th { 
+        padding-top: 3px;
+        border: 1px solid black;
+    } /* Add borders to cells */
+
+    th {
+        font-weight: bold; /* Make sure they're bold */
+    }
+
+    td {
+        text-align: center; /* Center our text */
+    }
+
+    td.left{
+        text-align: left;
+    }
+    td.center{
+        text-align: center;
+    }
+
+    span.recibi{
+        font-style: italic;
+        font-weight: bold;
+        font-size: 0.8em;
+        padding-left: 290px;
+    }
+
+    #table-head td{
+        border: none;
+        background-color: white;
+    }
+
+    #table-head td.bordered{
+        border: 1px solid black;
+    }
+
+    #table-head td h2{
+        font-size: 24px;
+    }
+
+    #info-head{
+        font-size: 10px;
+        text-align: right;
+    }
+
+    </style>
+    <!-- Simple Invoice - END -->
+        
+    </body>
+</html>

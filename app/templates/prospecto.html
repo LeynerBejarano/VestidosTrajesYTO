@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container">
+    <h2>Prospectos</h2> <br>
+    <form class="form-horizontal" method="post" name="prospectos" role="form">
+      {{ form.hidden_tag() }}
+      {{ form.prospecto }}
+      {% if prospectos %}
+        <table class="table table-bordered table-striped table-list">
+          <thead>
+            <tr>
+              <th rowspan="2">Fecha de contacto</th>
+              <th colspan="6">Encargado</th>
+              <th colspan="3">Institucion</th>
+            </tr>
+            <tr>
+              <th>C.C.</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Municipio</th>
+              <th>Email</th>
+              <th>Celular</th>
+              <th>Nit</th>
+              <th>Nombre</th>
+              <th>Municipio</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for prospecto in prospectos %}
+              <tr id="prospecto-{{ prospecto.id }}">
+                <td>
+                  <input type="radio" name="prospecto" id="{{ prospecto.id }}">
+                  {% if prospecto.fecha_contacto %}
+                    {{ prospecto.fecha_contacto }}
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+                <td>{{ prospecto.cliente.identificacion }}</td>
+                <td>{{ prospecto.cliente.nombre }}</td>
+                <td>{{ prospecto.cliente.apellido }}</td>
+                <td>{{ prospecto.cli_ciudad }}</td>
+                <td>{{ prospecto.cliente.email }}</td>
+                <td>{{ prospecto.cliente.celular }}</td>
+                <td>{{ prospecto.institucion.nit }}</td>
+                <td>{{ prospecto.institucion.nombre }}</td>
+                <td>{{ prospecto.ins_ciudad }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <h3>No hay prospectos en existencia</h3> <br>
+      {% endif %}
+
+      <div class="form-group" style="padding-left: 15px">
+        <input type="submit" value="Cargar prospecto" class="btn btn-primary">
+      </div>
+    </form>
+  </div>
+  <script src='/static/js/prospectos.js'></script>
+{% endblock %}

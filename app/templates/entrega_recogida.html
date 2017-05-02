@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Factura Losdelastogas</title>
+</head>
+<body>
+            <!-- Simple Invoice - START -->
+<header>
+<table id="table-head">
+    <tr>
+        <!-- <td>
+            <img src="{{path}}/static/img/logo.png" alt="Logo" width="70" height="80">
+        </td> -->
+        <td>
+            <h1>{{empresa.emp_razon2}}</h1> 
+            Alquiler de trajes para toda ocasión
+        </td>
+        <td style="text-align: center;">
+            <h2>ORDEN DE ENTREGA<br>
+            <span>Pedido N° {{pedido.ped_numero}} - {{ det_entrega.motivo }}</span>
+            </h2>
+
+        </td>
+        <td colspan="2" id="info-head">
+            {{ empresa.emp_direccion }} - {{ empresa.emp_barrio }} <br>
+            Teléfono fijo: {{ empresa.emp_telefono }} <br>
+            Celular: {{ empresa.emp_movil }} <br>
+        </td>
+    </tr>
+</table>
+</header>
+
+<table>
+    <tr>
+        <th colspan="2">Institución</th>
+        <td colspan="11">
+            {% if institucion.ins_nombre and institucion.ins_nombre != 'uncaught' %}
+                {{institucion.ins_nombre}}
+                {% if pedido.ped_jornada %}
+                    |{{det_pedido.jornada}} 
+                {% endif %}
+                {% if pedido.ped_nivel %}
+                    |{{det_pedido.nivel}} 
+                {% endif %}
+            {% endif %}
+        </td>
+        <th colspan="2">Pedido N°</th>
+        <td colspan="3"> {{pedido.ped_numero }}</td>
+    </tr>
+    <tr>
+        <th colspan="3">Fecha de entrega</th>
+        <td colspan="9"> {{det_entrega.fecha_entrega }}</td>
+        <th colspan="3">Hora de entrega</th>
+        <td colspan="3"> {{entrega.ord_hora }} </td>
+    </tr>
+</table>
+<table>
+{% if ent_personalizada %}
+    <tr>
+        <th>Tipo de entrega</th>
+        <td>
+            {% if det_entrega.tipo %}
+                {{ det_entrega.tipo }}
+            {% endif %}
+        </td>
+        <th>Entregar pedido personalmente a</th>
+        <td>
+            {% if ent_personalizada.per_encargado %}
+                {{ ent_personalizada.per_encargado }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>C.C.</th>
+        <td>
+            
+            {% if ent_personalizada.per_cedula %}
+                {{ ent_personalizada.per_cedula }}
+            {% endif %}
+        </td>
+        <th>Celular</th>
+        <td>
+            
+            {% if ent_personalizada.per_celular %}
+                {{ ent_personalizada.per_celular }}
+            {% endif %}
+        </td>
+    </tr>
+    {% if entrega.ord_tipo_orden == 2 %}
+    <tr>
+        <th>Dirección de entrega</th>
+        <td>            
+            {% if ent_personalizada.per_direccion %}
+                {{ ent_personalizada.per_direccion }}
+            {% endif %}
+        </td>
+        <th>Barrio</th>
+        <td>
+            {% if ent_personalizada.per_barrio %}
+                {{ ent_personalizada.per_barrio }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Indicaciones</th>
+        <td>
+            {% if ent_personalizada.per_indicaciones %}
+                {{ ent_personalizada.per_indicaciones }}
+            {% endif %}
+        </td>
+        <th>Municipio</th>
+        <td>
+            {% if ent_personalizada.per_municipio %}
+                {{ det_entrega.per_ciudad }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>lugar, auditorio, teatro, universidad, colegio, salón, etc</th>
+        <td>
+           {% if ent_personalizada.per_lugar %}
+                {{ ent_personalizada.per_lugar }}
+            {% endif %}
+        </td>
+        <th># de repartidores</th>
+        <td>
+            {% if ent_personalizada.per_repartidores %}
+                {{ ent_personalizada.per_repartidores }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th colspan="2">CELULAR DEL REPARTIDOR</th>
+        <td colspan="2">
+            {% if ent_personalizada.per_cel_repartidor %}
+                {{ ent_personalizada.per_cel_repartidor }}
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+{% else %}
+    <tr>
+        <th>Tipo de entrega</th>
+        <td>
+            {% if det_entrega.tipo %}
+                {{ det_entrega.tipo }}
+            {% endif %}
+        </td>
+        <th>Dirigido a (persona destinataria)</th>
+        <td>
+            {% if ent_transportadora.tra_encargado %}
+                {{ ent_transportadora.tra_encargado }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>c.c. destinatirio</th>
+        <td>
+            {% if ent_transportadora.tra_cedula %}
+                {{ ent_transportadora.tra_cedula }}
+            {% endif %}
+        </td>
+        <th>municipio de destino</th>
+        <td>
+            {% if ent_transportadora.tra_municipio %}
+                {{ det_entrega.tra_ciudad }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>barrio, vereda, corregimiento</th>
+        <td>
+            {% if ent_transportadora.tra_barrio %}
+                {{ ent_transportadora.tra_barrio }}
+            {% endif %}
+        </td>
+        <th>Dirección de destino</th>
+        <td>
+            {% if ent_transportadora.tra_direccion %}
+                {{ ent_transportadora.tra_direccion }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Indicaciones</th>
+        <td>
+            {% if ent_transportadora.tra_indicaciones %}
+                {{ ent_transportadora.tra_indicaciones }}
+            {% endif %}
+        </td>
+        <th>Tel o cel del lugar de destina</th>
+        <td>
+            {% if ent_transportadora.tra_telefono %}
+                {{ ent_transportadora.tra_telefono }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>empresa transportadora</th>
+        <td>
+            {% if ent_transportadora.tra_empresa %}
+                {{ ent_transportadora.tra_empresa }}
+            {% endif %}
+        </td>
+        <th>teléfono de la transportadora</th>
+        <td>
+            {% if ent_transportadora.tra_emp_telefono %}
+                {{ ent_transportadora.tra_emp_telefono }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>N° de taquilla</th>
+        <td>
+            {% if ent_transportadora.tra_taquilla %}
+                {{ ent_transportadora.tra_taquilla }}
+            {% endif %}
+        </td>
+        <th>n° de ruta/placas/vehículo/vuelo/etc</th>
+        <td>
+            {% if ent_transportadora.tra_emp_info %}
+                {{ ent_transportadora.tra_emp_info }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>nombre del conductor</th>
+        <td>
+            {% if ent_transportadora.tra_nombre %}
+                {{ ent_transportadora.tra_nombre }}
+            {% endif %}
+        </td>
+        <th>celular del conductor</th>
+        <td>
+            {% if ent_transportadora.tra_celular %}
+                {{ ent_transportadora.tra_celular }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>hora de salida del transporte</th>
+        <td>
+            {% if ent_transportadora.tra_hora %}
+                {{ ent_transportadora.tra_hora }}
+            {% endif %}
+        </td>
+        <th></th>
+        <td></td>
+    </tr>
+{% endif %}
+</table>
+{% if detalles.all() %} 
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th colspan="2">Color</th>
+                <th colspan="2">Estilo</th>
+                <th colspan="2">Detalle</th>
+                <th>Despachada</th>
+                <th>Devoluciones</th>
+                <th>Entregadas</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set cla = 0 %}
+        {% set col = 0 %}
+        {% set est = 0 %}
+        {% for detalle in detalles %}
+            <tr>
+                <td>
+                    {%if detalle.det_clase %}
+                        {{clases[cla].cla_nombre}}
+                        {% set cla = cla + 1 %}
+                    {% endif %}
+                </td>
+                <td colspan="2">
+                    {%if detalle.det_color %}
+                        {{colores[col].col_nombre}}
+                        {% set col = col + 1 %}
+                    {% endif %}
+                </td>
+                <td colspan="2">
+                    {%if detalle.det_estilo %}
+                        {{estilos[est].est_nombre}}
+                        {% set est = est + 1 %}
+                    {% endif %}
+                </td>
+                <td  colspan="2">
+                    {%if detalle.det_detalle %}
+                        {{ detalle.det_detalle}}
+                    {% endif %}
+                </td>
+                <td>
+                    {%if detalle.det_despachada %}
+                        {{detalle.det_despachada}}
+                    {% endif %}
+                </td>
+                <td>
+                    
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<table>
+    <tr>
+        <th colspan="4">Repartidor</th>
+        <td><em style="font-size: 0.7em">firma</em></td>
+        <td colspan="6"></td>
+        <td colspan="2"><em style="font-size: 0.7em">Fecha y hora</em></td>
+        <td colspan="6"></td>
+    </tr>
+    <tr>
+        <th colspan="4">Cliente que recibe el pedido</th>
+        <td><em style="font-size: 0.7em">firma</em></td>
+        <td colspan="6"></td>
+        <td colspan="2"><em style="font-size: 0.7em">Fecha y hora</em></td>
+        <td colspan="6"></td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th>Observaciones de la entrega</th>
+        <td colspan="3">
+            {% if entrega.ord_observaciones %}
+                {{entrega.ord_observaciones}}
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+<table id="table-head">
+    <tr>
+        <!-- <td>
+            <img src="{{path}}/static/img/logo.png" alt="Logo" width="70" height="80">
+        </td> -->
+        <td>
+            <h2>ORDEN DE RECOGIDA/DEVOLUCIÓN</h2>
+        </td>
+    </tr>
+</table>
+</header>
+
+<table>
+    <tr>
+        <th colspan="3">Fecha de recogida/ devolución</th>
+        <td colspan="9">{{ det_recogida.fecha_recogida }}</td>
+        <th colspan="3">Hora de recogida/ devolución</th>
+        <td colspan="3">{{recogida.ord_hora}}</td>
+    </tr>
+</table>
+<table>
+{% if rec_personalizada %}
+    <tr>
+        <th>Tipo de recogida/ devolución</th>
+        <td>
+            {% if det_entrega.tipo %}
+                {{ det_entrega.tipo }}
+            {% endif %}
+        </td>
+        <th>Recoger pedido personalmente a</th>
+        <td>
+            {% if rec_personalizada.per_encargado %}
+                {{ rec_personalizada.per_encargado }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>C.C.</th>
+        <td>
+            
+            {% if rec_personalizada.per_cedula %}
+                {{ rec_personalizada.per_cedula }}
+            {% endif %}
+        </td>
+        <th>Celular</th>
+        <td>
+            
+            {% if rec_personalizada.per_celular %}
+                {{ rec_personalizada.per_celular }}
+            {% endif %}
+        </td>
+    </tr>
+    {% if recogida.ord_tipo_orden == 2 %}
+    <tr>
+        <th>Dirección de recogida/ devolución</th>
+        <td>            
+            {% if rec_personalizada.per_direccion %}
+                {{ rec_personalizada.per_direccion }}
+            {% endif %}
+        </td>
+        <th>Barrio</th>
+        <td>
+            {% if rec_personalizada.per_barrio %}
+                {{ rec_personalizada.per_barrio }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Indicaciones</th>
+        <td>
+            {% if rec_personalizada.per_indicaciones %}
+                {{ rec_personalizada.per_indicaciones }}
+            {% endif %}
+        </td>
+        <th>Municipio</th>
+        <td>
+            {% if rec_personalizada.per_municipio %}
+                {{ det_entrega.per_ciudad }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>lugar, auditorio, teatro, universidad, colegio, salón, etc</th>
+        <td>
+           {% if rec_personalizada.per_lugar %}
+                {{ rec_personalizada.per_lugar }}
+            {% endif %}
+        </td>
+        <th># de recolectores</th>
+        <td>
+            {% if rec_personalizada.per_repartidores %}
+                {{ rec_personalizada.per_repartidores }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th colspan="2">CELULAR DEL RECOLECTOR</th>
+        <td colspan="2">
+            {% if rec_personalizada.per_cel_repartidor %}
+                {{ rec_personalizada.per_cel_repartidor }}
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+{% else %}
+    <tr>
+        <th>Tipo de recogida/ devolución</th>
+        <td>
+            {% if det_entrega.tipo %}
+                {{ det_entrega.tipo }}
+            {% endif %}
+        </td>
+        <th>persona que devuelve el pedido</th>
+        <td>
+            {% if rec_transportadora.tra_encargado %}
+                {{ rec_transportadora.tra_encargado }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>c.c.</th>
+        <td>
+            {% if rec_transportadora.tra_cedula %}
+                {{ rec_transportadora.tra_cedula }}
+            {% endif %}
+        </td>
+        <th>municipio de origen</th>
+        <td>
+            {% if rec_transportadora.tra_municipio %}
+                {{ det_entrega.tra_ciudad }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>barrio, vereda, corregimiento</th>
+        <td>
+            {% if rec_transportadora.tra_barrio %}
+                {{ rec_transportadora.tra_barrio }}
+            {% endif %}
+        </td>
+        <th>Dirección de origen</th>
+        <td>
+            {% if rec_transportadora.tra_direccion %}
+                {{ rec_transportadora.tra_direccion }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Indicaciones</th>
+        <td>
+            {% if rec_transportadora.tra_indicaciones %}
+                {{ rec_transportadora.tra_indicaciones }}
+            {% endif %}
+        </td>
+        <th>Tel o cel del lugar de origen</th>
+        <td>
+            {% if rec_transportadora.tra_telefono %}
+                {{ rec_transportadora.tra_telefono }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>empresa transportadora</th>
+        <td>
+            {% if rec_transportadora.tra_empresa %}
+                {{ rec_transportadora.tra_empresa }}
+            {% endif %}
+        </td>
+        <th>teléfono de la transportadora</th>
+        <td>
+            {% if rec_transportadora.tra_emp_telefono %}
+                {{ rec_transportadora.tra_emp_telefono }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>N° de taquilla</th>
+        <td>
+            {% if rec_transportadora.tra_taquilla %}
+                {{ rec_transportadora.tra_taquilla }}
+            {% endif %}
+        </td>
+        <th>n° de ruta/placas/vehículo/vuelo/etc</th>
+        <td>
+            {% if rec_transportadora.tra_emp_info %}
+                {{ rec_transportadora.tra_emp_info }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>nombre del conductor</th>
+        <td>
+            {% if rec_transportadora.tra_nombre %}
+                {{ rec_transportadora.tra_nombre }}
+            {% endif %}
+        </td>
+        <th>celular del conductor</th>
+        <td>
+            {% if rec_transportadora.tra_celular %}
+                {{ rec_transportadora.tra_celular }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>hora de salida del transporte</th>
+        <td>
+            {% if rec_transportadora.tra_hora %}
+                {{ rec_transportadora.tra_hora }}
+            {% endif %}
+        </td>
+        <th></th>
+        <td></td>
+    </tr>
+{% endif %}
+</table>
+{% if detalles.all() %} 
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th colspan="2">Color</th>
+                <th colspan="2">Estilo</th>
+                <th colspan="2">Detalle</th>
+                <th>Entregadas</th>
+                <th>Faltantes</th>
+                <th>Recogidas</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set cla = 0 %}
+        {% set col = 0 %}
+        {% set est = 0 %}
+        {% for detalle in detalles %}
+            <tr>
+                <td>
+                    {%if detalle.det_clase %}
+                        {{clases[cla].cla_nombre}}
+                        {% set cla = cla + 1 %}
+                    {% endif %}
+                </td>
+                <td colspan="2">
+                    {%if detalle.det_color %}
+                        {{colores[col].col_nombre}}
+                        {% set col = col + 1 %}
+                    {% endif %}
+                </td>
+                <td colspan="2">
+                    {%if detalle.det_estilo %}
+                        {{estilos[est].est_nombre}}
+                        {% set est = est + 1 %}
+                    {% endif %}
+                </td>
+                <td colspan="2">
+                    {%if detalle.det_detalle %}
+                        {{ detalle.det_detalle}}
+                    {% endif %}
+                </td>
+                <td>
+                    {%if detalle.det_despachada %}
+                        {{detalle.det_despachada}}
+                    {% endif %}
+                </td>
+                <td>
+                    
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<table>
+    <tr>
+        <th colspan="4">Recolector</th>
+        <td><em style="font-size: 0.7em">firma</em></td>
+        <td colspan="6"></td>
+        <td colspan="2"><em style="font-size: 0.7em">Fecha y hora</em></td>
+        <td colspan="6"></td>
+    </tr>
+    <tr>
+        <th colspan="4">Cliente que recibe el pedido</th>
+        <td><em style="font-size: 0.7em">firma</em></td>
+        <td colspan="6"></td>
+        <td colspan="2"><em style="font-size: 0.7em">Fecha y hora</em></td>
+        <td colspan="6"></td>
+    </tr>
+    <tr>
+        <th colspan="4">Despachador</th>
+        <td><em style="font-size: 0.7em">firma</em></td>
+        <td colspan="6"></td>
+        <td colspan="2"><em style="font-size: 0.7em">Fecha y hora</em></td>
+        <td colspan="6"></td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th>Observaciones de la recogida/ devolución</th>
+        <td colspan="3">
+            {% if recogida.ord_observaciones %}
+                {{recogida.ord_observaciones}}
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+<style>
+
+    body {
+      margin: 0 auto; 
+      color: #001028;
+      font-family: Arial, sans-serif; 
+      font-size: 11px; 
+      font-family: Arial;
+    }
+
+
+    header {
+      padding: 10px 0;
+      margin-bottom: 30px;
+    }
+
+
+    .sub-content {
+      /*float: left;*/
+      display: inline-block;
+      width: 33%;
+    }
+
+    .content{
+        display: flex;
+    }
+
+
+    
+    table { 
+        width: 100%; 
+        color: #333;
+        border-collapse: collapse;
+    } /* Make table wider */
+    td, th { 
+        padding-top: 3px;
+        border: 1px solid #CCC;
+    } /* Add borders to cells */
+
+    th {
+        font-weight: bold; /* Make sure they're bold */
+    }
+
+    td {
+        text-align: center; /* Center our text */
+    }
+
+    #table-head td{
+        border: none;
+        background-color: white;
+    }
+
+    #table-head td h2{
+        font-size: 24px;
+    }
+
+    #info-head{
+        font-size: 10px;
+        text-align: right;
+    }
+
+    </style>
+    <!-- Simple Invoice - END -->
+        
+    </body>
+</html>

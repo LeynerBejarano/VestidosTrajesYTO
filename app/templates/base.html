@@ -1,0 +1,158 @@
+  <!-- <!DOCTYPE html> -->
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{datos.title}}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/owl.carousel.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/css/animate.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <link rel='stylesheet prefetch' href='./static/css/jquery-ui.css'>
+    <link rel="stylesheet" href="./static/css/login.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    {% block styles %}{% endblock %}
+    <!-- Js -->
+    <script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/owl.carousel.min.js"></script>
+    <script src="/static/js/plugins.js"></script>
+    <script src="/static/js/min/waypoints.min.js"></script>
+    <script src="/static/js/jquery.counterup.js"></script>
+    <script src="/static/js/jquery.blockUI.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+  </head>
+  <body>
+    <!-- Header Start -->
+    <div class="loader"></div>
+    <header>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <!-- header Nav Start -->
+            <nav class="navbar navbar-default">
+              <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="http://losdelastogas.com/">
+                    <img src="/static/img/logo.png" alt="Logo" width="70" height="80">
+                  </a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                  <ul class="nav navbar-nav navbar-right">
+                    <li><a href="http://losdelastogas.com/">Almacen</a></li>
+                    <!-- <li><a href="togas">Togas</a></li> -->
+                    <li class="dropdown">
+                      <a class="dropdown-toggle" data-toggle="dropdown" href="#">Datos
+                        <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="clientes">Clientes</a></li>                    
+                          <li><a href="municipios">Municipios</a></li>
+                          <li><a href="exportar_excel" target="_blank">Exportar Pedidos</a></li>
+                          <li><a href="exportar_excel_A" target="_blank">Exportar Pedidos/ Temporada A</a></li>
+                          <li><a href="exportar_excel_B" target="_blank">Exportar Pedidos/ Temporada B</a></li>
+                          <li><a href="exportar_excel_activos" target="_blank">Exportar Pedidos Activos</a></li>
+                          <li><a href="exportar_excel_activos_A" target="_blank">Exportar Pedidos Activos/A</a></li>
+                          <li><a href="exportar_excel_activos_B" target="_blank">Exportar Pedidos Activos/B</a></li>
+                          <li><a href="exportar_excel_estolas" target="_blank">Exportar Estolas</a></li>
+                        </ul>
+                      </li>
+                      <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Inventario
+                          <span class="caret"></span></a>
+                          <ul class="dropdown-menu">
+                            <li><a href="prendas">Prendas</a></li>
+                            <li><a href="accesorios">Accesorios</a></li>
+                          </ul>
+                        </li>
+                        <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Pedidos
+                          <span class="caret"></span></a>
+                          <ul class="dropdown-menu">
+                            <li><a href="pedidos">Nuevo Pedido</a></li>
+                            <li><a href="buscar">Buscar</a></li>
+                            <li class="divider"></li>
+                            <li><a href="prospectos">Prospectos</a></li>
+                            <li class="divider"></li>
+                            <li><a href="abonos">Abonos</a></li>
+                          </ul>
+                        </li>
+                        <!-- <li><a href="#">Reportes</a></li> -->
+                        <li><a href="salir">Salir</a></li>
+                      </ul>
+                      </div><!-- /.navbar-collapse -->
+                      </div><!-- /.container-fluid -->
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </header>
+            <!-- header close -->
+            <hr>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <div class="modal fade" id="modal_messages" role="dialog" >
+                <div class="modal-dialog">
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button> <br>
+                      {% for category, message in messages %}
+                        <div class="alert alert-{{category}}">
+                          {{message}}
+                        </div>
+                      {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endwith %}
+          {% block content %}{% endblock %}
+          <!-- footer Start -->
+          <footer>
+            <div class="container">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="footer-manu">
+                    <ul>
+                      <li><a href="#">About Us</a></li>
+                      <li><a href="#">Contact us</a></li>
+                      <li><a href="#">How it works</a></li>
+                      <li><a href="#">Support</a></li>
+                      <li><a href="#">Terms</a></li>
+                    </ul>
+                  </div>
+                  <p>Copyright &copy; Desarrollado por <a href="http://www.cidenet.org">Cidenet</a>. All rights reserved.</p>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </body>
+      </html>

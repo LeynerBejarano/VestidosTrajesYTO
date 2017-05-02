@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Factura Losdelastogas</title>
+</head>
+<body>
+            <!-- Simple Invoice - START -->
+<table>
+    <tr class="bordered">
+        <td> 
+            <table class="main">
+                <tr>
+                    <td colspan="3"></td>
+                </tr>
+                <tr>
+                    <td class="light-grey" style="font-family: Arial;"><strong>PEDIDO No.</strong> <span style="color: red;">{{pedido.ped_numero}}</span></td>
+                    <td style="text-align: center;" style="font-family: Arial;"><strong style="font-size: 1.3em">LETRA DE CAMBIO</strong> <br><span style="font-size: 0.7em">(SIN PROTESTO)</span></td>
+                    <td class="light-grey" style="font-family: Arial;"><strong>POR $</strong> {{det_letra.valor}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="font-style: italic;">Señor(a) {{cliente}} con C.C. {{cedula}}, <br> El día {{det_letra.rec_fecha}} se servirá usted pagar solidariamente en Medellín a la orden de John Jairo Cardona Mejia</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="light-grey" style="font-family: Arial;"><strong>EXACTOS</strong> {{det_letra.valorLetras}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="font-style: italic;">Pesos moneda legal, más intereses durante el plazo del 0% mensual y de mora a la tasa máxima legal autorizada. Todas las partes de esta letra quedan obligadas solidariamente y renuncian a la presentación para la aceptación y el pago a los avisos de rechazo.</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align: center;">Medellín {{det_letra.fecha}}</td>
+                </tr>
+                <tr>
+                    <td class="light-grey" style="font-size: 0.7em" colspan="2">Atentamente,</td>
+                    <td class="light-grey" style="text-align: right; font-size: 0.8em"><br><strong>(Girador)</strong></td>
+                </tr>
+            </table> 
+        </td>
+    </tr>
+</table>  
+ 
+
+{% if detalles.all() %} 
+    <table class="detalles">
+        <tr>
+            <th></th>
+            <th>Color</th>
+            <th>Estilo</th>
+            <th colspan="2">Detalle</th>
+            <th>Despachada</th>
+        </tr>
+        {% set cla = 0 %}
+        {% set col = 0 %}
+        {% set est = 0 %}
+        {% for detalle in detalles %}
+            <tr>
+                <th>
+                    {%if detalle.det_clase %}
+                        {{clases[cla].cla_nombre}}
+                        {% set cla = cla + 1 %}
+                    {% endif %}
+                </th>
+                <td>
+                    {%if detalle.det_color %}
+                        {{colores[col].col_nombre}}
+                        {% set col = col + 1 %}
+                    {% endif %}
+                </td>
+                <td>
+                    {%if detalle.det_estilo %}
+                        {{estilos[est].est_nombre}}
+                        {% set est = est + 1 %}
+                    {% endif %}
+                </td>
+                <td colspan="2">
+                    {%if detalle.det_detalle %}
+                        {{ detalle.det_detalle}}
+                    {% endif %}
+                </td>
+                <td>
+                    {%if det_letra.cantidad %}
+                        {{det_letra.cantidad}}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+
+<style>
+
+    body {
+      margin: 0 auto; 
+      color: #001028;
+      background: #FFFFFF; 
+      font-family: sans-serif, Arial; 
+      font-size: 14px; 
+      font-family: Arial;
+    } 
+
+    tr.bordered{
+        border: 1px solid black;
+    }
+
+    td.light-grey{
+        background-color: #F1F1F1;
+    }
+
+    table.main{
+        margin: 10px;
+    }
+
+    table.detalles{
+        border: 1px solid black;
+        text-align: center;
+    }
+
+    @page{
+        margin: 20px 20px;
+    }
+
+    </style>
+    <!-- Simple Invoice - END -->
+        
+    </body>
+</html>

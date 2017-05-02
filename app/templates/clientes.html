@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h2 class="panel-title">
+        Clientes
+        </h2>
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" method="post" name="input_pre" role="form" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
+          <div class="row">
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="identificacion_enc">C.C.<span class="obligatorio">*</span></label>
+              <div class="col-lg-10">
+                {{ form.identificacion_enc(class="form-control", placeholder="C.C.") }}
+                {% for error in form.identificacion_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="nombre_enc">Nombre<span class="obligatorio">*</span></label>
+              <div class="col-lg-4">
+                {{ form.nombre_enc(class="form-control", placeholder="Nombre") }}
+                {% for error in form.nombre_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+              <label class="col-lg-2 control-label" for="apellido_enc">Apellido<span class="obligatorio">*</span></label>
+              <div class="col-lg-4">
+                {{ form.apellido_enc(class="form-control", placeholder="Apellido") }}
+                {% for error in form.apellido_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="municipio_enc">Municipio<span class="obligatorio">*</span></label>
+              <div class="col-lg-10">
+                <div class="input-group">
+                  {{ form.municipio_enc(class="form-control other") }}
+                  <span class="input-group-addon" id="area_enc"></span>
+                </div>
+                {% for error in form.municipio_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+                {{ form.otro_municipio_enc(class="form-control", placeholder="¿Cuál?")}}
+                {% if not form.municipio_enc.errors %}
+                  {% for error in form.otro_municipio_enc.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                  {% endfor %}
+                {% endif %}  <br>
+              </div>
+            </div>
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="cargo_enc">Cargo<span class="obligatorio">*</span></label>
+              <div class="col-lg-10">
+                {{ form.cargo_enc(class="form-control other")}}
+                {% for error in form.cargo_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+                {{ form.otro_cargo_enc(class="form-control", placeholder="¿Cuál?")}}
+                {% if not form.cargo_enc.errors %}
+                  {% for error in form.otro_cargo_enc.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                  {% endfor %}
+                {% endif %}  <br>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="celular_enc">Celular<span class="obligatorio">*</span></label>
+              <div class="col-lg-10">
+                {{ form.celular_enc(class="form-control", placeholder="Celular") }}
+                {% for error in form.celular_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="email_enc">Email<span class="obligatorio">*</span></label>
+              <div class="col-lg-10">
+                {{ form.email_enc(class="form-control", placeholder="Email") }}
+                {% for error in form.email_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="telefono_enc">Telefono fijo</label>
+              <div class="col-lg-6">
+                {{ form.telefono_enc(class="form-control", placeholder="Telefono fijo") }}
+                {% for error in form.telefono_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+              {{ form.extension_enc.label(class="col-lg-1 control-label")}}
+              <div class="col-lg-3">
+                {{ form.extension_enc(class="form-control", placeholder="Ext.") }}
+                {% for error in form.extension_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="direccion_enc">Dirección</label>
+              <div class="col-lg-10">
+                {{ form.direccion_enc(class="form-control", placeholder="Direccion") }}
+                {% for error in form.direccion_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label"">Fecha de nacimiento</label>
+              <div class="col-lg-10">
+                <div class="row">
+                  <div class="col-lg-6 form-group">
+                    {{ form.mes_enc.label(class="col-lg-2 control-label")}}
+                    <div class="col-lg-10">
+                      {{ form.mes_enc(class="form-control") }}
+                      {% for error in form.mes_enc.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                      {% endfor %} <br>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 form-group">
+                    {{ form.dia_enc.label(class="col-lg-2 control-label")}}
+                    <div class="col-lg-10">
+                      {{ form.dia_enc(class="form-control") }}
+                      {% for error in form.dia_enc.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                      {% endfor %} <br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-2 control-label" for="barrio_enc">Barrio</label>
+              <div class="col-lg-10">
+                {{ form.barrio_enc(class="form-control", placeholder="Barrio") }}
+                {% for error in form.barrio_enc.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} <br>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6"></div>
+            <div class="col-lg-6 form-group">
+              <label class="col-lg-offset-6 col-lg-2 control-label" for="tipo_enc">Tipo</label>
+              <div class="col-lg-4">
+                <input class="form-control" id="tipo_enc" type="text" readonly="readonly" placeholder="Tipo">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 form-group">
+              <div class="col-lg-offset-2 col-lg-10">
+                <input type="submit" name = "btn" value="Insertar" class="btn btn-primary"/>
+                <input type="submit" name = "btn" value="Crear pedido" class="btn btn-primary"/> <br>
+              </div>
+            </div>
+            <div class="col-lg-6 form-group">
+              <div class="col-lg-12">
+                <div class="pull-right">
+                  <strong>Cargar cliente</strong>
+                  <a href="#" class="anterior"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                  <a href="#" class="siguiente"><span class="glyphicon glyphicon-triangle-right"></span></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  {% for campo in form %}
+    {% if campo.type == 'SelectField' %}
+      {% if campo.data %}
+        <script type = "text/javascript">
+        $('#{{campo.id}}').append('<option disabled>-</option>');
+        </script>
+      {% else %}
+        <script type = "text/javascript">
+        $('#{{campo.id}}').append('<option selected disabled>-</option>');
+        </script>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  <script type="text/javascript">
+  var cedulas = {{ cedulas }};
+  </script>
+  <script src='/static/js/cliente.js'></script>
+  <script type="text/javascript">autocompletar();</script>
+{% endblock %}

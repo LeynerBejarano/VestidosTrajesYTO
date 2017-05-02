@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1>{{ label.concepto }} exitosamente {{ label.accion }}!</h1>
+            <br>
+            <p>{{ label.concepto }} {{ label.accion }} correctamente, El número de consecutivo del <strong>pedido</strong> es <strong>{{ consecutivo.pedido }}</strong>. 
+            {% if consecutivo.orden %}
+                El número de consecutivo de la <strong>orden</strong> es <strong>{{ consecutivo.orden }}</strong>
+            {% endif %}
+            {% if consecutivo.abono %}
+                El número de consecutivo del <strong>abono</strong> es <strong>{{ consecutivo.abono }}</strong>
+            {% endif %} </p>
+
+            <p>
+                {% if consecutivo.abono %}
+                    <a class="btn btn-primary btn-lg" href="abonos" role="button">Nuevo abono</a>
+                {% else %}
+                    <a class="btn btn-primary btn-lg" href="pedidos" role="button">Nuevo pedido</a>
+                {% endif %}
+
+                {% if filenames %}
+                    <a class="btn btn-primary btn-lg" id='descargasPDF'>Descargar PDF</a>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $('#descargasPDF').click(function() {
+            {% for filename in filenames %}
+                window.open("uploads/{{filename}}")
+            {% endfor %}
+        });
+    </script>
+{% endblock %}

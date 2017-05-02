@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Factura Losdelastogas</title>
+</head>
+<body>
+            <!-- Simple Invoice - START -->
+<header>
+<table id="table-head">
+    <tr>
+        <!-- <td>
+            <img src="{{path}}/static/img/logo.png" alt="Logo" width="70" height="80">
+        </td> -->
+        <td rowspan="4" class="center">
+            <h1>{{empresa.emp_razon2}}</h1> 
+            Alquiler de trajes para toda ocasión
+        </td>
+        <td><strong>RECIBO DE TOGAS</strong></td>
+        <td class="bordered" style="color: red;>"> No. {% if abono %} {{ abono.abo_id }} {% endif %}</td>
+        <td><strong>Tel: </strong></td>
+        <td class="bordered"> {% if cliente %} {{ cliente.cli_celular }} {% endif %}</td>
+    </tr>
+    <tr>
+        <td><strong>VALOR ABONO $</strong></td>
+        <td class="bordered">{% if det_abono %}{{ det_abono.valor }}{% endif %}</td>
+        <td><strong>No. PEDIDO</strong></td>
+        <td class="bordered">{% if pedido %}{{ pedido.ped_numero }}{% endif %}</td>
+    </tr>
+    <tr>
+        <td><strong>VALOR UNIDAD $</strong></td>
+        <td class="bordered"> {% if det_pedido %}{{ det_pedido.valor_unitario }}{% endif %}</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <strong>Cra 76 No. 29 - 24 Frente al éxito de Belén Teléfono: 238 25 23, Medellín - Colombia</strong>
+        </td>
+    </tr>
+</table>
+</header>
+
+<table>
+    <tr>
+        <td class="left">
+            <strong> CIUDAD Y FECHA </strong> {% if det_pedido %}{{det_pedido.ciudad}}, {{det_pedido.fecha}}{% endif %}<br>
+            <strong> FECHA DE PAGO </strong> 
+                {% if det_abono %}
+                    {% if det_abono.fecha %}
+                        {{det_abono.fecha}}
+                    {% else %}
+                        {{det_pedido.fecha}}
+                    {% endif %}
+                {% endif %} <br>
+            <strong> RECIBIMOS DE </strong> {% if cliente %}{{cliente.cli_nombre}} {{cliente.cli_apellido}}{% endif %}<br>
+            <strong> INSTITUCIÓN </strong> 
+                {% if institucion %} 
+                    {% if institucion.ins_nombre and institucion.ins_nombre != 'uncaught' %}
+                        {{institucion.ins_nombre}}
+                        {% if pedido.ped_jornada %}
+                            |{{det_pedido.jornada}} 
+                        {% endif %}
+                        {% if pedido.ped_nivel %}
+                            |{{det_pedido.nivel}} 
+                        {% endif %}
+                    {% endif %}
+                {% endif %}<br>
+            <strong> LA SUMA DE </strong> {% if det_pedido %}{{det_pedido.abonoTexto}}{% endif %}<br>
+            <strong> POR CONCEPTO DE </strong> 
+                {% if det_pedido %}
+                    {% if det_pedido.saldo == 0 %}
+                        Cancelación
+                    {% else %}
+                        Abono
+                    {% endif %}
+                {% endif %}<br>
+            <strong> TIPO DE PAGO </strong> {% if det_abono %}{{det_abono.tipo}}{% endif %}<br>
+            <strong> TOTAL DE UNIDADES DEL PEDIDO </strong> {% if det_pedido %}{{det_pedido.cantidad}}{% endif %}
+            <strong>, VALOR TOTAL DEL PEDIDO </strong> {% if det_pedido %}{{det_pedido.valor}}{% endif %}
+            <strong>, SALDO DEL PEDIDO </strong>{% if det_pedido %}{{det_pedido.saldo}}{% endif %}<br>
+            <strong> TOTAL DE UNIDADES DEL DESPACHO </strong> {% if det_despacho %}{{det_despacho.cantidad}}{% endif %}
+            <strong>, VALOR TOTAL DEL DESPACHO </strong> {% if det_despacho %}{{det_despacho.valor}}{% endif %}
+            <strong>, SALDO DEL DESPACHO </strong> {% if det_despacho %}{{det_despacho.saldo}}{% endif %}<br>
+            <br>
+            <strong> NO HAY DEVOLUCIÓN DE DINERO,</strong> <span class="recibi"> RECIBÍ:</span> _____________________________________ 
+        </td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th>Observaciones</th>
+        <td colspan="3">
+            {% if abono %}
+                {% if abono.abo_observacion %}
+                    {{abono.abo_observacion}}
+                {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+</table> <br>
+
+<style>
+
+    body {
+      color: #001028;
+      background: #FFFFFF; 
+      font-family: Arial, sans-serif; 
+      font-size: 11px; 
+      font-family: Arial;
+    }
+
+
+    header {
+      padding: 10px 0;
+      margin-bottom: 30px;
+    }
+
+
+    .sub-content {
+      /*float: left;*/
+      display: inline-block;
+      width: 33%;
+    }
+
+    .content{
+        display: flex;
+    }
+
+
+    
+    table { 
+        width: 100%; 
+        color: #333;
+        border-collapse: collapse;
+        margin: 0px 20px;
+    } /* Make table wider */
+    td, th { 
+        padding-top: 3px;
+        border: 1px solid black;
+    } /* Add borders to cells */
+
+    th {
+        font-weight: bold; /* Make sure they're bold */
+    }
+
+    td {
+        text-align: center; /* Center our text */
+    }
+
+    td.left{
+        text-align: left;
+    }
+    td.center{
+        text-align: center;
+    }
+
+    span.recibi{
+        font-style: italic;
+        font-weight: bold;
+        font-size: 0.8em;
+        padding-left: 290px;
+    }
+
+    #table-head td{
+        border: none;
+        background-color: white;
+    }
+
+    #table-head td.bordered{
+        border: 1px solid black;
+    }
+
+    #table-head td h2{
+        font-size: 24px;
+    }
+
+    #info-head{
+        font-size: 10px;
+        text-align: right;
+    }
+
+    </style>
+    <!-- Simple Invoice - END -->
+        
+    </body>
+</html>

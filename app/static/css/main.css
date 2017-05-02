@@ -1,0 +1,208 @@
+.form-group{
+    margin-bottom: 0px;
+}
+
+.panel-primary>.panel-heading{
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+}
+
+.panel-primary {
+    border-color: #2c3e50;
+}
+
+.btn-primary {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+}
+
+.table-responsive select{
+    min-width: 70px;
+}
+
+.table > tbody > tr > .thick-line {
+    border-top: 2px solid;
+}
+
+.obligatorio{
+    color: red;
+    font-size: 20px;
+}
+
+#valor-cortesias {
+    vertical-align: middle;
+}
+
+#valor-pagar {
+    vertical-align: middle;
+}
+
+#orden > .panel-body > .table-responsive > table > tbody > tr > td > .form-control{
+    min-width: 52px;
+}
+
+.form-horizontal .form-group {
+    margin-right: 15px;
+}
+
+input[id $= 'detalle']{
+    width: 200px;
+}
+
+#detalles-3-detalle{
+    width: 100%;
+}
+
+#tabla_pedidos > thead > tr > th.margin-top{
+    border-top: 4px solid black;
+}
+
+#tabla_pedidos > thead > tr > th.margin-left{
+    border-left: 4px solid black;
+}
+
+#tabla_pedidos > thead > tr > th.margin-right{
+    border-right: 4px solid black;
+}
+
+#tabla_pedidos > thead > tr > td.margin-right{
+    border-right: 4px solid black;
+}
+
+#tabla_pedidos > thead > tr > td.margin-left{
+    border-left: 4px solid black;
+}
+
+#main-body .margin-left{
+    border-left: 4px solid black;
+}
+
+#main-body .margin-right{
+    border-right: 4px solid black;
+}
+
+#main-body > tr:last-child > td:nth-child(n+7){
+    border-bottom: 4px solid black;
+}
+
+
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    /* add padding to account for vertical scrollbar */
+    padding-right: 20px;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+    height: 100px;
+}
+
+.glyphicon.glyphicon-triangle-left, .glyphicon.glyphicon-triangle-right {
+    font-size: 30px;
+    color: #2c3e50;
+}
+
+.glyphicon.glyphicon-triangle-left:hover, .glyphicon.glyphicon-triangle-right:hover {
+    color: #49637c;
+}
+
+.loader{
+    display: none;
+    width: 60px;
+    height: 60px;
+    border: 10px solid #ccc;
+    border-top-color: #2c3e50;
+    border-radius: 100%;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    animation: round 2s linear infinite;
+    z-index: 9999;
+    }
+    @keyframes round{
+        from{transform: rotate(0deg)}
+        to{transform: rotate(360deg)}
+    }
+
+a.disabled .glyphicon.glyphicon-triangle-right{
+    cursor: default;
+    background-image: none;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    color: #333;
+}
+
+a.disabled .glyphicon.glyphicon-triangle-right:hover {
+    color: #333;
+}
+
+a.disabled .glyphicon.glyphicon-triangle-left{
+    cursor: default;
+    background-image: none;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    color: #333;
+}
+
+a.disabled .glyphicon.glyphicon-triangle-left:hover {
+    color: #333;
+}
+
+
+.empty{
+    color: #363535;
+    border-color: #b24442;
+    background-color: #f2dede;
+}
+
+input:disabled, select:disabled, input:read-only{
+    border-color: #333;
+}
+
+span.disponible{
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+.table-list tbody tr:hover{
+    background: #ccccdb;
+}
+
+.table-list tbody tr.selected{
+    background: #ccccdb;
+}
+
+.destacado{
+    text-align: right;
+    font-size: 2em;
+}
+
+input[type='radio'].destacado{
+    height: 0.7em;
+    width: 0.7em;
+}
+
+.panel-primary .panel-empty{
+    background-color: #C5C5C5;
+}
+
+.nav-tabs > li > a{
+    background-color: #2c3e50;
+    color: #fff;
+}
+
+#tabla_pedidos td{
+    padding: 0;
+}
+
