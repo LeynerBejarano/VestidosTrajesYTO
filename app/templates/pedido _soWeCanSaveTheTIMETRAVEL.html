@@ -225,18 +225,18 @@
                     <fieldset>
                         <legend>Datos del cliente</legend>
                         <div class="row">
-                            <div class="form-group">  
-                                <label class="col-lg-1 control-label" for="nombre_enc">Nombre<span class="obligatorio">*</span></label>
-                                <div class="col-lg-2">
-                                    {{ form.nombre_cli(class="form-control", placeholder="Nombre") }}
-                                    {% for error in form.nombre_cli.errors %}
+                            <div class="form-group">
+                                <label class="col-lg-1 control-label" for="identificacion_enc">C.C.<span class="obligatorio">*</span></label>
+                                <div class="col-md-2 ">
+                                    {{ form.identificacion_enc(class="form-control", placeholder="C.C.") }}
+                                    {% for error in form.identificacion_enc.errors %}
                                         <span style="color: red;">[{{ error }}]</span>
                                     {% endfor %}
                                 </div>
-                                <label class="col-lg-1 control-label" for="identificacion_enc">C.C./Nit.<span class="obligatorio">*</span></label>
-                                <div class="col-md-2 ">
-                                    {{ form.identificacion_cli(class="form-control", placeholder="C.C./Nit") }}
-                                    {% for error in form.identificacion_cli.errors %}
+                                <label class="col-lg-1 control-label" for="nombre_enc">Nombre<span class="obligatorio">*</span></label>
+                                <div class="col-lg-2">
+                                    {{ form.nombre_enc(class="form-control", placeholder="Nombre") }}
+                                    {% for error in form.nombre_enc.errors %}
                                         <span style="color: red;">[{{ error }}]</span>
                                     {% endfor %}
                                 </div>
@@ -247,74 +247,34 @@
                                         <span style="color: red;">[{{ error }}]</span>
                                     {% endfor %}
                                 </div>
-                                 <label class="col-lg-2 control-label"">Fecha de nacimiento</label>
-                                <div class="col-md-3 form-group">
-                                    {{ form.nacido_mes_cli.label(class="col-lg-1 control-label")}}
-                                    <div class="col-md-5">
-                                        {{ form.nacido_mes_cli(class="form-control", style="padding: 6px 6px;") }}
-                                        {% for error in form.nacido_mes_cli.errors %}
+                                <label class="col-lg-1 control-label" for="cargo_enc">Cargo<span class="obligatorio">*</span></label>
+                                <div class="col-md-2 ">
+                                    {{ form.cargo_enc(class="form-control other")}}
+                                    {% for error in form.cargo_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                    {{ form.otro_cargo_enc(class="form-control", placeholder="¿Cuál?")}}
+                                    {% if not form.cargo_enc.errors %}
+                                        {% for error in form.otro_cargo_enc.errors %}
                                             <span style="color: red;">[{{ error }}]</span>
                                         {% endfor %}
-                                    </div>
-                                    {{ form.nacido_dia_cli.label(class="col-lg-1 control-label")}}
-                                    <div class="col-md-4">
-                                        {{ form.nacido_dia_cli(class="form-control", style="padding: 6px 6px;") }}
-                                        {% for error in form.nacido_dia_cli.errors %}
-                                            <span style="color: red;">[{{ error }}]</span>
-                                        {% endfor %}
-                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
-                            <div class="form-group">
-                                <label class="col-lg-1 control-label" for="telefono_enc" style="white-space: nowrap;">Telefono fijo</label>
-                                <div class="col-md-2">
-                                    {{ form.telefono_cli(class="form-control", placeholder="Telefono fijo") }}
-                                    {% for error in form.telefono_cli.errors %}
-                                        <span style="color: red;">[{{ error }}]</span>
-                                    {% endfor %}
-                                </div>
-                                <div class="col-lg-1">
-                                    {{ form.extension_cli(class="form-control", placeholder="Ext.") }}
-                                    {% for error in form.extension_cli.errors %}
-                                        <span style="color: red;">[{{ error }}]</span>
-                                    {% endfor %}
-                                </div>
-                                <label class="col-lg-1 control-label" for="celular_enc">Celular<span class="obligatorio">*</span></label>
-                                <div class="col-md-2">
-                                    {{ form.celular_cli(class="form-control", placeholder="Celular") }}
-                                    {% for error in form.celular_cli.errors %}
-                                        <span style="color: red;">[{{ error }}]</span>
-                                    {% endfor %}
-                                </div>
-                                <label class="col-lg-1 control-label" for="email_enc">Email<span class="obligatorio">*</span></label>
-                                <div class="col-md-2">
-                                    {{ form.email_cli(class="form-control", placeholder="Email") }}
-                                    {% for error in form.email_cli.errors %}
-                                        <span style="color: red;">[{{ error }}]</span>
-                                    {% endfor %}
-                                </div>
-                                <label class="col-lg-1 control-label" for="direccion_enc">Dirección</label>
-                                <div class="col-md-2">
-                                    {{ form.direccion_cli(class="form-control", placeholder="Direccion") }}
-                                    {% for error in form.direccion_cli.errors %}
-                                        <span style="color: red;">[{{ error }}]</span>
-                                    {% endfor %}
-                                </div>
-                        </div>
-                        </div>
-                         <div class="row">
                             <div class="form-group">
                                 <label class="col-lg-1 control-label" for="municipio_enc">Municipio<span class="obligatorio">*</span></label>
                                 <div class="col-md-2">
                                     <div class="input-group">
-                                        {{ form.ciudad_cli(class="form-control other") }}
+                                        {{ form.municipio_enc(class="form-control other") }}
                                         <span class="input-group-addon" id="area_enc"></span>
                                     </div>
-                                    {% for error in form.ciudad_cli.errors %}
+                                    {% for error in form.municipio_enc.errors %}
                                         <span style="color: red;">[{{ error }}]</span>
                                     {% endfor %}
-                                    {{ form.otro_ciudad_cli(class="form-control", placeholder="¿Cuál?")}}
-                                    {% if not form.ciudad_cli.errors %}
+                                    {{ form.otro_municipio_enc(class="form-control", placeholder="¿Cuál?")}}
+                                    {% if not form.municipio_enc.errors %}
                                         {% for error in form.otro_municipio_enc.errors %}
                                             <span style="color: red;">[{{ error }}]</span>
                                         {% endfor %}
@@ -322,40 +282,106 @@
                                 </div>
                                 <label class="col-lg-1 control-label" for="barrio_enc">Barrio</label>
                                 <div class="col-md-2">
-                                    {{ form.barrio_cli(class="form-control", placeholder="Barrio") }}
-                                    {% for error in form.barrio_cli.errors %}
+                                    {{ form.barrio_enc(class="form-control", placeholder="Barrio") }}
+                                    {% for error in form.barrio_enc.errors %}
                                         <span style="color: red;">[{{ error }}]</span>
                                     {% endfor %}
                                 </div>
-                                <div class="col-lg-2" style="padding-left: 0;">
+                                <label class="col-lg-1 control-label" for="direccion_enc">Dirección</label>
+                                <div class="col-md-2">
+                                    {{ form.direccion_enc(class="form-control", placeholder="Direccion") }}
+                                    {% for error in form.direccion_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <label class="col-lg-1 control-label" for="celular_enc">Celular<span class="obligatorio">*</span></label>
+                                <div class="col-md-2">
+                                    {{ form.celular_enc(class="form-control", placeholder="Celular") }}
+                                    {% for error in form.celular_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-lg-1 control-label" for="telefono_enc" style="white-space: nowrap;">Telefono fijo</label>
+                                <div class="col-md-2">
+                                    {{ form.telefono_enc(class="form-control", placeholder="Telefono fijo") }}
+                                    {% for error in form.telefono_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-lg-1">
+                                    {{ form.extension_enc(class="form-control", placeholder="Ext.") }}
+                                    {% for error in form.extension_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <label class="col-lg-1 control-label" for="email_enc">Email<span class="obligatorio">*</span></label>
+                                <div class="col-md-2">
+                                    {{ form.email_enc(class="form-control", placeholder="Email") }}
+                                    {% for error in form.email_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <label class="col-lg-2 control-label"">Fecha de nacimiento</label>
+                                <div class="col-md-3 form-group">
+                                    {{ form.mes_enc.label(class="col-lg-1 control-label")}}
+                                    <div class="col-md-5">
+                                        {{ form.mes_enc(class="form-control", style="padding: 6px 6px;") }}
+                                        {% for error in form.mes_enc.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </div>
+                                    {{ form.dia_enc.label(class="col-lg-1 control-label")}}
+                                    <div class="col-md-4">
+                                        {{ form.dia_enc(class="form-control", style="padding: 6px 6px;") }}
+                                        {% for error in form.dia_enc.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-lg-2 control-label" for="ins_nombre">Nombre institución</label>
+                            <div class="col-md-2">
+                                {{ form.ins_nombre(class="form-control", placeholder="Nombre") }}
+                                {% for error in form.ins_nombre.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </div>
+                            <label class="col-lg-1 control-label" for="ins_nit">Nit</label>
+                            <div class="col-md-2 ">
+                                {{ form.ins_nit(class="form-control", placeholder="Nit") }}
+                                {% for error in form.ins_nit.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </div>
+                            <label class="col-lg-1 control-label" for="ins_ciudad">Municipio<span class="obligatorio">*</span></label>
+                            <div class="col-md-2">
+                                <div class="input-group">
+                                    {{ form.ins_ciudad(class="form-control other") }}
+                                    <span class="input-group-addon" id="ins_area"></span>
+                                </div>
+                                {% for error in form.ins_ciudad.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
+                                {{ form.otro_ins_ciudad(class="form-control", placeholder="¿Cuál?")}}
+                                {% if not form.ins_ciudad.errors %}
+                                    {% for error in form.otro_ins_ciudad.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-2" style="padding-left: 0;">
                                 <label class="col-lg-2 control-label" for="tipo_enc">Tipo</label>
                                 <div class="col-lg-9">
                                     <input class="form-control" id="tipo_enc" type="text" readonly="readonly" placeholder="Tipo de cliente">
                                 </div>
                             </div>
                         </div>
-                        </div>
-                        <label class="col-lg-1 control-label" for="identificacion_enc">Referencia(que no viva con el cliente)<span class="obligatorio">*</span></label>
-                                <div class="col-md-2 ">
-                                    {{ form.ReferenciaNombre_fac(class="form-control", placeholder="Nombre de la referencia") }}
-                                    {% for error in form.ReferenciaNombre_fac.errors %}
-                                        <span style="color: red;">[{{ error }}]</span>
-                                    {% endfor %}
-                                </div>
-                                <div class="col-lg-2">
-                                    {{ form.ReferenciaCelula_fac(class="form-control", placeholder="Celular") }}
-                                    {% for error in form.ReferenciaCelula_fac.errors %}
-                                        <span style="color: red;">[{{ error }}]</span>
-                                    {% endfor %}
-                                </div>
-                            <div class="col-lg-2">
-                                    {{ form.ReferenciaMedio(class="form-control", placeholder="Telefono Fijo") }}
-                                    {% for error in form.ReferenciaMedio.errors %}
-                                        <span style="color: red;">[{{ error }}]</span>
-                                    {% endfor %}
-                                </div>
-                             </div>
-                         </div>
                     </fieldset>
                     <fieldset>
                         <legend>Datos del pedido</legend>
