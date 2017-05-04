@@ -16,6 +16,7 @@ class Usuario(db.Model):
     usu_modifica = db.Column(db.String(10))
     usu_fecha_mod = db.Column(db.DateTime)
     usu_relacion = db.Column(db.String(45))
+    is_active = db.Column(db.Integer)
 
     @property
     def is_active(self):
