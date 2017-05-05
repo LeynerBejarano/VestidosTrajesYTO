@@ -53,8 +53,11 @@ class Pedido(db.Model):
     ped_crea = db.Column(db.String(10))
     ped_modifica = db.Column(db.String(10))
     ped_fecha_mod = db.Column(db.DateTime)
+    ped_referenciaNombre = db.Column(db.String(200))
+    ped_referenciaCelular =  db.Column(db.String(200))
+    ped_referenciaTelefono = db.Column(db.String(200))
 
-    def __init__(self, ped_empresa, ped_cliente, ped_institucion, ped_total, ped_evento, ped_poblacion, ped_estilo, ped_jornada, ped_nivel, ped_vendedor, ped_fecha_evento, ped_hora_evento, ped_fecha_entrega, ped_hora_entrega, ped_fecha_recogida, ped_hora_recogida, ped_tipo_entrega_ord, ped_tipo_recogida_ord, ped_val_unitario, ped_abono, ped_estado_com, ped_estado_fin, ped_estado, ped_observacion, ped_manual, ped_principal, ped_crea, ped_modifica):
+    def __init__(self, ped_empresa, ped_cliente, ped_institucion, ped_total, ped_evento, ped_poblacion, ped_estilo, ped_jornada, ped_nivel, ped_vendedor, ped_fecha_evento, ped_hora_evento, ped_fecha_entrega, ped_hora_entrega, ped_fecha_recogida, ped_hora_recogida, ped_tipo_entrega_ord, ped_tipo_recogida_ord, ped_val_unitario, ped_abono, ped_estado_com, ped_estado_fin, ped_estado, ped_observacion, ped_manual, ped_principal, ped_crea, ped_modifica, ped_referenciaNombre, ped_referenciaCelular, ped_referenciaTelefono):
         self.ped_empresa= ped_empresa
         self.ped_cliente= ped_cliente
         self.ped_institucion= ped_institucion
@@ -85,6 +88,9 @@ class Pedido(db.Model):
         self.ped_crea= ped_crea
         self.ped_modifica= ped_modifica
         self.ped_fecha_mod= datetime.now(timezone('America/Bogota'))
+        self.ped_referenciaNombre = ped_referenciaNombre
+        self.ped_referenciaCelular = ped_referenciaCelular 
+        self.ped_referenciaTelefono =  ped_referenciaTelefono
 
 
     def __repr__(self):
@@ -99,8 +105,12 @@ class Pedido(db.Model):
         <ped_estilo: {}>
         <ped_jornada: {}>
         <ped_nivel: {}>
-        <ped_vendedor   : {}>'''
-        return texto.format(self.ped_numero, self.ped_empresa, self.ped_cliente, self.ped_institucion, self.ped_fecha, self.ped_total, self.ped_evento, self.ped_poblacion, self.ped_estilo, self.ped_jornada, self.ped_nivel, self.ped_vendedor)
+        <ped_vendedor   : {}>
+        <ped_referenciaNombre   : {}>
+        <ped_referenciaCelular   : {}>
+        <ped_referenciaTelefono   : {}>
+        '''
+        return texto.format(self.ped_numero, self.ped_empresa, self.ped_cliente, self.ped_institucion, self.ped_fecha, self.ped_total, self.ped_evento, self.ped_poblacion, self.ped_estilo, self.ped_jornada, self.ped_nivel, self.ped_vendedor, self.ped_referenciaNombre, self.ped_referenciaCelular,self.ped_referenciaTelefono)
 
     @property
     def serialize(self):
@@ -137,6 +147,9 @@ class Pedido(db.Model):
         'observacion': self.ped_observacion,
         'manual' : self.ped_manual,
         'principal': self.ped_principal,
+        'ped_referenciaNombre' : self.ped_referenciaNombre,
+        'ped_referenciaCelular' : self.ped_referenciaCelular,
+        'ped_referenciaTelefono' : self.ped_referenciaTelefono,
        }
 
 

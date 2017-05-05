@@ -97,6 +97,9 @@ class Form_Pedido(Form):
     vendedor = SelectField('Vendedor<span class="obligatorio">*</span>', coerce = str, validators = [DataRequired()])
     valor_uni = DecimalField('Valor unitario<span class="obligatorio">*</span>', validators = [DataRequired()]) ## default = 10000
     valor_sugerido = HiddenField(validators=[Optional()], default = 0)
+    ped_referenciaNombre = StringField('nombre de la referencia dek cliente', validators=[Optional()])
+    ped_referenciaCelular = StringField('Telefono de la referencia dek cliente', validators=[Optional()])
+    ped_referenciaTelefono = StringField('Celular de la referencia dek cliente', validators=[Optional()])
 
     abonos = DecimalField('Abonos', validators = [Optional()])
     
