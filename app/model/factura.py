@@ -26,6 +26,7 @@ def parse_time(time):
 class Factura(db.Model):
     __tablename__ = 'neg_tfactura'
     fac_numero = db.Column(db.Integer, primary_key = True, autoincrement=True)
+    fac_cliente = db.Column(db.Integer)
     fac_tipoPedido = db.Column(db.Integer, nullable = False)
     fac_ReferenciaNombre = db.Column(db.String(100))
     fac_ReferenciaCelular = db.Column(db.String(100))
@@ -72,10 +73,12 @@ class Factura(db.Model):
     fac_colorToga = db.Column(db.Integer)
     fac_nota = db.Column(db.Integer)
     fac_fecha_mod = db.Column(db.DateTime)
+
     
 
-    def __init__(self, fac_tipoPedido, fac_ReferenciaNombre, fac_ReferenciaCelular, fac_ReferenciaMedio, fac_poblacion, fac_evento, fac_eventoDia, fac_eventoMes, fac_eventoAño,  fac_ReferenciaProducto1,  fac_ReferenciaProducto2,  fac_ReferenciaProducto3, fac_ReferenciaProducto4,  fac_descripcion1, fac_descripcion2, fac_descripcion3, fac_descripcion4, fac_accesorios1, fac_accesorios2, fac_accesorios3, fac_accesorios4,  fac_MedidasArreglos1, fac_MedidasArreglos2, fac_MedidasArreglos3, fac_MedidasArreglos4, fac_ValorReferencia1, fac_ValorReferencia2, fac_ValorReferencia3, fac_ValorReferencia4, fac_Total, fac_Abono, fac_Saldo, fac_Retefuente, fac_ReclamarMercanciaDia, fac_ReclamarMercanciaMes, fac_ReclamarMercanciaAño, fac_DevolverMercanciaDia, fac_DevolverMercanciaMes, fac_DevolverMercanciaAño, fac_AtendioPor, fac_consecutivoManual, fac_tipoToga, fac_colorToga, fac_nota, fac_modifica, fac_fecha_mod):
+    def __init__(self, fac_cliente, fac_tipoPedido, fac_ReferenciaNombre, fac_ReferenciaCelular, fac_ReferenciaMedio, fac_poblacion, fac_evento, fac_eventoDia, fac_eventoMes, fac_eventoAño,  fac_ReferenciaProducto1,  fac_ReferenciaProducto2,  fac_ReferenciaProducto3, fac_ReferenciaProducto4,  fac_descripcion1, fac_descripcion2, fac_descripcion3, fac_descripcion4, fac_accesorios1, fac_accesorios2, fac_accesorios3, fac_accesorios4,  fac_MedidasArreglos1, fac_MedidasArreglos2, fac_MedidasArreglos3, fac_MedidasArreglos4, fac_ValorReferencia1, fac_ValorReferencia2, fac_ValorReferencia3, fac_ValorReferencia4, fac_Total, fac_Abono, fac_Saldo, fac_ReclamarMercanciaDia, fac_ReclamarMercanciaMes, fac_ReclamarMercanciaAño, fac_DevolverMercanciaDia, fac_DevolverMercanciaMes, fac_DevolverMercanciaAño, fac_AtendioPor, fac_consecutivoManual):
         self.fac_tipoPedido= fac_tipoPedido
+        self.fac_cliente = fac_cliente
         self.fac_ReferenciaNombre= fac_ReferenciaNombre
         self.fac_ReferenciaCelular= fac_ReferenciaCelular
         self.fac_ReferenciaMedio= fac_ReferenciaMedio
@@ -107,7 +110,6 @@ class Factura(db.Model):
         self.fac_Total = fac_Total
         self.fac_Abono = fac_Abono
         self.fac_Saldo = fac_Saldo
-        self.fac_Retefuente  = fac_Retefuente 
         self.fac_ReclamarMercanciaDia = fac_ReclamarMercanciaDia
         self.fac_ReclamarMercanciaMes = fac_ReclamarMercanciaMes
         self.fac_ReclamarMercanciaAño = fac_ReclamarMercanciaAño
@@ -117,8 +119,6 @@ class Factura(db.Model):
         self.fac_AtendioPor = fac_AtendioPor
         self.fac_modifica = fac_modifica
         self.fac_consecutivoManual = fac_consecutivoManual
-        self.fac_tipoToga = fac_tipoToga
-        self.fac_colorToga = fac_tipoToga
         self.fac_nota = fac_tipoToga
         self.fac_fecha_mod = datetime.now(timezone('America/Bogota'))
        
@@ -126,6 +126,7 @@ class Factura(db.Model):
 
     def __repr__(self):
         texto = '''<fac_numero: {}>
+        <fac_cliente: {}>
         <fac_tipoPedido: {}>
         <fac_ReferenciaNombre: {}>
         <fac_ReferenciaCelular: {}>
@@ -173,13 +174,14 @@ class Factura(db.Model):
         <fac_modifica: {}>
         <fac_fecha_mod: {}>
         '''
-        return texto.format(self.fac_tipoPedido, self.fac_ReferenciaNombre,self.fac_ReferenciaCelular,self.fac_ReferenciaMedio,self.fac_poblacion, self.fac_evento, self.fac_eventoDia, self.fac_eventoMes, self.fac_eventoAño, self.fac_ReferenciaProducto1, self.fac_ReferenciaProducto2, self.fac_ReferenciaProducto3, self.fac_ReferenciaProducto4, self.fac_descripcion1, self.fac_descripcion2, self.fac_descripcion3, self.fac_descripcion4, self.fac_accesorios1, self.fac_accesorios2, self.fac_accesorios3, self.fac_accesorios4, self.fac_MedidasArreglos1, self.fac_MedidasArreglos2, self.fac_MedidasArreglos3, self.fac_MedidasArreglos4, self.fac_ValorReferencia1, self.fac_ValorReferencia2, self.fac_ValorReferencia3, self.fac_ValorReferencia4, self.fac_Total, self.fac_Abono, self.fac_Saldo, self.fac_Retefuente, self.fac_ReclamarMercanciaDia, self.fac_ReclamarMercanciaMes, self.fac_ReclamarMercanciaAño, self.fac_DevolverMercanciaDia, self.fac_DevolverMercanciaMes, self.fac_DevolverMercanciaAño, self.fac_AtendioPor, self.fac_consecutivoManual, self.fac_tipoToga, self.fac_colorToga, self.fac_nota)
+        return texto.format(self.fac_tipoPedido, self.fac_cliente, self.fac_ReferenciaNombre,self.fac_ReferenciaCelular,self.fac_ReferenciaMedio,self.fac_poblacion, self.fac_evento, self.fac_eventoDia, self.fac_eventoMes, self.fac_eventoAño, self.fac_ReferenciaProducto1, self.fac_ReferenciaProducto2, self.fac_ReferenciaProducto3, self.fac_ReferenciaProducto4, self.fac_descripcion1, self.fac_descripcion2, self.fac_descripcion3, self.fac_descripcion4, self.fac_accesorios1, self.fac_accesorios2, self.fac_accesorios3, self.fac_accesorios4, self.fac_MedidasArreglos1, self.fac_MedidasArreglos2, self.fac_MedidasArreglos3, self.fac_MedidasArreglos4, self.fac_ValorReferencia1, self.fac_ValorReferencia2, self.fac_ValorReferencia3, self.fac_ValorReferencia4, self.fac_Total, self.fac_Abono, self.fac_Saldo, self.fac_Retefuente, self.fac_ReclamarMercanciaDia, self.fac_ReclamarMercanciaMes, self.fac_ReclamarMercanciaAño, self.fac_DevolverMercanciaDia, self.fac_DevolverMercanciaMes, self.fac_DevolverMercanciaAño, self.fac_AtendioPor, self.fac_consecutivoManual, self.fac_tipoToga, self.fac_colorToga, self.fac_nota)
 
     @property
     def serialize(self):
        """Return object data in easily serializeable format"""
        return {
         'numero': self.fac_numero,
+        'cliente': self.fac_cliente,
         'tipoPedido': self.fac_tipoPedido,
         'ReferenciaNombre': self.fac_ReferenciaNombre,
         'ReferenciaCelular': self.fac_ReferenciaCelular,
