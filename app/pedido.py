@@ -140,23 +140,43 @@ def pedidos():
 @app.route('/insertarCliente', methods=['GET','POST'])
 def insertarCliente():
 
-  nombre = request.form.get('txtNonmbreCliente')#['txtNonmbreCliente']
-  CcNit = request.form.get('txtCC_Nit')#['txtCC_Nit']
-  DiaCumpleaños = request.form.get('txtDiaCumpleaños')#[]
+  #nombre = request.form.get('txtNonmbreCliente')#['txtNonmbreCliente']
+  #nombre = request.args.get("txtNonmbreCliente")
+  nombre = request.form.get('txtNonmbreCliente')
+  #nombre = str(request.form["txtNonmbreCliente"])
+  #CcNit = request.form.get('txtCC_Nit')#['txtCC_Nit']
+  CcNit = request.form.get("txtCC_Nit")
+  #CcNit = request.data['txtCC_Nit']
+  #CcNit = str(request.form["txtCC_Nit"])
+  #DiaCumpleaños = request.form.get('txtDiaCumpleaños')#[]
+  DiaCumpleaños = request.form.get("txtDiaCumpleaños")
+  #DiaCumpleaños = request.data['txtDiaCumpleaños']
+  #DiaCumpleaños = str(request.form["txtDiaCumpleaños"])
   MesCumpleaños = request.form.get('txtMesCumpleaños')#[]
-  TelFijo = request.form.get('txtTelefonoFijo')#[]
-  Ext =  request.form.get('Ext')#[]
-  Celular = request.form.get('txtCelular')#[]
+  #MesCumpleaños = request.args.get("txtMesCumpleaños")
+  #MesCumpleaños = str(request.form["'txtMesCumpleaños"])
+  #TelFijo = request.form.get('txtTelefonoFijo')#[]
+  TelFijo = request.form.get("txtTelefonoFijo")
+  #TelFijo = str(request.fomr["txtTelefonoFijo"])
+  #Ext =  request.form.get('Ext')#[]
+  Ext = request.form.get("Ext")
+  #Ext = str(request.form["Ext"])
+  #Celular = request.form.get('txtCelular')#[]
+  Celular = request.form.get("txtCelular")
+  #Celular = str(request.form["txtCelular"])
   Email = request.form.get('txtEmail')#[]
+  #Email = request.args.get('txtEmail',type=text)
   Direccion = request.form.get('txtDireccion')#[]
-  Municipio = int(request.form.get('txtMunicipio'))#[]
+  #Direccion = request.args.get('txtDireccion',type=text)
+  Municipio = request.form.get('txtMunicipio')#[]
+  #Municipio = request.args.get('txtMunicipio',type=text)
   Barrio = request.form.get('txtBarrio')#[]
-  Barrio = request.form.get('txtBarrio')#[]
-  ReferenciaNombre = request.form.get('txtReferenciaNombre')#[]
-  ReferenciaCelular = request.form.get('txtReferenciaCelular')#[]
-  ReferenciaTelefono = request.form.get('txtReferenciaTElefono')#[]
+  #Barrio = request.form.get('txtBarrio')#[]
+  #ReferenciaNombre = request.form.get('txtReferenciaNombre')#[]
+  #ReferenciaCelular = request.form.get('txtReferenciaCelular')#[]
+  #ReferenciaTelefono = request.form.get('txtReferenciaTElefono')#[]
   cliMedio= 3
-  new_cli = Cliente(123456789012, 'nombre', 1, 'Direccion', 'Email', 'Celular', 'TelFijo','Ext', 'Barrio', 3, 'MesCumpleaños', 'DiaCumpleaños')
+  new_cli = Cliente(CcNit, nombre, 1, Direccion, Email, Celular, TelFijo,Ext,Barrio, 3, MesCumpleaños, DiaCumpleaños)
   db.session.add(new_cli)
   db.session.commit()
   return jsonify({'nombre': nombre})
