@@ -166,11 +166,11 @@ def insertarCliente():
   Municipio = request.form.get('txtMunicipio')#[]
   Barrio = request.form.get('txtBarrio')#[]
   MedioConocio = request.form.get('txtMedioConocio')#[]
+  Poblacion = request.form.get('txtPedPoblacion')
   #
   #
   #
   TipoPedido = request.form.get('txtTipoPedido')
-  Poblacion = request.form.get('txtPoblacion')
   TipoEvento = request.form.get('txtTipoEvento')
   DiaEvento = request.form.get('txtDiaEvento')
   MesEvento = request.form.get('txtMesEvento')
@@ -221,16 +221,16 @@ def insertarCliente():
     Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
     db.session.commit()
   if Factura.query.get(Consecutivo) is None:
-    new_factu = Factura(nombre, TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Descripcion1, Accesorios1, MedidasArreglos1, ValorReferencia1, Referencia2, Descripcion2, Accesorios2, MedidasArreglos2, ValorReferencia2, Referencia3, Descripcion3, Accesorios3, MedidasArreglos3, ValorReferencia3, Referencia4, Descripcion4, Accesorios4, MedidasArreglos4, ValorReferencia4, Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'current_user.usu_login', ConsecutivoManual)
+    new_factu = Factura(nombre, TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Descripcion1, Accesorios1, MedidasArreglos1, ValorReferencia1, Referencia2, Descripcion2, Accesorios2, MedidasArreglos2, ValorReferencia2, Referencia3, Descripcion3, Accesorios3, MedidasArreglos3, ValorReferencia3, Referencia4, Descripcion4, Accesorios4, MedidasArreglos4, ValorReferencia4, Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'current_user.usu_login', ConsecutivoManual, Nota)
     db.session.add(new_factu)
     db.session.commit()
   else:
-      Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : nombre , Factura.fac__tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñosEntregar, Factura.fac_AtendioPor: 'current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
+      Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : nombre , Factura.fac_tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñoEntregar, Factura.fac_AtendidoPor: 'current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
       db.session.commit()
 
 
 
-  return jsonify({'nombre': nombre})
+  return jsonify({'nombre': Nota})
   return jsonify({'error': 'Missing data'})
 
 @app.route('/_descargar_pdf', methods=['GET','POST'])
@@ -356,7 +356,8 @@ def siguienteFactura():
   Factura_actual = int(request.form.get('txtConsecutivo'))
   Factura_actual+1   
   factura = Factura.query.get(str(Factura_actual))
-  return jsonify(str(factura.fac_cliente))
+  cliente = Cliente.query.get(str(factura.fac_cliente))
+  return jsonify(str(cliente.cli_nombre))
   #cliente = Cliente.query.get(str(factura.fac_cliente))   
   #return jsonify(cliente.cli_identificacion)
   """

@@ -188,6 +188,9 @@ $('#Descargar').click(function(){
         $.ajax({
             //data : $('form').serialize(),
             data : {
+
+               txtConsecutivoManual: $('#txtConsecutivoManual').val(),
+               txtConsecutivo: $('#txtConsecutivo').val(),
                txtNonmbreCliente: $('#txtNonmbreCliente').val(),
                txtCC_Nit :$('#txtCC_Nit').val(),
                txtDiaCumpleaños:$('#txtDiaCumpleaños').val(),
