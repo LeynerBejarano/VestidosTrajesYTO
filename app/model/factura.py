@@ -66,7 +66,7 @@ class Factura(db.Model):
     fac_DevolverMercanciaDia = db.Column(db.Integer)
     fac_DevolverMercanciaMes = db.Column(db.Integer)
     fac_DevolverMercanciaAño = db.Column(db.Integer)
-    fac_AtendioPor = db.Column(db.Integer)
+    fac_AtendidoPor = db.Column(db.String(100))
     fac_modifica = db.Column(db.Integer)
     fac_consecutivoManual = db.Column(db.Integer)
     fac_tipoToga = db.Column(db.Integer)
@@ -76,7 +76,7 @@ class Factura(db.Model):
 
     
 
-    def __init__(self, fac_cliente, fac_tipoPedido, fac_ReferenciaNombre, fac_ReferenciaCelular, fac_ReferenciaMedio, fac_poblacion, fac_evento, fac_eventoDia, fac_eventoMes, fac_eventoAño,  fac_ReferenciaProducto1,  fac_ReferenciaProducto2,  fac_ReferenciaProducto3, fac_ReferenciaProducto4,  fac_descripcion1, fac_descripcion2, fac_descripcion3, fac_descripcion4, fac_accesorios1, fac_accesorios2, fac_accesorios3, fac_accesorios4,  fac_MedidasArreglos1, fac_MedidasArreglos2, fac_MedidasArreglos3, fac_MedidasArreglos4, fac_ValorReferencia1, fac_ValorReferencia2, fac_ValorReferencia3, fac_ValorReferencia4, fac_Total, fac_Abono, fac_Saldo, fac_ReclamarMercanciaDia, fac_ReclamarMercanciaMes, fac_ReclamarMercanciaAño, fac_DevolverMercanciaDia, fac_DevolverMercanciaMes, fac_DevolverMercanciaAño, fac_AtendioPor, fac_consecutivoManual):
+    def __init__(self, fac_cliente, fac_tipoPedido, fac_ReferenciaNombre, fac_ReferenciaCelular, fac_ReferenciaMedio, fac_poblacion, fac_evento, fac_eventoDia, fac_eventoMes, fac_eventoAño,  fac_ReferenciaProducto1,  fac_ReferenciaProducto2,  fac_ReferenciaProducto3, fac_ReferenciaProducto4,  fac_descripcion1, fac_descripcion2, fac_descripcion3, fac_descripcion4, fac_accesorios1, fac_accesorios2, fac_accesorios3, fac_accesorios4,  fac_MedidasArreglos1, fac_MedidasArreglos2, fac_MedidasArreglos3, fac_MedidasArreglos4, fac_ValorReferencia1, fac_ValorReferencia2, fac_ValorReferencia3, fac_ValorReferencia4, fac_Total, fac_Abono, fac_Saldo, fac_ReclamarMercanciaDia, fac_ReclamarMercanciaMes, fac_ReclamarMercanciaAño, fac_DevolverMercanciaDia, fac_DevolverMercanciaMes, fac_DevolverMercanciaAño, fac_AtendidoPor, fac_consecutivoManual, fac_nota):
         self.fac_tipoPedido= fac_tipoPedido
         self.fac_cliente = fac_cliente
         self.fac_ReferenciaNombre= fac_ReferenciaNombre
@@ -116,10 +116,10 @@ class Factura(db.Model):
         self.fac_DevolverMercanciaDia = fac_DevolverMercanciaDia
         self.fac_DevolverMercanciaMes = fac_DevolverMercanciaMes
         self.fac_DevolverMercanciaAño = fac_DevolverMercanciaAño
-        self.fac_AtendioPor = fac_AtendioPor
-        self.fac_modifica = fac_modifica
+        self.fac_AtendidoPor = fac_AtendidoPor
+        #self.fac_modifica = fac_modifica
         self.fac_consecutivoManual = fac_consecutivoManual
-        self.fac_nota = fac_tipoToga
+        self.fac_nota = fac_nota
         self.fac_fecha_mod = datetime.now(timezone('America/Bogota'))
        
 

@@ -6,7 +6,7 @@ from calendar import monthrange, month_name
 from zipfile import ZipFile
 from werkzeug import secure_filename
 from xhtml2pdf import pisa
-from io import BytesIO
+from io import BytesIO, StringIO
 from sqlalchemy.sql import func
 from flask.ext.login import login_required, current_user
 from flask_wtf.file import FileField
@@ -54,7 +54,16 @@ from app.model.transportadora import Transportadora
 from app.model.tipo_orden import Tipo_orden
 from app.model.medioConocio import MedioConocio
 from app.model.tipoPedido import TipoPedido
+from app.model.factura import Factura
 from app.utils import numero_a_letras, timeRange, get_temporada, text_to_time
+from pdfkit import api
+from flask import make_response
+from flask import send_file,Response
+
+
+#from wkhtmltopdf import WKHtmlToPdf
+#from wkhtmltopdf.main import WKhtmlToPdf
+
 
 
 @app.route('/pedidos', methods=['GET', 'POST'])
@@ -111,6 +120,8 @@ def pedidos():
 
 
     ### Volcado de datos en otros selectores/Radio buttons del formulario
+    choices = [(v.usu_login, v.usu_nombre + ' ' + v.usu_apellido if v.usu_estado == 1 else 'Inactivo - ' + v.usu_nombre + ' ' + v.usu_apellido) for v in vendedores]
+    form.vendedor.choices = choices
     choices = [(ti.pedi_id, ti.pedi_nombre) for ti in tipoPedido or []] + [(-1, 'Otro')]
     form.fac_tipoPedido.choices = choices
     choices = [(m.medio_id, m.medio_nombre) for m in medioConocio or []] + [(-1, 'Otro')]
@@ -129,6 +140,7 @@ def pedidos():
     choices = [(c.cla_id - 1, c.cla_id - 1) for c in clases or []]
     form.principal.choices = choices
     form.dia_enc.choices = [(i, str(i)) for i in range(1,32) or []]
+    
       
 
     ####### SUBMIT ######
@@ -140,58 +152,264 @@ def pedidos():
 @app.route('/insertarCliente', methods=['GET','POST'])
 def insertarCliente():
 
-  #nombre = request.form.get('txtNonmbreCliente')#['txtNonmbreCliente']
-  #nombre = request.args.get("txtNonmbreCliente")
+  
   nombre = request.form.get('txtNonmbreCliente')
-  #nombre = str(request.form["txtNonmbreCliente"])
-  #CcNit = request.form.get('txtCC_Nit')#['txtCC_Nit']
+  
   CcNit = request.form.get("txtCC_Nit")
-  #CcNit = request.data['txtCC_Nit']
-  #CcNit = str(request.form["txtCC_Nit"])
-  #DiaCumpleaños = request.form.get('txtDiaCumpleaños')#[]
   DiaCumpleaños = request.form.get("txtDiaCumpleaños")
-  #DiaCumpleaños = request.data['txtDiaCumpleaños']
-  #DiaCumpleaños = str(request.form["txtDiaCumpleaños"])
   MesCumpleaños = request.form.get('txtMesCumpleaños')#[]
-  #MesCumpleaños = request.args.get("txtMesCumpleaños")
-  #MesCumpleaños = str(request.form["'txtMesCumpleaños"])
-  #TelFijo = request.form.get('txtTelefonoFijo')#[]
   TelFijo = request.form.get("txtTelefonoFijo")
-  #TelFijo = str(request.fomr["txtTelefonoFijo"])
-  #Ext =  request.form.get('Ext')#[]
   Ext = request.form.get("Ext")
-  #Ext = str(request.form["Ext"])
-  #Celular = request.form.get('txtCelular')#[]
   Celular = request.form.get("txtCelular")
-  #Celular = str(request.form["txtCelular"])
   Email = request.form.get('txtEmail')#[]
-  #Email = request.args.get('txtEmail',type=text)
   Direccion = request.form.get('txtDireccion')#[]
-  #Direccion = request.args.get('txtDireccion',type=text)
   Municipio = request.form.get('txtMunicipio')#[]
-  #Municipio = request.args.get('txtMunicipio',type=text)
   Barrio = request.form.get('txtBarrio')#[]
-  #Barrio = request.form.get('txtBarrio')#[]
-  #ReferenciaNombre = request.form.get('txtReferenciaNombre')#[]
-  #ReferenciaCelular = request.form.get('txtReferenciaCelular')#[]
-  #ReferenciaTelefono = request.form.get('txtReferenciaTElefono')#[]
-  cliMedio= 3
-  new_cli = Cliente(CcNit, nombre, 1, Direccion, Email, Celular, TelFijo,Ext,Barrio, 3, MesCumpleaños, DiaCumpleaños)
-  db.session.add(new_cli)
-  db.session.commit()
+  MedioConocio = request.form.get('txtMedioConocio')#[]
+  #
+  #
+  #
+  TipoPedido = request.form.get('txtTipoPedido')
+  Poblacion = request.form.get('txtPoblacion')
+  TipoEvento = request.form.get('txtTipoEvento')
+  DiaEvento = request.form.get('txtDiaEvento')
+  MesEvento = request.form.get('txtMesEvento')
+  AñoEvento = request.form.get('txtAñoEvento')
+  Referencia1 = request.form.get('txtReferencia1')
+  Descripcion1 = request.form.get('txtDescripcion1')
+  Accesorios1 = request.form.get('txtAccesorios1')
+  MedidasArreglos1 = request.form.get('txtMedidasArreglos1')
+  ValorReferencia1 = request.form.get('txtValorReferencia1')
+  Referencia2 = request.form.get('txtReferencia2')
+  Descripcion2 = request.form.get('txtDescripcion2')
+  Accesorios2 = request.form.get('txtAccesorios2')
+  MedidasArreglos2 = request.form.get('txtMedidasArreglos2')
+  ValorReferencia2 = request.form.get('txtValorReferencia2')
+  Referencia3 = request.form.get('txtReferencia3')
+  Descripcion3 = request.form.get('txtDescripcion3')
+  Accesorios3 = request.form.get('txtAccesorios3')
+  MedidasArreglos3 = request.form.get('txtMedidasArreglos3')
+  ValorReferencia3 = request.form.get('txtValorReferencia3')
+  Referencia4 = request.form.get('txtReferencia4')
+  Descripcion4 = request.form.get('txtDescripcion4')
+  Accesorios4 = request.form.get('txtAccesorios4')
+  MedidasArreglos4 = request.form.get('txtMedidasArreglos4')
+  ValorReferencia4 = request.form.get('txtValorReferencia4')
+  #
+  DiaRecoger = request.form.get('txtDiaRecoger')
+  MesRecoger = request.form.get('txtMesRecoger')
+  AñoRecoger = request.form.get('txtAñoRecoger')
+  DiaEntregar = request.form.get('txtDiaEntregar')
+  MesEntregar = request.form.get('txtMesEntregar')
+  AñoEntregar =  request.form.get('txtAñoEntregar')
+  Saldo = request.form.get('txtSaldo')
+  Total = request.form.get('txtTotal')
+  Abono =  request.form.get('txtAbono')
+  Retefuente = request.form.get('txtRetefuente')
+  ReferenciaNombre = request.form.get('txtReferenciaNombre')#[]
+  ReferenciaCelular = request.form.get('txtReferenciaCelular')#[]
+  ReferenciaTelefono = request.form.get('txtReferenciaTelefono')#[]
+  Nota = request.form.get('txtNota')#[]
+  #
+  ConsecutivoManual = request.form.get('txtConsecutivoManual')#[]z
+  Consecutivo = request.form.get('txtConsecutivo')#[]z
+  if Cliente.query.get(CcNit) is None:
+    new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo,Ext,Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
+    db.session.add(new_cli)
+    db.session.commit()
+  else:
+    Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
+    db.session.commit()
+  if Factura.query.get(Consecutivo) is None:
+    new_factu = Factura(nombre, TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Descripcion1, Accesorios1, MedidasArreglos1, ValorReferencia1, Referencia2, Descripcion2, Accesorios2, MedidasArreglos2, ValorReferencia2, Referencia3, Descripcion3, Accesorios3, MedidasArreglos3, ValorReferencia3, Referencia4, Descripcion4, Accesorios4, MedidasArreglos4, ValorReferencia4, Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'current_user.usu_login', ConsecutivoManual)
+    db.session.add(new_factu)
+    db.session.commit()
+  else:
+      Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : nombre , Factura.fac__tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñosEntregar, Factura.fac_AtendioPor: 'current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
+      db.session.commit()
+
+
+
   return jsonify({'nombre': nombre})
   return jsonify({'error': 'Missing data'})
 
+@app.route('/_descargar_pdf', methods=['GET','POST'])
+def descargar_pdf():
+
+  file = 'factura.pdf'
+  #return jsonify(result = True)
+  nombre = request.form.get('txtNonmbreCliente')
+  
+  CcNit = request.form.get("txtCC_Nit")
+  DiaCumpleaños = request.form.get("txtDiaCumpleaños")
+  MesCumpleaños = request.form.get('txtMesCumpleaños')#[]
+  TelFijo = request.form.get("txtTelefonoFijo")
+  Ext = request.form.get("Ext")
+  Celular = request.form.get("txtCelular")
+  Email = request.form.get('txtEmail')#[]
+  Direccion = request.form.get('txtDireccion')#[]
+  Municipio = request.form.get('txtMunicipio')#[]
+  Barrio = request.form.get('txtBarrio')#[]
+  MedioConocio = request.form.get('txtMedioConocio')#[]
+  #
+  #
+  #
+  TipoPedido = request.form.get('txtTipoPedido')
+  Poblacion = request.form.get('txtPedPoblacion')
+  TipoEvento = request.form.get('txtTipoEvento')
+  DiaEvento = request.form.get('txtDiaEvento')
+  MesEvento = request.form.get('txtMesEvento')
+  AñoEvento = request.form.get('txtAñoEvento')
+  Referencia1 = request.form.get('txtReferencia1')
+  Descripcion1 = request.form.get('txtDescripcion1')
+  Accesorios1 = request.form.get('txtAccesorios1')
+  MedidasArreglos1 = request.form.get('txtMedidasArreglos1')
+  ValorReferencia1 = request.form.get('txtValorReferencia1')
+  Referencia2 = request.form.get('txtReferencia2')
+  Descripcion2 = request.form.get('txtDescripcion2')
+  Accesorios2 = request.form.get('txtAccesorios2')
+  MedidasArreglos2 = request.form.get('txtMedidasArreglos2')
+  ValorReferencia2 = request.form.get('txtValorReferencia2')
+  Referencia3 = request.form.get('txtReferencia3')
+  Descripcion3 = request.form.get('txtDescripcion3')
+  Accesorios3 = request.form.get('txtAccesorios3')
+  MedidasArreglos3 = request.form.get('txtMedidasArreglos3')
+  ValorReferencia3 = request.form.get('txtValorReferencia3')
+  Referencia4 = request.form.get('txtReferencia4')
+  Descripcion4 = request.form.get('txtDescripcion4')
+  Accesorios4 = request.form.get('txtAccesorios4')
+  MedidasArreglos4 = request.form.get('txtMedidasArreglos4')
+  ValorReferencia4 = request.form.get('txtValorReferencia4')
+  #
+  DiaRecoger = request.form.get('txtDiaRecoger')
+  MesRecoger = request.form.get('txtMesRecoger')
+  AñoRecoger = request.form.get('txtAñoRecoger')
+  DiaEntregar = request.form.get('txtDiaEntregar')
+  MesEntregar = request.form.get('txtMesEntregar')
+  AñoEntregar =  request.form.get('txtAñoEntregar')
+  Saldo = request.form.get('txtSaldo')
+  Total = request.form.get('txtTotal')
+  Abono =  request.form.get('txtAbono')
+  Retefuente = request.form.get('txtRetefuente')
+  ReferenciaNombre = request.form.get('txtReferenciaNombre')#[]
+  ReferenciaCelular = request.form.get('txtReferenciaCelular')#[]
+  ReferenciaTelefono = request.form.get('txtReferenciaTelefono')#[]
+  Nota = request.form.get('txtNota')#[]
+  #
+  ConsecutivoManual = request.form.get('txtConsecutivoManual')#[]z
+  Consecutivo = request.form.get('txtConsecutivo')#[]z
+  AtendidoPor = request.form.get('txtAtendidoPor')#[]z
+
+
+  if Cliente.query.get(CcNit) is None:
+    new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo,Ext,Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
+    db.session.add(new_cli)
+    db.session.commit()
+  else:
+    Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
+    db.session.commit()
+  #if Factura.query.get(Consecutivo) is None:
+  new_factu = Factura(nombre, TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Descripcion1, Accesorios1, MedidasArreglos1, ValorReferencia1, Referencia2, Descripcion2, Accesorios2, MedidasArreglos2, ValorReferencia2, Referencia3, Descripcion3, Accesorios3, MedidasArreglos3, ValorReferencia3, Referencia4, Descripcion4, Accesorios4, MedidasArreglos4, ValorReferencia4, Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'wacor', ConsecutivoManual,Nota)
+  db.session.add(new_factu)
+  db.session.commit()
+  #else:
+   #   Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : nombre , Factura.fac__tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñosEntregar, Factura.fac_AtendioPor:' current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
+    #  db.session.commit()
+  factura = Factura.query.get(5)
+  #cliente = Cliente.query.get(CcNit)
   
 
- 
-
 
   
-                        
+  #pdf = create_pdf(render_template("factura.html", factura = factura, cliente = cliente, path = os.path.abspath(os.path.dirname(__file__))), file)
+  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/Ffactura.pdf'
+  pagina = render_template("factura.html", factura = factura)
+  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+
+  pdf = api.from_string(pagina,False,configuration=config)
+  
+  download('Ffactura.pdf')
+  """return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={"Content-disposition:":
+                 "attachment; filename=factura.html"})"""
+  #response = make_response(pdf)
 
 
-                        
-                         
-                         
-                         
+  #response.headers["Content-Disposition"] = "attachment; filename=Ffactura.pdf"
+  #response.mimetype='application/pdf'
+  #return send_from_directory('C:\\Users\\Cidenet\\Documents\\VirutalEnvs\\ikotia\\ikotia\\uploads\\pdf\\','Ffactura.pdf', as_attachment=True)
+
+@app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
+def download(filename):
+    uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+    return send_from_directory(directory=uploads, filename=filename)
+
+@app.route('/retornar')
+def retornar():
+  return send_file('C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/Ffactura.pdf')
+
+@app.route('/siguienteFactura', methods=['GET','POST'])
+def siguienteFactura():
+  
+  Factura_actual = int(request.form.get('txtConsecutivo'))
+  Factura_actual+1   
+  factura = Factura.query.get(str(Factura_actual))
+  return jsonify(str(factura.fac_cliente))
+  #cliente = Cliente.query.get(str(factura.fac_cliente))   
+  #return jsonify(cliente.cli_identificacion)
+  """
+  if factura is None:
+    while (factura==None):
+      str(IntentoDeEncontrarFactura)
+      factura = Factura.query.get(IntentoDeEncontrarFactura)
+      int(IntentoDeEncontrarFactura)
+      IntentoDeEncontrarFactura+1
+      cliente = Cliente.query.get(str(factura.fac_cliente))   
+    return jsonify({'fac_numero':factura.fac_numero,'fac_cliente':factura.fac_cliente,'fac_tipoPedido':factura.fac_tipoPedido,'fac_ReferenciaNombre':factura.fac_ReferenciaNombre,'fac_ReferenciaCelular':factura.fac_ReferenciaCelular,'fac_ReferenciaMedio': factura.fac_ReferenciaMedio, 'fac_poblacion':factura.fac_poblacion, 'fac_evento':factura.fac_evento,'fac_eventoDia':factura.fac_eventoDia, 'fac_eventoMes':factura.fac_eventoMes, 'fac_eventoAño': factura.fac_eventoAño,'fac_ReferenciaProducto1': factura.fac_ReferenciaProducto1,'fac_ReferenciaProducto2': factura.fac_ReferenciaProducto2,'fac_ReferenciaProducto3':factura.fac_ReferenciaProducto3,'fac_ReferenciaProducto4': factura.fac_ReferenciaProducto4,'fac_descripcion1':factura.fac_descripcion1, 'fac_descripcion2':factura.fac_descripcion2,'fac_descripcion3':factura.fac_descripcion3,'fac_descripcion4':factura.fac_descripcion4, 'fac_MedidasArreglos1': factura.fac_MedidasArreglos1, 'fac_MedidasArreglos2':factura.fac_MedidasArreglos2,'fac_MedidasArreglos3': factura.fac_MedidasArreglos3, 'fac_MedidasArreglos4': factura.fac_MedidasArreglos4, 'fac_ValorReferencia1':factura.fac_ValorReferencia1, 'fac_ValorReferencia2':factura.fac_ValorReferencia2, 'fac_ValorReferencia3':factura.fac_ValorReferencia3, 'fac_ValorReferencia4': factura.fac_ValorReferencia4, 'fac_Total':factura.fac_Total, 'fac_Abono': factura.fac_Abono, 'fac_Saldo':factura.fac_Saldo, 'fac_Retefuente': factura.fac_Retefuente , 'fac_ReclamarMercanciaDia': factura.fac_ReclamarMercanciaDia, 'fac_ReclamarMercanciaMes': factura.fac_ReclamarMercanciaMes, 'fac_ReclamarMercanciaAño': factura.fac_ReclamarMercanciaAño, 'fac_DevolverMercanciaDia':factura.fac_DevolverMercanciaDia, 'fac_DevolverMercanciaMes':factura.fac_DevolverMercanciaMes, 'fac_DevolverMercanciaAño':factura.fac_DevolverMercanciaAño, 'fac_AtendidoPor': factura.fac_AtendidoPor,'fac_consecutivoManual':factura.fac_consecutivoManual,'cli_identificacion': cliente.cli_identificacion, 'cli_nombre': cliente.cli_nombre, 'cli_ciudad':cliente.cli_ciudad, 'cli_direccion': cliente.cli_direccion, 'cli_email':cliente.cli_email, 'cli_celular':cliente.cli_celular, 'cli_telefono':cliente.cli_telefono,'cli_extension':cliente.cli_extension, 'cli_cargo':cliente.cli_cargo, 'cli_barrio':cliente.cli_barrio, 'cli_medioConocio':cliente.cli_medioConocio})
+  else:
+    cliente = Cliente.query.get(str(factura.fac_cliente))
+    
+    return jsonify({'fac_numero':factura.fac_numero,'fac_cliente':factura.fac_cliente,'fac_tipoPedido':factura.fac_tipoPedido,'fac_ReferenciaNombre':factura.fac_ReferenciaNombre,'fac_ReferenciaCelular':factura.fac_ReferenciaCelular,'fac_ReferenciaMedio': factura.fac_ReferenciaMedio, 'fac_poblacion':factura.fac_poblacion, 'fac_evento':factura.fac_evento,'fac_eventoDia':factura.fac_eventoDia, 'fac_eventoMes':factura.fac_eventoMes, 'fac_eventoAño': factura.fac_eventoAño,'fac_ReferenciaProducto1': factura.fac_ReferenciaProducto1,'fac_ReferenciaProducto2': factura.fac_ReferenciaProducto2,'fac_ReferenciaProducto3':factura.fac_ReferenciaProducto3,'fac_ReferenciaProducto4': factura.fac_ReferenciaProducto4,'fac_descripcion1':factura.fac_descripcion1, 'fac_descripcion2':factura.fac_descripcion2,'fac_descripcion3':factura.fac_descripcion3,'fac_descripcion4':factura.fac_descripcion4, 'fac_MedidasArreglos1': factura.fac_MedidasArreglos1, 'fac_MedidasArreglos2':factura.fac_MedidasArreglos2,'fac_MedidasArreglos3': factura.fac_MedidasArreglos3, 'fac_MedidasArreglos4': factura.fac_MedidasArreglos4, 'fac_ValorReferencia1':factura.fac_ValorReferencia1, 'fac_ValorReferencia2':factura.fac_ValorReferencia2, 'fac_ValorReferencia3':factura.fac_ValorReferencia3, 'fac_ValorReferencia4': factura.fac_ValorReferencia4, 'fac_Total':factura.fac_Total, 'fac_Abono': factura.fac_Abono, 'fac_Saldo':factura.fac_Saldo, 'fac_Retefuente': factura.fac_Retefuente , 'fac_ReclamarMercanciaDia': factura.fac_ReclamarMercanciaDia, 'fac_ReclamarMercanciaMes': factura.fac_ReclamarMercanciaMes, 'fac_ReclamarMercanciaAño': factura.fac_ReclamarMercanciaAño, 'fac_DevolverMercanciaDia':factura.fac_DevolverMercanciaDia, 'fac_DevolverMercanciaMes':factura.fac_DevolverMercanciaMes, 'fac_DevolverMercanciaAño':factura.fac_DevolverMercanciaAño, 'fac_AtendidoPor': factura.fac_AtendidoPor,'fac_consecutivoManual':factura.fac_consecutivoManual,'cli_identificacion': cliente.cli_identificacion, 'cli_nombre': cliente.cli_nombre, 'cli_ciudad':cliente.cli_ciudad, 'cli_direccion': cliente.cli_direccion, 'cli_email':cliente.cli_email, 'cli_celular':cliente.cli_celular, 'cli_telefono':cliente.cli_telefono,'cli_extension':cliente.cli_extension, 'cli_cargo':cliente.cli_cargo, 'cli_barrio':cliente.cli_barrio, 'cli_medioConocio':cliente.cli_medioConocio})
+  
+  """
+   #return jsonify(fac_numero = factura.fac_numero, fac_tipoPedido =Factura.fac_tipoPedido,fac_ReferenciaNombre = Factura.fac_ReferenciaNombre, fac_ReferenciaCelular =Factura.fac_ReferenciaCelular, fac_ReferenciaMedio =Factura.fac_ReferenciaMedio,  fac_poblacion =Factura.fac_poblacion)
+
+
+  """
+  IntentoDeEncontrarFactura = 0
+  if Factura_actual is None:
+    while (Factura_actual==None):
+
+      Factura_actual = Factura.query.get(IntentoDeEncontrarFactura)
+      IntentoDeEncontrarFactura+1
+    Factura.query.get(Factura_actual)
+    return jsonify(fac_numero = Factura.fac_numero, fac_tipoPedido =Factura.fac_tipoPedido,fac_ReferenciaNombre = Factura.fac_ReferenciaNombre, fac_ReferenciaCelular =Factura.fac_ReferenciaCelular, fac_ReferenciaMedio =Factura.fac_ReferenciaMedio,  fac_poblacion =Factura.fac_poblacion)
+
+  else: 
+    Factura_actual+1 
+    Factura.query.get(Factura_actual)
+    return jsonify(fac_numero = Factura.fac_numero, fac_tipoPedido =Factura.fac_tipoPedido,fac_ReferenciaNombre = Factura.fac_ReferenciaNombre, fac_ReferenciaCelular =Factura.fac_ReferenciaCelular, fac_ReferenciaMedio =Factura.fac_ReferenciaMedio,  fac_poblacion =Factura.fac_poblacion)
+  
+    return jsonify(fac_numero = Factura.fac_numero, fac_tipoPedido =Factura.fac_tipoPedido,fac_ReferenciaNombre = Factura.fac_ReferenciaNombre, fac_ReferenciaCelular =Factura.fac_ReferenciaCelular, fac_ReferenciaMedio =Factura.fac_ReferenciaMedio,  fac_poblacion =Factura.fac_poblacion)
+  
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,8 @@
+Necesito una tabla que guarde fechas (de ida y llegada) y la cantidad que hay
+
+entonces, pongo una fecha de ida y una de llegada la fecha de ida  la de llegada se pondrian en forma que pueda pasarsea fechas, asi conoceria todas las fechas
+in between, luego, ---tomo de la base de datos y bajo las diferentes fechas de ida y llegada y miro cuantas intersecciones entre conjjuntos hay----si son 5 prendas y hay 5 intersecciones, entonces esa fecha tiene menos 5 prendas disponibles, 
+
+ahora, como voya guardar la tabla.......necesito un campo que guarde el de ida y un campo que guarde el de venida ......entonces, por prenda y por talla ......seria muy engorroso poner una entrada por prenda fisica, asi que nesesito una tabla llamada cantidades tendria un id, un campo nombre, un campo color, un campo talla, y un campo cantidad......
+
+y la tabla importante, es la tabla reservas, que incluye nombre, color, talla, dia de ida y de llegada....

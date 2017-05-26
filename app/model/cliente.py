@@ -10,7 +10,7 @@ def to_iso(date):
 
 class Cliente(db.Model):
     __tablename__ = 'gen_tcliente'
-    cli_identificacion = db.Column(db.DECIMAL, primary_key = True, autoincrement=False)
+    cli_identificacion = db.Column(db.INTEGER, primary_key = True, autoincrement=False)
     cli_nombre = db.Column(db.String(200), nullable = False)
     cli_ciudad = db.Column(db.Integer, nullable = False)
     cli_direccion = db.Column(db.String(200))  

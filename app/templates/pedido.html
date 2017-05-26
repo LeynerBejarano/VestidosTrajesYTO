@@ -5,6 +5,11 @@
 {% block content %}
  <form action = "http://localhost:5000/result" method = "POST" >
 
+<p> Consecutivo Manual<input type ="text" name = "txtConsecutivoManual" plaholder="Nombre de la Referencia" id="txtConsecutivoManual"/>
+<p> Consecutivo <input type ="text" name = "txtConsecutivo" plaholder="Nombre de la Referencia" id="txtConsecutivo" />
+<!-- disabled -->
+ <hr>
+
          <p>Nombre del cliente <input type = "text" name = "txtNonmbreCliente" id="txtNonmbreCliente"/></p>
          <p>CC/Nit <input type = "text" name = "txtCC_Nit" id="txtCC_Nit" /></p>
          <p>  <input type = "text" name = "txtDiaCumpleaños" placeholder="Dia_Cumpleaños" id="txtDiaCumpleaños"/></p>
@@ -14,15 +19,104 @@
          <p>Celular <input type ="text" name = "txtCelular" placeholder="Celular" id="txtCelular"/></p>
          <p> Email <input type ="text" name = "txtEmail" placeholder="Email" id="txtEmail"/></p>
          <p> Direccion<input type ="text" name = "txtDireccion" placeholder="Direccion" id="txtDireccion"/></p>
-         <p> Municipio <input type ="text" name = "txtMunicipio" placeholder="Municipio" id="txtMunicipio"/></p>
+         <p> Municipio {{form.municipio_enc(class="form-control",id="txtMunicipio", placeholder="¿Cuál?")}}</p>
+         <p> Medio {{form.cli_medioConocio( id = "txtMedioConocio")}}</p>
          <p> Barrio <input type ="text" name = "txtBarrio" placeholder="Barrio"  id="txtBarrio"/></p>
-         <--! input type ="text" name = "txtReferenciaNombre" plaholder="Nombre de la Referencia" id="AjReferenciaNombre"/>
-         <--! input type ="text" name = "txtReferenciaCelular" plaholder="Celular de la Referencia" id="AjReferenciaCelular"/>
-         <--! input type ="text" name = "txtReferenciaTElefono" plaholder="Telefono de la Referencia" id="AjReferenciaTelefono"/>
+         <p> Atendido por {{form.vendedor( id = "txtAtendidoPor" )}}</p>
+         <p> <input type ="text" name = "txtReferenciaNombre" plaholder="Nombre de la Referencia" id="txtReferenciaNombre"/>
+         <p> <input type ="text" name = "txtReferenciaCelular" plaholder="Celular de la Referencia" id="txtReferenciaCelular"/>
+         <p>Telefono de la referencia <input type ="text" name = "txtReferenciaTelefono" plaholder="Telefono de la Referencia" id="txtReferenciaTelefono"/>
 
 
+<hr> 
+         <p> Tipo de pedido {{form.fac_tipoPedido( id = "txtTipoPedido")}}</p>
+         <p> Poblacion {{form.ped_poblacion( id = "txtPedPoblacion")}}</p>
+         <p> Tipo de evento {{form.ped_evento( id = "txtTipoEvento")}}</p>
+         <p> Fecha del evento <input type = "text" name = "txtDiaEvento" placeholder="Dia del evento" id="txtDiaEvento"/>
+         <input type = "text" name = "txtMesEvento" placeholder="Dia del evento" id="txtMesEvento"/>
+         <input type = "text" name = "txtAñoEvento" placeholder="Dia del evento" id="txtAñoEvento"/></p>
 
-         <p><input type = "submit" value = "submit" /></p>
+         <table>
+          <tr>
+            <th>Referencia #</th>     
+            <th>Descripción</th>
+            <th>Accesorios</th>
+            <th>Medidas y Arreglos</th>
+            <th>Valor Referencia</th>
+          </tr>
+          <tr>
+            <td><input type = "text" name = "txtReferencia1" placeholder="txtReferencia1" class="txtReferencia" id = "txtReferencia1"/></td>
+            <td><input type = "text" name = "txtDescripcion1" placeholder="txtDescripcion1" class="txtDescripcion" id = "txtDescripcion1"/></td>
+            <td><input type = "text" name = "txtAccesorios1" placeholder="txtAccesorios1" class="txtAccesorios" id = "txtAccesorios1"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos1" placeholder="txtMedidasArreglos1" class="txtMedidasArreglos" id = "txtMedidasArreglos1"/></td>
+            <td><input type = "text" name = "txtValorReferencia1" placeholder="txtValorReferencia1" class="txtValorReferencia" id = "txtValorReferencia1"/></td>
+          </tr>
+          <tr>
+            <td><input type = "text" name = "txtReferencia2" placeholder="txtReferencia2" class="txtReferencia" id = "txtReferencia2"/></td>
+            <td><input type = "text" name = "txtDescripcion2" placeholder="txtDescripcion2" class="txtDescripcion" id = "txtDescripcion2"/></td>
+            <td><input type = "text" name = "txtAccesorios2" placeholder="txtAccesorios2" class="txtAccesorios" id = "txtAccesorios2"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos2" placeholder="txtMedidasArreglos2" class="txtMedidasArreglos" id = "txtMedidasArreglos2"/></td>
+            <td><input type = "text" name = "txtValorReferencia2" placeholder="txtValorReferencia2" class="txtValorReferencia" id = "txtValorReferencia2"/></td>
+          </tr>
+          <tr>
+            <td><input type = "text" name = "txtReferencia3" placeholder="txtReferencia3" class="txtReferencia" id = "txtReferencia3"/></td>
+            <td><input type = "text" name = "txtDescripcion3" placeholder="txtDescripcion3" class="txtDescripcion" id = "txtDescripcion3"/></td>
+            <td><input type = "text" name = "txtAccesorios3" placeholder="txtAccesorios3" class="txtAccesorios" id = "txtAccesorios3"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos3" placeholder="txtMedidasArreglos3" class="txtMedidasArreglos" id = "txtMedidasArreglos3"/></td>
+            <td><input type = "text" name = "txtValorReferencia3" placeholder="txtMedidasArreglos3" class="txtValorReferencia" id = "txtValorReferencia3"/></td>
+          </tr>
+          <tr>
+            <td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td>
+            <td><input type = "text" name = "txtDescripcion4" placeholder="txtDescripcion4" class="txtDescripcion" id = "txtDescripcion4"/></td>
+            <td><input type = "text" name = "txtAccesorios4" placeholder="txtAccesorios1" class="txtAccesorios" id = "txtAccesorios4"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos4" placeholder="txtMedidasArreglos4" class="txtMedidasArreglos" id = "txtMedidasArreglos4"/></td>
+            <td><input type = "text" name = "txtValorReferencia4" placeholder="txtValorReferencia4" class="txtValorReferencia" id = "txtValorReferencia4"/></td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <th>Recoger Mercancia</th>     
+            <th><input type = "text" name = "txtDiaRecoger" placeholder="txtDiaRecoger" class="txtRecoger" id = "txtDiaRecoger"/></th>
+            <th><input type = "text" name = "txtMesRecoger" placeholder="txtMesRecoger" class="txtRecoger" id = "txtMesRecoger"/></th>
+            <th><input type = "text" name = "txtAñoRecoger" placeholder="txtAñoRecoger" class="txtRecoger" id = "txtAñoRecoger"/></th>
+          </tr>
+          <tr>
+            <th>Devolver Mercancia</th>
+            <th><input type = "text" name = "txtDiaEntregar" placeholder="Dia para Entregar" class="txtEntregar" id = "txtDiaEntregar"/></th>
+            <th><input type = "text" name = "txtMesEntregar" placeholder="Mes para Entregar" class="txtEntregar" id = "txtMesEntregar"/></th>
+            <th><input type = "text" name = "txtAñoEntregar" placeholder="Año para Entregar" class="txtEntregar" id = "txtAñoEntregar"/></th>
+          </tr>          
+        </table>
+        <table>
+          <tr>
+            <th>Total</th>
+            <th><input type = "text" name = "txtTotal" placeholder="" class="txtTotal" id = "txtTotal"/></th>
+          </tr>
+          <tr>
+            <td>Abono</td>
+            <td><input type = "text" name = "txtAbono" placeholder="" class="txtAbono" id = "txtAbono"/></td>
+          </tr>
+          <tr>
+            <td>Saldo</td>
+            <td><input type = "text" name = "txtSaldo" placeholder="" class="txtSaldo" id = "txtSaldo"/></td>
+          </tr>
+          <tr>
+            <td>Contabilidad</td>
+            <td>Retefuente</td>
+            <td><input type = "text" name = "txtContabilidad" placeholder="" class="txtTotal" id = "txtContabilidad"/></td>
+            <td><input type = "text" name = "txtRetefuente" placeholder="" class="txtRetefuente" id = "txtRetefuente"/></td>
+          </tr>
+        </table>
+        Nota
+        <textarea id="txtNota" name="txtNota">
+         
+        </textarea>
+
+<hr>
+
+         <p><input type = "submit" class="Grabar" value="Grabar"/></p>
+         <button type="button" id="Descargar">Click Me</button>
+         <button type="button" id="SiguienteFactura">Siguiente Factura</button>
       </form>
       <br>
       <div id="succesAlert" class="alert alert-succes" role="alert" style="display:none;"></div>
