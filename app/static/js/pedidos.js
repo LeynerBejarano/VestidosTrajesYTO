@@ -93,7 +93,6 @@ $('#SiguienteFactura').click(function(){
                         $('#txtReferenciaNombre').val(data.fac_ReferenciaNombre)
                         $('#txtReferenciaCelular').val(data.fac_ReferenciaCelular)
                         $('#txtPedPoblacion').val(data.fac_poblacion)
-
                         $('#txtConsecutivo').val(data.fac_numero)
                         $('#ConsecutivoManual').val(data.fac_consecutivoManual)
                         $('#txtNonmbreCliente').val(data.cli_nombre)

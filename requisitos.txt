@@ -8,7 +8,7 @@ el sistema indica las prendas disponibles para ese dia adecuadamente!!!!!
 
 el  sistema indica adecuadamente si es FAM O AM!!!!!!!----->YA 
 
-se navega entre pedidos------>
+se navega entre pedidos------>Ya
 
 se guarda adecuadamente como borrador ----->
 
