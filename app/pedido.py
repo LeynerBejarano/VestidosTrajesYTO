@@ -14,6 +14,8 @@ from flask import render_template, redirect, request, jsonify, url_for, flash,se
 from flask.ext.mail import Mail, Message
 from flask.ext.principal import Identity
 from .form_pedido import Form_Pedido
+#from app.model.reservas_Prenda import Reservas_Prenda
+#from app.model.cantidad_Prenda import Cantidad_Prenda
 from app.model.cargo import Cargo
 from app.model.ciudad import Ciudad
 from app.model.evento import Evento
@@ -93,7 +95,7 @@ def pedidos():
     tipos_orden = Tipo_orden.query.order_by(Tipo_orden.tip_id)
     medioConocio = MedioConocio.query.order_by(MedioConocio.medio_id)
     tipoPedido = TipoPedido.query.order_by(TipoPedido.pedi_id)
-
+    #cantidad_Prenda = Cantidad_Prenda.query.order_by(Cantidad_Prenda.cantidadPrenda_id)
 
 
     #### Creacion de arreglos usados en el auto-completar de jquery
@@ -120,6 +122,8 @@ def pedidos():
 
 
     ### Volcado de datos en otros selectores/Radio buttons del formulario
+    #choices = [(p.cantidadPrenda_id, p.cantidadPrenda_nombre_talla_color) for p in cantidad_Prenda or []]
+    #form.fac_prenda = choices
     choices = [(v.usu_login, v.usu_nombre + ' ' + v.usu_apellido if v.usu_estado == 1 else 'Inactivo - ' + v.usu_nombre + ' ' + v.usu_apellido) for v in vendedores]
     form.vendedor.choices = choices
     choices = [(ti.pedi_id, ti.pedi_nombre) for ti in tipoPedido or []] + [(-1, 'Otro')]
@@ -221,12 +225,12 @@ def insertarCliente():
     Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
     db.session.commit()
   if Factura.query.get(Consecutivo) is None:
-    new_factu = Factura(nombre, TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Descripcion1, Accesorios1, MedidasArreglos1, ValorReferencia1, Referencia2, Descripcion2, Accesorios2, MedidasArreglos2, ValorReferencia2, Referencia3, Descripcion3, Accesorios3, MedidasArreglos3, ValorReferencia3, Referencia4, Descripcion4, Accesorios4, MedidasArreglos4, ValorReferencia4, Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'current_user.usu_login', ConsecutivoManual, Nota)
+    new_factu = Factura(CcNit,  TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Referencia2, Referencia3, Referencia4, Descripcion1,  Descripcion2,  Descripcion3,  Descripcion4, Accesorios1,  Accesorios2,  Accesorios3,  Accesorios4, MedidasArreglos1, MedidasArreglos2, MedidasArreglos3, MedidasArreglos4,  ValorReferencia1,  ValorReferencia2,  ValorReferencia3,  ValorReferencia4,  Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'wacor', ConsecutivoManual,Nota)
     db.session.add(new_factu)
     db.session.commit()
   else:
-      Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : nombre , Factura.fac_tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñoEntregar, Factura.fac_AtendidoPor: 'current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
-      db.session.commit()
+    Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : CcNit , Factura.fac_tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñoEntregar, Factura.fac_AtendidoPor:' current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
+    db.session.commit()
 
 
 
@@ -308,13 +312,13 @@ def descargar_pdf():
   else:
     Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
     db.session.commit()
-  #if Factura.query.get(Consecutivo) is None:
-  new_factu = Factura(nombre, TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Descripcion1, Accesorios1, MedidasArreglos1, ValorReferencia1, Referencia2, Descripcion2, Accesorios2, MedidasArreglos2, ValorReferencia2, Referencia3, Descripcion3, Accesorios3, MedidasArreglos3, ValorReferencia3, Referencia4, Descripcion4, Accesorios4, MedidasArreglos4, ValorReferencia4, Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'wacor', ConsecutivoManual,Nota)
-  db.session.add(new_factu)
-  db.session.commit()
-  #else:
-   #   Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : nombre , Factura.fac__tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñosEntregar, Factura.fac_AtendioPor:' current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
-    #  db.session.commit()
+  if Factura.query.get(Consecutivo) is None:
+    new_factu = Factura( CcNit,  TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Referencia2, Referencia3, Referencia4, Descripcion1,  Descripcion2,  Descripcion3,  Descripcion4, Accesorios1,  Accesorios2,  Accesorios3,  Accesorios4, MedidasArreglos1, MedidasArreglos2, MedidasArreglos3, MedidasArreglos4,  ValorReferencia1,  ValorReferencia2,  ValorReferencia3,  ValorReferencia4,  Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'wacor', ConsecutivoManual,Nota)
+    db.session.add(new_factu)
+    db.session.commit()
+  else:
+    Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : CcNit , Factura.fac__tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñosEntregar, Factura.fac_AtendioPor:' current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
+    db.session.commit()
   factura = Factura.query.get(5)
   #cliente = Cliente.query.get(CcNit)
   
@@ -357,7 +361,7 @@ def siguienteFactura():
   Factura_actual+1   
   factura = Factura.query.get(str(Factura_actual))
   cliente = Cliente.query.get(str(factura.fac_cliente))
-  return jsonify(str(cliente.cli_nombre))
+  return jsonify(str(cliente.cli_ciudad))
   #cliente = Cliente.query.get(str(factura.fac_cliente))   
   #return jsonify(cliente.cli_identificacion)
   """
@@ -396,21 +400,60 @@ def siguienteFactura():
     return jsonify(fac_numero = Factura.fac_numero, fac_tipoPedido =Factura.fac_tipoPedido,fac_ReferenciaNombre = Factura.fac_ReferenciaNombre, fac_ReferenciaCelular =Factura.fac_ReferenciaCelular, fac_ReferenciaMedio =Factura.fac_ReferenciaMedio,  fac_poblacion =Factura.fac_poblacion)
   
 """
+@app.route('/UsuarioNuevoViejo', methods=['GET','POST'])
+def UsuarioNuevoViejo():
+  
+  CcNit = request.form.get("txtCC_Nit")
+  cliente = Cliente.query.get(CcNit)
+  if Cliente.query.get(CcNit) is None:
+    return jsonify("Nuevo")
+  else:
+    return jsonify("viejo")
 
 
+#@app.route('/ReservarPrenda', methods=['GET','POST'])
+#def ReservarPrenda():
+  #lo primero que necesitaria es el select
+
+  #del otro lado voy a seleccionar una prenda
+  #la talla
+  #y el color
+  #con eso, preguntaria, cuales son 
+  """
+  f_incialHechas = []
+  f_finalHechas = []
+  reservasHechass = []
+  txtDiaRecoger = request.form.get('txtDiaRecoger')
+  txtMesRecoger = request.form.get('txtMesRecoger')
+  txtAñoRecoger = request.form.get('txtAñoRecoger')
+  txtDiaEntregar = request.form.get('txtDiaEntregar')
+  txtMesEntregar = request.form.get('txtMesEntregar')
+  txtAñoEntregar = request.form.get('txtAñoEntregar')
+  diaRecogerString = str(txtDiaRecoger)+"-"+str(txtMesRecoger)+"-"+str(txtAñoRecoger)
+  diaEntregaString = str(txtDiaEntregar)+"-"+str(txtMesEntregar)+"-"+str(txtAñoEntregar)
+  formatter_string = "%d-%m-%y" 
+  datetime_object = datetime.strptime(diaRecogerString, formatter_string)
+  Recoger = datetime_object.date()
+  datetime_object = datetime.strptime(diaEntregaString, formatter_string)
+  Entregar = datetime_object.date()
+  conjunto_a_saber =  Entregar - Recoger  
+
+  TipoPedido = request.form.get('txtTipoPedido')
+  if(int(TipoPedido)==1):
+    reserva_entregar = Reservas_Prenda.query.get(request.form.get('txtPrenda'))
+    for r in  reserva_entregar:
+      f_finalHechas.append(r.ReservasPrenda_devolucion)
+    for f in reserva_entregar:
+      f_incialHechas.append(f.ReservasPrenda_entrega)
+    for l in range(f_incialHechas):
+      if (intersect(conjunto_a_saber,(f_finalHechas[l] - f_incialHechas[l]))) is not None:  
 
 
+  CcNit = request.form.get("txtCC_Nit")
+  cliente = Cliente.query.get(CcNit)
+  if Cliente.query.get(CcNit) is None:
+    return jsonify("Nuevo")
+  else:
+   return jsonify("viejo")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+"""

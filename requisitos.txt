@@ -1,0 +1,22 @@
+las facturas se guardan adecuadamente en base de datos!!!!!!!----> YA
+
+las facturas se actualizann adecuadamente !!!!!!!-------->YA
+
+el sistema indica si es un usuario nuevo o viejo!!!!!!! ------->YA
+
+el sistema indica las prendas disponibles para ese dia adecuadamente!!!!!
+
+el  sistema indica adecuadamente si es FAM O AM!!!!!!!----->YA 
+
+se navega entre pedidos------>
+
+se guarda adecuadamente como borrador ----->
+
+las unidades para vender y las de vender son diferentes!!!!!
+
+el tipo de prenda se guarda bn?????
+
+
+formulario compacto!!!! ----->ESPERAR OPINION
+
+pdf se guarda correctamente!!!!1------>

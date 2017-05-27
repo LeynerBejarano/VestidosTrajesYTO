@@ -8,14 +8,79 @@ var test;
 
 
 $(document).ready(function(){
+  /*  
+if( ($('#txtDiaRecoger').val() != '') && ($('#txtMesRecoger').val() != '') && ($('#txtAñoRecoger').val() != '') && ($('#txtDiaEntregar').val() != '') && ($('#txtMesEntregar').val() != '') && ($('#txtAñoEntregar').val() != '')  ) {
+  $.ajax({
+            
+            data:{
+                txtDiaRecoger : $('#txtDiaRecoger').val(),
+                txtMesRecoger: $('#txtMesRecoger').val(),
+                txtAñoRecoger: $('#txtAñoRecoger').val(),
+                txtDiaEntregar : $('#txtDiaEntregar').val(),
+                txtMesEntregar : $('#txtMesEntregar').val(),
+                txtAñoEntregar : $('#txtAñoEntregar').val(),
+                txtPrenda: $('#txtPrenda').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/UsuarioNuevoViejo',
+          success: function(data){
+            $('#NuevoViejo').text(data)
+            $('#NuevoViejo').show()
+                        
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
 
+        })  
 
+} */
+$('#txtMunicipio').on('change', function(event){
+
+if ( ($('#txtMunicipio').val() == '25') || ($('#txtMunicipio').val() == '24') || ($('#txtMunicipio').val() == '23') || ($('#txtMunicipio').val() == '22') || ($('#txtMunicipio').val() == '21') || ($('#txtMunicipio').val() == '20') || ($('#txtMunicipio').val() == '19') ){
+
+    $('#MetroPol').text('FAM')
+    $('#MetroPol').show()
+}
+
+else {
+    $('#MetroPol').text('AM')
+    $('#MetroPol').show()
+}
+
+}) 
+
+$('#txtCC_Nit').on('input', function(event){
+    $.ajax({
+            
+            data:{
+                txtCC_Nit :$('#txtCC_Nit').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/UsuarioNuevoViejo',
+          success: function(data){
+            $('#NuevoViejo').text(data)
+            $('#NuevoViejo').show()
+                        
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+})
 
 $('#SiguienteFactura').click(function(){
 
         $.ajax({
             
             data:{
+                txtCC_Nit :$('#txtCC_Nit').val(),
                 txtConsecutivo: $('#txtConsecutivo').val()
 
             },

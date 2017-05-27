@@ -86,7 +86,7 @@ class Form_Pedido(Form):
     ins_ciudad = SelectField(coerce = int, validators=[DataRequired()])
     otro_ins_ciudad = StringField(validators=[DataRequired()])
 
-    #Datos Pedido
+    #Datos factura
     fac_numero = StringField('nombre de la referencia dek cliente', validators=[Optional()])
     ped_poblacion = SelectField('Poblacion<span class="obligatorio">*</span>', coerce = int, choices = [(1,'Adultos'), (2,'Niños')], validators = [DataRequired()])
     fecha_evento = DateField('fecha_evento', validators=[Optional()])
@@ -139,6 +139,7 @@ class Form_Pedido(Form):
     fac_DevolverMercanciaAño = StringField('año en que devuelve las prendas', validators=[DataRequired()])
     fac_consecutivoManual = StringField('el equivalente en los manuales', validators=[DataRequired()])
     fac_nota = StringField('observaciones sobre la factura', validators=[DataRequired()])
+    fac_prenda = SelectField('Tipo de devolución', coerce = int, validators=[Optional()])
 
     abonos = DecimalField('Abonos', validators = [Optional()])
     
