@@ -89,6 +89,8 @@ $('#SiguienteFactura').click(function(){
             url:'/siguienteFactura',
             
              success: function(data){
+                        $('#txtConsecutivo').val(data.fac_numero)
+                        $('#txtConsecutivoManual').val(data.fac_consecutivoManual)
                         $('#tipoPedido').val(data.tipoPedido)
                         $('#txtReferenciaNombre').val(data.fac_ReferenciaNombre)
                         $('#txtReferenciaCelular').val(data.fac_ReferenciaCelular)
@@ -158,6 +160,8 @@ $('#SiguienteFactura').click(function(){
         })
          
     })
+
+
 
 $('#Descargar').click(function(){
 
@@ -311,6 +315,82 @@ $('#Descargar').click(function(){
             },
             type: 'POST',
             url:'/insertarCliente'
+        })
+       // .done(function(data){
+         //   if(data.error){
+           //     $('#errorAlert').text(data.error).show();
+            // //   $('#succesAlert').hide();
+            //}else {
+              //  $('#succesAlert').text(data.nombre).show();
+                //$('#errorAlert').hide();
+          //  }
+        });
+
+
+    $('#GuardarEnBorrador').click(function(){
+         
+        $.ajax({
+            //data : $('form').serialize(),
+            data : {
+
+               txtConsecutivoManual: $('#txtConsecutivoManual').val(),
+               txtConsecutivo: $('#txtConsecutivo').val(),
+               txtNonmbreCliente: $('#txtNonmbreCliente').val(),
+               txtCC_Nit :$('#txtCC_Nit').val(),
+               txtDiaCumpleaños:$('#txtDiaCumpleaños').val(),
+               txtMesCumpleaños:$('#txtMesCumpleaños').val(),
+               txtTelefonoFijo:$('#txtTelefonoFijo').val(),
+               txtExtension:$('#txtExtension').val(),
+               txtCelular:$('#txtCelular').val(),
+               txtEmail:$('#txtEmail').val(),
+               txtDireccion:$('#txtDireccion').val(),
+               txtMunicipio:$('#txtMunicipio').val(),
+               txtBarrio:$('#txtBarrio').val(),
+               txtMunicipio:$('#txtMunicipio').val(),
+               txtMedioConocio:$('#txtMedioConocio').val(),
+              //txtAtendidoPor://$('#txtAtendidoPor').val(),
+              txtReferenciaNombre:$('#txtReferenciaNombre').val(),
+              txtReferenciaCelular:$('#txtReferenciaCelular').val(),
+              txtReferenciaTelefono:$('#txtReferenciaTelefono').val(),
+              txtTipoPedido:$('#txtTipoPedido').val(),
+              txtTipoEvento:$('#txtTipoEvento').val(),
+              txtPedPoblacion:$('#txtPedPoblacion').val(),
+              txtDiaEvento:$('#txtDiaEvento').val(),
+              txtMesEvento:$('#txtMesEvento').val(),
+              txtAñoEvento:$('#txtAñoEvento').val(),
+              txtReferencia4:$('#txtReferencia1').val(),
+              txtDescripcion4:$('#txtDescripcion1').val(),
+              txtAccesorios4:$('#txtAccesorios1').val(),
+              txtMedidasArreglos4:$('#txtMedidasArreglos1').val(),
+              txtValorReferencia4:$('#txtValorReferencia1').val(),
+              txtReferencia4:$('#txtReferencia2').val(),
+              txtDescripcion4:$('#txtDescripcion2').val(),
+              txtAccesorios4:$('#txtAccesorios2').val(),
+              txtMedidasArreglos4:$('#txtMedidasArreglos2').val(),
+              txtValorReferencia4:$('#txtValorReferencia2').val(),
+              txtReferencia4:$('#txtReferencia3').val(),
+              txtDescripcion4:$('#txtDescripcion3').val(),
+              txtAccesorios4:$('#txtAccesorios3').val(),
+              txtMedidasArreglos4:$('#txtMedidasArreglos3').val(),
+              txtValorReferencia4:$('#txtValorReferencia3').val(),
+              txtReferencia4:$('#txtReferencia4').val(),
+              txtDescripcion4:$('#txtDescripcion4').val(),
+              txtAccesorios4:$('#txtAccesorios4').val(),
+              txtMedidasArreglos4:$('#txtMedidasArreglos4').val(),
+              txtValorReferencia4:$('#txtValorReferencia4').val(),
+              txtDiaRecoger:$('#txtDiaRecoger').val(),
+              txtDiaRecoger:$('#txtMesRecoger').val(),
+              txtDiaEntregar:$('#txtAñoEntregar').val(),
+              txtMesEntregar:$('#txtMesEntregar').val(),
+              txtAñoEntregar:$('#txtAñoEntregar').val(),
+              txtTotal:$('#txtTotal').val(),
+              txtAbono:$('#txtAbono').val(),
+              txtSaldo:$('#txtSaldo').val(),
+              txtRetefuente:$('#txtRetefuente').val(),
+              txtNota:$('#txtNota').val()
+            },
+            type: 'POST',
+            url:'/insertarClienteBorrador'
         })
        // .done(function(data){
          //   if(data.error){
