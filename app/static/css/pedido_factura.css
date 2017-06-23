@@ -1,0 +1,34 @@
+#PrimerContainer{
+	padding: 0 !important;
+}
+
+.formUsuarioLeftPart{
+	padding-left: 18 px;
+}
+
+input.tamañoFecha {
+	width: 25px;
+}
+
+#txtTipoPedido {
+	size: 85px;
+}
+#txtPedPoblacion{
+	size: 85px;
+}
+.cantidadPrenda{
+	width: 65px;
+    background-color:gray;
+}
+/*
+input.form-fixer {
+    padding: 1px;
+    font-size: 19px;
+    line-height: 14px;
+    height: 14px;
+}
+*/
+
+/*.control-label{
+	font-size: 0.6em;
+}*/

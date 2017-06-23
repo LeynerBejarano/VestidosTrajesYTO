@@ -89,6 +89,7 @@ class Form_Pedido(Form):
     #Datos factura
     fac_numero = StringField('nombre de la referencia dek cliente', validators=[Optional()])
     ped_poblacion = SelectField('Poblacion<span class="obligatorio">*</span>', coerce = int, choices = [(1,'Adultos'), (2,'Niños')], validators = [DataRequired()])
+    cantidadPrenda = SelectField('Prendas<span class="obligatorio">*</span>', coerce = int, validators=[DataRequired()])
     fecha_evento = DateField('fecha_evento', validators=[Optional()])
     hora_evento = TimeField('hora_evento', validators=[Optional()]) 
     fecha_entrega = DateField('Fecha de entrega', validators=[Optional()])

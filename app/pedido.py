@@ -15,7 +15,8 @@ from flask.ext.mail import Mail, Message
 from flask.ext.principal import Identity
 from .form_pedido import Form_Pedido
 from app.model.factura_borrador import Factura_Borrador
-#from app.model.reservas_Prenda import Reservas_Prenda
+from datetime import datetime
+from datetime import datetime, date
 #from app.model.cantidad_Prenda import Cantidad_Prenda
 from app.model.cargo import Cargo
 from app.model.ciudad import Ciudad
@@ -58,6 +59,9 @@ from app.model.tipo_orden import Tipo_orden
 from app.model.medioConocio import MedioConocio
 from app.model.tipoPedido import TipoPedido
 from app.model.factura import Factura
+from app.model.cantidadPrenda import CantidadPrenda
+from app.model.reservasPrenda import ReservasPrenda
+from app.model.recibo import Recibo
 from app.utils import numero_a_letras, timeRange, get_temporada, text_to_time
 from pdfkit import api
 from flask import make_response
@@ -96,6 +100,7 @@ def pedidos():
     tipos_orden = Tipo_orden.query.order_by(Tipo_orden.tip_id)
     medioConocio = MedioConocio.query.order_by(MedioConocio.medio_id)
     tipoPedido = TipoPedido.query.order_by(TipoPedido.pedi_id)
+    cantidadPrenda = CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_nombre_talla_color.like('%_%')).order_by(CantidadPrenda.cantidadPrenda_id)
     #cantidad_Prenda = Cantidad_Prenda.query.order_by(Cantidad_Prenda.cantidadPrenda_id)
 
 
@@ -118,6 +123,10 @@ def pedidos():
       
 
       ###Estilos
+
+    ##fecha actual
+    hoy = "{:%d.%m.%Y}".format(datetime.now())
+
       
 
 
@@ -141,7 +150,8 @@ def pedidos():
     form.rec_tipo_orden.choices = choices
     form.tipo_entrega_ord.choices = choices
     form.tipo_recogida_ord.choices = choices
-
+    choices = [(c.cantidadPrenda_id, c.cantidadPrenda_nombre_talla_color) for c in cantidadPrenda or []]
+    form.fac_prenda.choices = choices
     choices = [(c.cla_id - 1, c.cla_id - 1) for c in clases or []]
     form.principal.choices = choices
     form.dia_enc.choices = [(i, str(i)) for i in range(1,32) or []]
@@ -152,7 +162,7 @@ def pedidos():
     
     
 
-    return render_template('pedido.html',datos = datos,form = form,clases = clases,tallas = tallas, cedulas = cedulas,cliente = request.args.get('cliente'),pedido = request.args.get('pedido'))
+    return render_template('pedido.html',datos = datos,hoy = hoy, form = form ,clases = clases,tallas = tallas, cedulas = cedulas,cliente = request.args.get('cliente'),pedido = request.args.get('pedido'))
 
 @app.route('/insertarCliente', methods=['GET','POST'])
 def insertarCliente():
@@ -165,6 +175,8 @@ def insertarCliente():
   MesCumpleaños = request.form.get('txtMesCumpleaños')#[]
   TelFijo = request.form.get("txtTelefonoFijo")
   Ext = request.form.get("Ext")
+  TelFijoOficina = request.form.get("txtTelefonoFijoOficina")
+  ExtOficina = request.form.get("ExtOficina")
   Celular = request.form.get("txtCelular")
   Email = request.form.get('txtEmail')#[]
   Direccion = request.form.get('txtDireccion')#[]
@@ -218,15 +230,19 @@ def insertarCliente():
   #
   ConsecutivoManual = request.form.get('txtConsecutivoManual')#[]z
   Consecutivo = request.form.get('txtConsecutivo')#[]z
+  hoy = "{:%d.%m.%Y}".format(datetime.now())
+  fac_fechaFactura = hoy
+
   if Cliente.query.get(CcNit) is None:
-    new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo,Ext,Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
+    new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo, Ext, TelFijoOficina, ExtOficina, Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
     db.session.add(new_cli)
     db.session.commit()
+    
   else:
-    Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
+    Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_telefonoFijo: TelFijoOficina, Cliente.cli_telefonoFijo_ext: ExtOficina,Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
     db.session.commit()
   if Factura.query.get(Consecutivo) is None:
-    new_factu = Factura(CcNit,  TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Referencia2, Referencia3, Referencia4, Descripcion1,  Descripcion2,  Descripcion3,  Descripcion4, Accesorios1,  Accesorios2,  Accesorios3,  Accesorios4, MedidasArreglos1, MedidasArreglos2, MedidasArreglos3, MedidasArreglos4,  ValorReferencia1,  ValorReferencia2,  ValorReferencia3,  ValorReferencia4,  Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'wacor', ConsecutivoManual,Nota)
+    new_factu = Factura(CcNit,  TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Referencia2, Referencia3, Referencia4, Descripcion1,  Descripcion2,  Descripcion3,  Descripcion4, Accesorios1,  Accesorios2,  Accesorios3,  Accesorios4, MedidasArreglos1, MedidasArreglos2, MedidasArreglos3, MedidasArreglos4,  ValorReferencia1,  ValorReferencia2,  ValorReferencia3,  ValorReferencia4,  Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'wacor',ConsecutivoManual,Nota)
     db.session.add(new_factu)
     db.session.commit()
   else:
@@ -250,6 +266,8 @@ def descargar_pdf():
   MesCumpleaños = request.form.get('txtMesCumpleaños')#[]
   TelFijo = request.form.get("txtTelefonoFijo")
   Ext = request.form.get("Ext")
+  TelFijoOficina = request.form.get("txtTelefonoFijoOficina")
+  ExtOficina = request.form.get("ExtOficina")
   Celular = request.form.get("txtCelular")
   Email = request.form.get('txtEmail')#[]
   Direccion = request.form.get('txtDireccion')#[]
@@ -307,11 +325,12 @@ def descargar_pdf():
 
 
   if Cliente.query.get(CcNit) is None:
-    new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo,Ext,Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
+    new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo, Ext, TelFijoOficina, ExtOficina, Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
     db.session.add(new_cli)
     db.session.commit()
+    
   else:
-    Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
+    Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_telefonoFijo: TelFijoOficina, Cliente.cli_telefonoFijo_ext: ExtOficina,Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
     db.session.commit()
   if Factura.query.get(Consecutivo) is None:
     new_factu = Factura( CcNit,  TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Referencia2, Referencia3, Referencia4, Descripcion1,  Descripcion2,  Descripcion3,  Descripcion4, Accesorios1,  Accesorios2,  Accesorios3,  Accesorios4, MedidasArreglos1, MedidasArreglos2, MedidasArreglos3, MedidasArreglos4,  ValorReferencia1,  ValorReferencia2,  ValorReferencia3,  ValorReferencia4,  Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'wacor', ConsecutivoManual,Nota)
@@ -321,14 +340,14 @@ def descargar_pdf():
     Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : CcNit , Factura.fac__tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñosEntregar, Factura.fac_AtendioPor:' current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
     db.session.commit()
   factura = Factura.query.get(5)
-  #cliente = Cliente.query.get(CcNit)
-  
+  cliente = Cliente.query.get(CcNit)
+  hoy = "{:%d.%m.%Y}".format(datetime.now())
 
 
   
   #pdf = create_pdf(render_template("factura.html", factura = factura, cliente = cliente, path = os.path.abspath(os.path.dirname(__file__))), file)
   path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/Ffactura.pdf'
-  pagina = render_template("factura.html", factura = factura)
+  pagina = render_template("factura.html", factura = factura, cliente= cliente,hoy = hoy)
   config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
   pdf = api.from_string(pagina,False,configuration=config)
@@ -362,7 +381,7 @@ def siguienteFactura():
   Factura_actual+1   
   factura = Factura.query.get(str(Factura_actual))
   cliente = Cliente.query.get(str(factura.fac_cliente))
-  return jsonify({'fac_numero':str(factura.fac_numero),'fac_cliente':str(factura.fac_cliente),'fac_tipoPedido':str(factura.fac_tipoPedido),'fac_ReferenciaNombre':str(factura.fac_ReferenciaNombre),'fac_ReferenciaCelular':str(factura.fac_ReferenciaCelular),'fac_ReferenciaMedio': str(factura.fac_ReferenciaMedio), 'fac_poblacion':str(factura.fac_poblacion), 'fac_evento':str(factura.fac_evento),'fac_eventoDia':str(factura.fac_eventoDia), 'fac_eventoMes':str(factura.fac_eventoMes), 'fac_eventoAño': str(factura.fac_eventoAño),'fac_ReferenciaProducto1': str(factura.fac_ReferenciaProducto1),'fac_ReferenciaProducto2': str(factura.fac_ReferenciaProducto2),'fac_ReferenciaProducto3':str(factura.fac_ReferenciaProducto3),'fac_ReferenciaProducto4': str(factura.fac_ReferenciaProducto4),'fac_descripcion1':str(factura.fac_descripcion1), 'fac_descripcion2':str(factura.fac_descripcion2),'fac_descripcion3':str(factura.fac_descripcion3),'fac_descripcion4':factura.fac_descripcion4, 'fac_MedidasArreglos1': factura.fac_MedidasArreglos1, 'fac_MedidasArreglos2':factura.fac_MedidasArreglos2,'fac_MedidasArreglos3': factura.fac_MedidasArreglos3, 'fac_MedidasArreglos4': factura.fac_MedidasArreglos4, 'fac_ValorReferencia1':factura.fac_ValorReferencia1, 'fac_ValorReferencia2':factura.fac_ValorReferencia2, 'fac_ValorReferencia3':factura.fac_ValorReferencia3, 'fac_ValorReferencia4': factura.fac_ValorReferencia4, 'fac_Total':factura.fac_Total, 'fac_Abono': factura.fac_Abono, 'fac_Saldo':factura.fac_Saldo, 'fac_Retefuente': factura.fac_Retefuente , 'fac_ReclamarMercanciaDia': factura.fac_ReclamarMercanciaDia, 'fac_ReclamarMercanciaMes': factura.fac_ReclamarMercanciaMes, 'fac_ReclamarMercanciaAño': factura.fac_ReclamarMercanciaAño, 'fac_DevolverMercanciaDia':factura.fac_DevolverMercanciaDia, 'fac_DevolverMercanciaMes':factura.fac_DevolverMercanciaMes, 'fac_DevolverMercanciaAño':factura.fac_DevolverMercanciaAño, 'fac_AtendidoPor': factura.fac_AtendidoPor,'fac_consecutivoManual':str(factura.fac_consecutivoManual),'cli_identificacion': cliente.cli_identificacion, 'cli_nombre': cliente.cli_nombre, 'cli_ciudad':cliente.cli_ciudad, 'cli_direccion': cliente.cli_direccion, 'cli_email':cliente.cli_email, 'cli_celular':cliente.cli_celular, 'cli_telefono':cliente.cli_telefono,'cli_extension':cliente.cli_extension, 'cli_cargo':cliente.cli_cargo, 'cli_barrio':cliente.cli_barrio, 'cli_medioConocio':cliente.cli_medioConocio})
+  return jsonify({'fac_numero':str(factura.fac_numero),'fac_cliente':str(factura.fac_cliente),'fac_tipoPedido':str(factura.fac_tipoPedido),'fac_ReferenciaNombre':str(factura.fac_ReferenciaNombre),'fac_ReferenciaCelular':str(factura.fac_ReferenciaCelular),'fac_ReferenciaMedio': str(factura.fac_ReferenciaMedio), 'fac_poblacion':str(factura.fac_poblacion), 'fac_evento':str(factura.fac_evento),'fac_eventoDia':str(factura.fac_eventoDia), 'fac_eventoMes':str(factura.fac_eventoMes), 'fac_eventoAño': str(factura.fac_eventoAño),'fac_ReferenciaProducto1': str(factura.fac_ReferenciaProducto1),'fac_ReferenciaProducto2': str(factura.fac_ReferenciaProducto2),'fac_ReferenciaProducto3':str(factura.fac_ReferenciaProducto3),'fac_ReferenciaProducto4': str(factura.fac_ReferenciaProducto4),'fac_descripcion1':str(factura.fac_descripcion1), 'fac_descripcion2':str(factura.fac_descripcion2),'fac_descripcion3':str(factura.fac_descripcion3),'fac_descripcion4':factura.fac_descripcion4, 'fac_MedidasArreglos1': factura.fac_MedidasArreglos1, 'fac_MedidasArreglos2':factura.fac_MedidasArreglos2,'fac_MedidasArreglos3': factura.fac_MedidasArreglos3, 'fac_MedidasArreglos4': factura.fac_MedidasArreglos4, 'fac_ValorReferencia1':factura.fac_ValorReferencia1, 'fac_ValorReferencia2':factura.fac_ValorReferencia2, 'fac_ValorReferencia3':factura.fac_ValorReferencia3, 'fac_ValorReferencia4': factura.fac_ValorReferencia4, 'fac_Total':factura.fac_Total, 'fac_Abono': factura.fac_Abono, 'fac_Saldo':factura.fac_Saldo, 'fac_Retefuente': factura.fac_Retefuente , 'fac_ReclamarMercanciaDia': factura.fac_ReclamarMercanciaDia, 'fac_ReclamarMercanciaMes': factura.fac_ReclamarMercanciaMes, 'fac_ReclamarMercanciaAño': factura.fac_ReclamarMercanciaAño, 'fac_DevolverMercanciaDia':factura.fac_DevolverMercanciaDia, 'fac_DevolverMercanciaMes':factura.fac_DevolverMercanciaMes, 'fac_DevolverMercanciaAño':factura.fac_DevolverMercanciaAño, 'fac_AtendidoPor': factura.fac_AtendidoPor,'fac_consecutivoManual':str(factura.fac_consecutivoManual),'cli_identificacion': cliente.cli_identificacion, 'cli_nombre': cliente.cli_nombre, 'cli_ciudad':cliente.cli_ciudad, 'cli_direccion': cliente.cli_direccion, 'cli_email':cliente.cli_email, 'cli_celular':cliente.cli_celular, 'cli_telefono':cliente.cli_telefono,'cli_extension':cliente.cli_extension, 'cli_cargo':cliente.cli_cargo, 'cli_barrio':cliente.cli_barrio, 'cli_medioConocio':cliente.cli_medioConocio,'fac_fechaFactura':factura.fac_fechaFactura})
   
   #cliente = Cliente.query.get(str(factura.fac_cliente))   
   #return jsonify(cliente.cli_identificacion)
@@ -412,6 +431,294 @@ def UsuarioNuevoViejo():
   else:
     return jsonify("viejo")
 
+@app.route('/FechaEntreFechas', methods=['GET','POST'])
+def FechaEntreFechas(start, end, delta):
+  curr = start
+  while curr < end:
+      yield curr
+      curr += delta
+
+
+
+
+@app.route('/IndicarCantidad1', methods=['GET','POST'])
+def IndicarCantidad1():
+  hoy = "{:%d.%m.%Y}".format(datetime.now())
+  DiaRecoger = request.form.get('txtDiaRecoger')
+  MesRecoger = request.form.get('txtMesRecoger')
+  AñoRecoger = request.form.get('txtAñoRecoger')
+  DiaEntregar = request.form.get('txtDiaEntregar')
+  MesEntregar = request.form.get('txtMesEntregar')
+  AñoEntregar = request.form.get('txtAñoEntregar')
+  fac_prenda1 = str(request.form.get('txtfac_prenda1'))
+  TipoPedido = str(request.form.get('txtTipoPedido'))
+ 
+
+  fecha_a_reservarLIST = [None]
+  fecha_a_reservadaLIST = [None]
+  for result in FechaEntreFechas(date(int(AñoRecoger), int(MesRecoger), int(DiaRecoger)), date(int(AñoEntregar), int(MesEntregar), int(DiaEntregar)), timedelta(days=1)):
+    fecha_a_reservarLIST.append(result)
+
+  reservasProdcuto  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda1)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+
+  #si no hay reservas en esa fecha y ....esperate yo me fijo bn
+  if not reservasProdcuto:
+    return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad)
+  else:
+    if(TipoPedido == '1' or TipoPedido == '3' or TipoPedido == '5' or TipoPedido == '7'):
+      #Es una venta osea que si hay en stock, debo disminuir esto con un update, pero no con el onChange
+      #nuevaCantidad = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad) - 1
+      #CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == fac_prenda1).update({CantidadPrenda.cantidadPrenda_cantidad: nuevaCantidad},synchronize_session=False)
+      #db.session.commit()
+      #return jsonify('cantidad del producto actualizado')
+      reservasQueHay = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda1)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+      catidadRealProductoPaVender = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad)
+      for ploplo in reservasQueHay:
+        catidadRealProductoPaVender = catidadRealProductoPaVender - 1
+      return jsonify(catidadRealProductoPaVender)   
+    else:
+      reservasProdcutoss  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda1)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+      catidadRealProducto = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad)
+      for chere in reservasProdcutoss:
+        for rara in  FechaEntreFechas(date(int(chere.AñoRecoger), int(chere.MesRecoger), int(chere.DiaRecoger)), date(int(chere.AñoEntregar), int(chere.MesEntregar), int(chere.DiaEntregar)), timedelta(days=1)):
+          fecha_a_reservadaLIST.append(rara) 
+        if (bool(set(fecha_a_reservarLIST) & set(fecha_a_reservadaLIST))):
+          catidadRealProducto = catidadRealProducto - 1
+      return jsonify(catidadRealProducto)
+
+
+@app.route('/DimeAccesorios1', methods=['GET','POST'])
+def DimeAccesorios1():
+
+  fac_prenda1 = str(request.form.get('txtfac_prenda1'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_Accesorios)
+
+@app.route('/DimeDescripcion1', methods=['GET','POST'])
+def DimeDescripcion1():
+
+  fac_prenda1 = str(request.form.get('txtfac_prenda1'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_descripcion)
+
+@app.route('/DimeValorReferencia1', methods=['GET','POST'])
+def DimeValorReferencia1():
+
+  fac_prenda1 = str(request.form.get('txtfac_prenda1'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_ValorReferencia)
+
+@app.route('/IndicarCantidad2', methods=['GET','POST'])
+def IndicarCantidad2():
+  hoy = "{:%d.%m.%Y}".format(datetime.now())
+  DiaRecoger = request.form.get('txtDiaRecoger')
+  MesRecoger = request.form.get('txtMesRecoger')
+  AñoRecoger = request.form.get('txtAñoRecoger')
+  DiaEntregar = request.form.get('txtDiaEntregar')
+  MesEntregar = request.form.get('txtMesEntregar')
+  AñoEntregar = request.form.get('txtAñoEntregar')
+  fac_prenda2 = str(request.form.get('txtfac_prenda2'))
+  TipoPedido = str(request.form.get('txtTipoPedido'))
+ 
+
+  fecha_a_reservarLIST = [None]
+  fecha_a_reservadaLIST = [None]
+  for result in FechaEntreFechas(date(int(AñoRecoger), int(MesRecoger), int(DiaRecoger)), date(int(AñoEntregar), int(MesEntregar), int(DiaEntregar)), timedelta(days=1)):
+    fecha_a_reservarLIST.append(result)
+
+  reservasProdcuto  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda2)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+
+  #si no hay reservas en esa fecha y ....esperate yo me fijo bn
+  if not reservasProdcuto:
+    return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_cantidad)
+  else:
+    if(TipoPedido == '1' or TipoPedido == '3' or TipoPedido == '5' or TipoPedido == '7'):
+      #Es una venta osea que si hay en stock, debo disminuir esto con un update, pero no con el onChange
+      #nuevaCantidad = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad) - 1
+      #CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == fac_prenda1).update({CantidadPrenda.cantidadPrenda_cantidad: nuevaCantidad},synchronize_session=False)
+      #db.session.commit()
+      #return jsonify('cantidad del producto actualizado')
+      reservasQueHay = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda2)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+      catidadRealProductoPaVender = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_cantidad)
+      for ploplo in reservasQueHay:
+        catidadRealProductoPaVender = catidadRealProductoPaVender - 1
+      return jsonify(catidadRealProductoPaVender)   
+    else:
+      reservasProdcutoss  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda2)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+      catidadRealProducto = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_cantidad)
+      for chere in reservasProdcutoss:
+        for rara in  FechaEntreFechas(date(int(chere.AñoRecoger), int(chere.MesRecoger), int(chere.DiaRecoger)), date(int(chere.AñoEntregar), int(chere.MesEntregar), int(chere.DiaEntregar)), timedelta(days=1)):
+          fecha_a_reservadaLIST.append(rara) 
+        if (bool(set(fecha_a_reservarLIST) & set(fecha_a_reservadaLIST))):
+          catidadRealProducto = catidadRealProducto - 1
+      return jsonify(catidadRealProducto)
+
+
+@app.route('/DimeAccesorios2', methods=['GET','POST'])
+def DimeAccesorios2():
+
+  fac_prenda2 = str(request.form.get('txtfac_prenda2'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_Accesorios)
+
+@app.route('/DimeDescripcion2', methods=['GET','POST'])
+def DimeDescripcion2():
+
+  fac_prenda2 = str(request.form.get('txtfac_prenda2'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_descripcion)
+
+@app.route('/DimeValorReferencia2', methods=['GET','POST'])
+def DimeValorReferencia2():
+
+  fac_prenda2 = str(request.form.get('txtfac_prenda2'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_ValorReferencia)
+
+@app.route('/IndicarCantidad3', methods=['GET','POST'])
+def IndicarCantidad3():
+  hoy = "{:%d.%m.%Y}".format(datetime.now())
+  DiaRecoger = request.form.get('txtDiaRecoger')
+  MesRecoger = request.form.get('txtMesRecoger')
+  AñoRecoger = request.form.get('txtAñoRecoger')
+  DiaEntregar = request.form.get('txtDiaEntregar')
+  MesEntregar = request.form.get('txtMesEntregar')
+  AñoEntregar = request.form.get('txtAñoEntregar')
+  fac_prenda3 = str(request.form.get('txtfac_prenda3'))
+  TipoPedido = str(request.form.get('txtTipoPedido'))
+ 
+
+  fecha_a_reservarLIST = [None]
+  fecha_a_reservadaLIST = [None]
+  for result in FechaEntreFechas(date(int(AñoRecoger), int(MesRecoger), int(DiaRecoger)), date(int(AñoEntregar), int(MesEntregar), int(DiaEntregar)), timedelta(days=1)):
+    fecha_a_reservarLIST.append(result)
+
+  reservasProdcuto  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda3)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+
+  #si no hay reservas en esa fecha y ....esperate yo me fijo bn
+  if not reservasProdcuto:
+    return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_cantidad)
+  else:
+    if(TipoPedido == '1' or TipoPedido == '3' or TipoPedido == '5' or TipoPedido == '7'):
+      #Es una venta osea que si hay en stock, debo disminuir esto con un update, pero no con el onChange
+      #nuevaCantidad = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad) - 1
+      #CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == fac_prenda1).update({CantidadPrenda.cantidadPrenda_cantidad: nuevaCantidad},synchronize_session=False)
+      #db.session.commit()
+      #return jsonify('cantidad del producto actualizado')
+      reservasQueHay = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda3)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+      catidadRealProductoPaVender = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_cantidad)
+      for ploplo in reservasQueHay:
+        catidadRealProductoPaVender = catidadRealProductoPaVender - 1
+      return jsonify(catidadRealProductoPaVender)   
+    else:
+      reservasProdcutoss  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda3)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+      catidadRealProducto = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_cantidad)
+      for chere in reservasProdcutoss:
+        for rara in  FechaEntreFechas(date(int(chere.AñoRecoger), int(chere.MesRecoger), int(chere.DiaRecoger)), date(int(chere.AñoEntregar), int(chere.MesEntregar), int(chere.DiaEntregar)), timedelta(days=1)):
+          fecha_a_reservadaLIST.append(rara) 
+        if (bool(set(fecha_a_reservarLIST) & set(fecha_a_reservadaLIST))):
+          catidadRealProducto = catidadRealProducto - 1
+      return jsonify(catidadRealProducto)
+
+
+@app.route('/DimeAccesorios3', methods=['GET','POST'])
+def DimeAccesorios3():
+
+  fac_prenda3 = str(request.form.get('txtfac_prenda3'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_Accesorios)
+
+@app.route('/DimeDescripcion3', methods=['GET','POST'])
+def DimeDescripcion3():
+
+  fac_prenda3 = str(request.form.get('txtfac_prenda3'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_descripcion)
+
+@app.route('/DimeValorReferencia3', methods=['GET','POST'])
+def DimeValorReferencia3():
+
+  fac_prenda3 = str(request.form.get('txtfac_prenda3'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_ValorReferencia)
+
+@app.route('/IndicarCantidad4', methods=['GET','POST'])
+def IndicarCantidad4():
+  hoy = "{:%d.%m.%Y}".format(datetime.now())
+  DiaRecoger = request.form.get('txtDiaRecoger')
+  MesRecoger = request.form.get('txtMesRecoger')
+  AñoRecoger = request.form.get('txtAñoRecoger')
+  DiaEntregar = request.form.get('txtDiaEntregar')
+  MesEntregar = request.form.get('txtMesEntregar')
+  AñoEntregar = request.form.get('txtAñoEntregar')
+  fac_prenda4 = str(request.form.get('txtfac_prenda4'))
+  TipoPedido = str(request.form.get('txtTipoPedido'))
+ 
+
+  fecha_a_reservarLIST = [None]
+  fecha_a_reservadaLIST = [None]
+  for result in FechaEntreFechas(date(int(AñoRecoger), int(MesRecoger), int(DiaRecoger)), date(int(AñoEntregar), int(MesEntregar), int(DiaEntregar)), timedelta(days=1)):
+    fecha_a_reservarLIST.append(result)
+
+  reservasProdcuto  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda4)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+
+  #si no hay reservas en esa fecha y ....esperate yo me fijo bn
+  if not reservasProdcuto:
+    return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_cantidad)
+  else:
+    if(TipoPedido == '1' or TipoPedido == '3' or TipoPedido == '5' or TipoPedido == '7'):
+      #Es una venta osea que si hay en stock, debo disminuir esto con un update, pero no con el onChange
+      #nuevaCantidad = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad) - 1
+      #CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == fac_prenda1).update({CantidadPrenda.cantidadPrenda_cantidad: nuevaCantidad},synchronize_session=False)
+      #db.session.commit()
+      #return jsonify('cantidad del producto actualizado')
+      reservasQueHay = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda4)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+      catidadRealProductoPaVender = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_cantidad)
+      for ploplo in reservasQueHay:
+        catidadRealProductoPaVender = catidadRealProductoPaVender - 1
+      return jsonify(catidadRealProductoPaVender)   
+    else:
+      reservasProdcutoss  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda4)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
+      catidadRealProducto = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_cantidad)
+      for chere in reservasProdcutoss:
+        for rara in  FechaEntreFechas(date(int(chere.AñoRecoger), int(chere.MesRecoger), int(chere.DiaRecoger)), date(int(chere.AñoEntregar), int(chere.MesEntregar), int(chere.DiaEntregar)), timedelta(days=1)):
+          fecha_a_reservadaLIST.append(rara) 
+        if (bool(set(fecha_a_reservarLIST) & set(fecha_a_reservadaLIST))):
+          catidadRealProducto = catidadRealProducto - 1
+      return jsonify(catidadRealProducto)
+
+
+@app.route('/DimeAccesorios4', methods=['GET','POST'])
+def DimeAccesorios4():
+
+  fac_prenda4 = str(request.form.get('txtfac_prenda4'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_Accesorios)
+
+@app.route('/DimeDescripcion4', methods=['GET','POST'])
+def DimeDescripcion4():
+
+  fac_prenda4 = str(request.form.get('txtfac_prenda4'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_descripcion)
+
+@app.route('/DimeValorReferencia4', methods=['GET','POST'])
+def DimeValorReferencia4():
+
+  fac_prenda4 = str(request.form.get('txtfac_prenda4'))
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_ValorReferencia)
+
+@app.route('/GuardarRecibo', methods=['GET','POST'])
+def GuardarRecibo():
+  
+  reci_Factura = request.form.get('txtReci_Factura')
+  reci_valor = request.form.get('txtReci_valor')
+  reci_ciudad = request.form.get('txtReci_ciudad')
+  reci_fecha = request.form.get('txtReci_fecha')
+  reci_Total = request.form.get('txtReci_Total')
+  reci_AporteEnLetras = request.form.get('txtReci_AporteEnLetras')
+  reci_Concepto = request.form.get('txtReci_Concepto')
+  reci_FacturaTipo =request.form.get('txtReci_FacturaTipo')
+  reci_nuevoSaldo = request.form.get('txtReci_nuevoSaldo')
+  reci_CCNit = request.form.get('txtReci_CCNit')
+
+  
+  new_reci = Cliente(reci_Factura,reci_valor,reci_ciudad,reci_fecha,reci_Total,reci_AporteEnLetras,reci_Concepto,reci_FacturaTipo,reci_nuevoSaldo,reci_CCNit)
+  db.session.add(new_cli)
+  db.session.commit()
+
+
+    
+  
 
 #@app.route('/ReservarPrenda', methods=['GET','POST'])
 #def ReservarPrenda():
@@ -459,87 +766,90 @@ def UsuarioNuevoViejo():
    return jsonify("viejo")
 
 """
-@app.route('/insertarClienteBorrador', methods=['GET','POST'])
-def insertarClienteBorrador():
+"""
+@app.route('/GuardarReserva', methods=['GET','POST'])
+def GuardarReserva():
 
-  
-  nombre = request.form.get('txtNonmbreCliente')
-  
-  CcNit = request.form.get("txtCC_Nit")
-  DiaCumpleaños = request.form.get("txtDiaCumpleaños")
-  MesCumpleaños = request.form.get('txtMesCumpleaños')#[]
-  TelFijo = request.form.get("txtTelefonoFijo")
-  Ext = request.form.get("Ext")
-  Celular = request.form.get("txtCelular")
-  Email = request.form.get('txtEmail')#[]
-  Direccion = request.form.get('txtDireccion')#[]
-  Municipio = request.form.get('txtMunicipio')#[]
-  Barrio = request.form.get('txtBarrio')#[]
-  MedioConocio = request.form.get('txtMedioConocio')#[]
-  Poblacion = request.form.get('txtPedPoblacion')
-  #
-  #
-  #
-  TipoPedido = request.form.get('txtTipoPedido')
-  TipoEvento = request.form.get('txtTipoEvento')
-  DiaEvento = request.form.get('txtDiaEvento')
-  MesEvento = request.form.get('txtMesEvento')
-  AñoEvento = request.form.get('txtAñoEvento')
-  Referencia1 = request.form.get('txtReferencia1')
-  Descripcion1 = request.form.get('txtDescripcion1')
-  Accesorios1 = request.form.get('txtAccesorios1')
-  MedidasArreglos1 = request.form.get('txtMedidasArreglos1')
-  ValorReferencia1 = request.form.get('txtValorReferencia1')
-  Referencia2 = request.form.get('txtReferencia2')
-  Descripcion2 = request.form.get('txtDescripcion2')
-  Accesorios2 = request.form.get('txtAccesorios2')
-  MedidasArreglos2 = request.form.get('txtMedidasArreglos2')
-  ValorReferencia2 = request.form.get('txtValorReferencia2')
-  Referencia3 = request.form.get('txtReferencia3')
-  Descripcion3 = request.form.get('txtDescripcion3')
-  Accesorios3 = request.form.get('txtAccesorios3')
-  MedidasArreglos3 = request.form.get('txtMedidasArreglos3')
-  ValorReferencia3 = request.form.get('txtValorReferencia3')
-  Referencia4 = request.form.get('txtReferencia4')
-  Descripcion4 = request.form.get('txtDescripcion4')
-  Accesorios4 = request.form.get('txtAccesorios4')
-  MedidasArreglos4 = request.form.get('txtMedidasArreglos4')
-  ValorReferencia4 = request.form.get('txtValorReferencia4')
-  #
+
   DiaRecoger = request.form.get('txtDiaRecoger')
   MesRecoger = request.form.get('txtMesRecoger')
   AñoRecoger = request.form.get('txtAñoRecoger')
   DiaEntregar = request.form.get('txtDiaEntregar')
   MesEntregar = request.form.get('txtMesEntregar')
   AñoEntregar =  request.form.get('txtAñoEntregar')
-  Saldo = request.form.get('txtSaldo')
-  Total = request.form.get('txtTotal')
-  Abono =  request.form.get('txtAbono')
-  Retefuente = request.form.get('txtRetefuente')
-  ReferenciaNombre = request.form.get('txtReferenciaNombre')#[]
-  ReferenciaCelular = request.form.get('txtReferenciaCelular')#[]
-  ReferenciaTelefono = request.form.get('txtReferenciaTelefono')#[]
-  Nota = request.form.get('txtNota')#[]
-  #
-  ConsecutivoManual = request.form.get('txtConsecutivoManual')#[]z
-  Consecutivo = request.form.get('txtConsecutivo')#[]z
-  if Cliente.query.get(CcNit) is None:
-    new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo,Ext,Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
-    db.session.add(new_cli)
-    db.session.commit()
-  else:
-    Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
-    db.session.commit()
-  if Factura_Borrador.query.get(Consecutivo) is None:
-    new_factu = Factura_Borrador(CcNit,'soy un borrador',TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Referencia2, Referencia3, Referencia4, Descripcion1,  Descripcion2,  Descripcion3,  Descripcion4, Accesorios1,  Accesorios2,  Accesorios3,  Accesorios4, MedidasArreglos1, MedidasArreglos2, MedidasArreglos3, MedidasArreglos4,  ValorReferencia1,  ValorReferencia2,  ValorReferencia3,  ValorReferencia4,  Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'wacor', ConsecutivoManual,Nota)
-    db.session.add(new_factu)
-    db.session.commit()
-  else:
-    Factura_Borrador.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : CcNit , Factura.fac_tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñoEntregar, Factura.fac_AtendidoPor:' current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
-    db.session.commit()
+  #############################################################################################################
+  fac_prenda1 = request.form.get('txtfac_prenda1')
+  fac_prenda2 = request.form.get('txtfac_prenda2')
+  fac_prenda3 = request.form.get('txtfac_prenda3')
+  fac_prenda4 = request.form.get('txtfac_prenda4')
 
-
-
-  return jsonify({'nombre': Nota})
-  return jsonify({'error': 'Missing data'})
   
+  
+
+
+  StringfechaDespega = AñoRecoger+'-'+MesRecoger+'-'+DiaRecoger 
+  DatefechaDespega  = datetime.strptime(StringfechaDespega, '%Y-%m-%d')
+  StringfechaLlegada = AñoEntregar+'-'+MesEntregar+'-'+DiaEntregar 
+  DatefechaLlegada =   datetime.strptime(StringfechaLlegada, '%Y-%m-%d')
+  fecha_a_reservar =  DatefechaDespega - DatefechaLlegada
+
+  if fac_prenda1 is not None: 
+    ##imprimir para ver 
+    prenda = CantidadPrenda.get(fac_prenda1)
+    cantidadQueHay1 = prenda.cantidadPrenda_cantidad
+    reservas = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color.get(fac_prenda1))
+    for a in reservas:
+     fechas_reservadas = reservas.ReservasPrenda_entrega - reservas.ReservasPrenda_devolucion  
+      if bool(set(fecha_a_reservar) & set(fechas_reservadas)):
+        cantidadQueHay1 = cantidadQueHay1 - reservas.ReservasPrenda_Cantidad
+    if cantidadQueHay1 <= 0:
+      CantidadRealString1 = 'primer producto reservado no tiene inventario en esa fecha'
+    else:
+      CantidadRealString1 = 'de esta prenda,para esta fecha hay'+str(cantidadQueHay1)+'items disponibles'
+
+  if fac_prenda2 is not None: 
+    ##imprimir para ver 
+    prenda = CantidadPrenda.get(fac_prenda1)
+    cantidadQueHay1 = prenda.cantidadPrenda_cantidad
+    reservas = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color.get(fac_prenda1))
+    for a in reservas:
+     fechas_reservadas = reservas.ReservasPrenda_entrega - reservas.ReservasPrenda_devolucion  
+      if bool(set(fecha_a_reservar) & set(fechas_reservadas)):
+        cantidadQueHay1 = cantidadQueHay1 - reservas.ReservasPrenda_Cantidad
+    if cantidadQueHay1 <= 0:
+      CantidadRealString1 = 'primer producto reservado no tiene inventario en esa fecha'
+    else:
+      CantidadRealString1 = 'de esta prenda,para esta fecha hay'+str(cantidadQueHay1)+'items disponibles'
+  
+  if fac_prenda3 is not None: 
+    ##imprimir para ver 
+    prenda = CantidadPrenda.get(fac_prenda1)
+    cantidadQueHay1 = prenda.cantidadPrenda_cantidad
+    reservas = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color.get(fac_prenda1))
+    for a in reservas:
+     fechas_reservadas = reservas.ReservasPrenda_entrega - reservas.ReservasPrenda_devolucion  
+      if bool(set(fecha_a_reservar) & set(fechas_reservadas)):
+        cantidadQueHay1 = cantidadQueHay1 - reservas.ReservasPrenda_Cantidad
+    if cantidadQueHay1 <= 0:
+      CantidadRealString1 = 'primer producto reservado no tiene inventario en esa fecha'
+    else:
+      CantidadRealString1 = 'de esta prenda,para esta fecha hay'+str(cantidadQueHay1)+'items disponibles'
+
+  if fac_prenda4 is not None: 
+    ##imprimir para ver 
+    prenda = CantidadPrenda.get(fac_prenda1)
+    cantidadQueHay1 = prenda.cantidadPrenda_cantidad
+    reservas = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color.get(fac_prenda1))
+    for a in reservas:
+     fechas_reservadas = reservas.ReservasPrenda_entrega - reservas.ReservasPrenda_devolucion  
+      if bool(set(fecha_a_reservar) & set(fechas_reservadas)):
+        cantidadQueHay1 = cantidadQueHay1 - reservas.ReservasPrenda_Cantidad
+    if cantidadQueHay1 <= 0:
+      CantidadRealString1 = 'primer producto reservado no tiene inventario en esa fecha'
+    else:
+      CantidadRealString1 = 'de esta prenda,para esta fecha hay'+str(cantidadQueHay1)+'items disponibles'
+"""
+
+
+
+

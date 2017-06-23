@@ -18,6 +18,8 @@ class Cliente(db.Model):
     cli_celular = db.Column(db.String(45), nullable = False)
     cli_telefono = db.Column(db.String(45))
     cli_extension = db.Column(db.String(10))
+    cli_telefonoFijo = db.Column(db.String(20))
+    cli_telefonoFijo_ext = db.Column(db.String(6))
     cli_cargo = db.Column(db.Integer)
     cli_barrio = db.Column(db.String(100))
     cli_medioConocio = db.Column(db.Integer)
@@ -28,7 +30,7 @@ class Cliente(db.Model):
     cli_nacido_dia = db.Column(db.Integer)
 
 
-    def __init__(self, cli_identificacion, cli_nombre, cli_ciudad, cli_direccion,  cli_email, cli_celular, cli_telefono, cli_extension,  cli_barrio, cli_medioConocio, cli_nacido_mes, cli_nacido_dia):
+    def __init__(self, cli_identificacion, cli_nombre, cli_ciudad, cli_direccion,  cli_email, cli_celular, cli_telefono, cli_extension, cli_telefonoFijo, cli_telefonoFijo_ext, cli_barrio, cli_medioConocio, cli_nacido_mes, cli_nacido_dia):
         self.cli_identificacion = cli_identificacion 
         self.cli_nombre = cli_nombre
         self.cli_ciudad = cli_ciudad
@@ -37,6 +39,8 @@ class Cliente(db.Model):
         self.cli_celular = cli_celular
         self.cli_telefono = cli_telefono
         self.cli_extension = cli_extension
+        self.cli_telefonoFijo = cli_telefonoFijo
+        self.cli_telefonoFijo_ext = cli_telefonoFijo_ext
         self.cli_barrio = cli_barrio
         self.cli_medioConocio = cli_medioConocio
         self.cli_fecha_mod = datetime.now(timezone('America/Bogota'))
@@ -54,6 +58,8 @@ class Cliente(db.Model):
         <cli_celular: {}>
         <cli_telefono: {}>
         <cli_extension: {}>
+        <cli_telefonoFijo: {}>
+        <cli_telefonoFijo_ext: {}>
         <cli_cargo: {}>
         <cli_barrio: {}>
         <cli_medioConocio: {}>
@@ -61,7 +67,7 @@ class Cliente(db.Model):
         <cli_modifica: {}>
         <cli_nacido_mes: {}>
         <cli_nacido_dia: {}>'''
-        return texto.format(self.cli_nombre, self.cli_apellido, self.cli_ciudad, self.cli_direccion,  self.cli_email, self.cli_celular, self.cli_telefono, self.cli_extension, self.cli_cargo, self.cli_barrio, self.i_medioConocio, self.cli_crea, self.cli_modifica,self.cli_nacido_mes, self.cli_nacido_dia)
+        return texto.format(self.cli_nombre, self.cli_apellido, self.cli_ciudad, self.cli_direccion,  self.cli_email, self.cli_celular, self.cli_telefono, self.cli_telefonoFijo, self.cli_telefonoFijo_ext, self.cli_extension, self.cli_cargo, self.cli_barrio, self.i_medioConocio, self.cli_crea, self.cli_modifica,self.cli_nacido_mes, self.cli_nacido_dia)
 
     @property
     def serialize(self):
@@ -76,6 +82,8 @@ class Cliente(db.Model):
         'celular': self.cli_celular,
         'telefono': self.cli_telefono,
         'extension': self.cli_extension,
+        'telefonoFijo': self.cli_telefonoFijo,
+        'telefonoFijo_ext': self.cli_telefonoFijo_ext,
         'cargo': self.cli_cargo,
         'barrio': self.cli_barrio,
         'medioConocio': self.cli_medioConocio,

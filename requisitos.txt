@@ -1,22 +1,122 @@
+
+indica la cantidad de un producto  cuando no hay reservas o hay  reservas ya vencidas -------> 	YA CASI (FALTA TESTEAR EL SPAN, ), YA FUNCIONA EL ALERT
+
+indica la cantidad de un producto  cuando  HAY reservas o hay  reservas NO vencidas -------> 	
+
+puede ingresar recibos en un pop up--------->
+
+puede ver los pasados recibos de una factura---------->
+
+dependiendo si es alquiler o si es venta aparece o no las fechas de recoger y entregar---------->
+
+
+
+
 las facturas se guardan adecuadamente en base de datos!!!!!!!----> YA
 
-las facturas se actualizann adecuadamente !!!!!!!-------->YA
+las facturas se actualizann adecuadamente !!!!!!!-------->esperar comentarios
 
 el sistema indica si es un usuario nuevo o viejo!!!!!!! ------->YA
 
 el sistema indica las prendas disponibles para ese dia adecuadamente!!!!!
 
-el  sistema indica adecuadamente si es FAM O AM!!!!!!!----->YA 
+el  sistema indica adecuadamente si es FAM O AM!!!!!!!----->los que estan en el excel que estaba usando para desplegables es am y los que no esten alla son fam
 
 se navega entre pedidos------>YA
 
-se guarda adecuadamente como borrador!!!!!! ----->YA
-
-las unidades para vender y las de vender son diferentes!!!!!
 
 el tipo de prenda se guarda bn?????
 
 
-formulario compacto!!!! ----->ESPERAR OPINION
+formulario compacto!!!! ----->ESPERAR OPINION, tamo en esto........
 
-pdf se guarda correctamente!!!!1------>
+pdf se guarda correctamente!!!!------>
+
+
+cambiar mes y año del evento en el formulario---->YA
+
+cambiar 
+
+
+los campos del cliente en el formulario, ocupar el espacio no utilizado!!!!------->
+
+primero poner la cedula que el nomobre-------->YA
+
+poner telefono junto a extension (Ext)------->YA
+
+agregar otro telefono y llamarlos telefono oficina telefono ----->falta guardar para ver el desempeño
+
+en tipo de pedido, en los deplegables faltaron opciones, mirar en el excel el que falto  y los que dicen en esta linea --:::togas nueva en venta, togas nueva en alquiler, togas R.I.  en venta, en togas R.I.  en alquiler....lo mismo con vestidos y trajes ------>
+
+
+con la referencia debe llenar los otros campos
+
+
+tipo de pedido, cambiarlo por "tipo de factura"
+
+
+"Total" hacerlo una suma de los valores de referencia
+
+
+poner un checkBox que pueda poner iva y este campo debe sacar el 18% del valor total
+
+abono, desaparece.
+
+
+saldo
+
+cambios en factura requiere permisos de administrador, osea la actualizacion
+
+
+valor estimado, vendedor puede bajar hasta 30% del valor, menos de aqui la validacion no lo permitiria, mmmmmmmm, solo John podria cambiar esto
+
+
+el campo de contabilidad, vuela
+
+el campo de retefuente queda ahi solo, y antes debe tener un checkBox 
+
+
+enviar el podcast de publicidad, boluda--->ya
+
+
+ponerle el constraint a reservas y prendas--------->
+
+El sistema de reservas------------->
+
+
+
+
+
+dio problema:::::::::::::::::::::::::::::
+::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::
+:________________________
+
+los campos del cliente en el formulario, ocupar el espacio no utilizado!!!!------------>los campos (dia,mes cumpleaños el css organizarlo, tambien el ext)
+
+organizar el span en tipo poblacion y en tipo pedido
+
+recortar el espacio de dia y mes (de todo)---->PROBLEMA
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pendiente::::::::::::::::::::+
+::::::::::::::::::::::::::::::::
++::::::::::::::::::::::
+___________________________
+
+poner en el jquery el nuevo telefono fijo para la oficina
+

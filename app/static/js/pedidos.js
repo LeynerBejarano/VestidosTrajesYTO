@@ -3,11 +3,542 @@ var precio_clase = 0;
 var precio_estola = 0;
 var precio_entrega = 0;
 var precio_am = 0;
+var valor1;
+var valor2;
+var valor3;
+var valor4;
 var val_unitario;
 var test;
 
 
 $(document).ready(function(){
+
+$("#idRecibo").on("click",function(){
+    Recibo("QRyS",400,400);
+  });
+
+/*
+$('#txtTipoPedido').on('change', function(event){
+  
+  if(($('txtTipoPedido').val()=='2')||($('txtTipoPedido').val()=='4')||($('txtTipoPedido').val()=='6')||($('txtTipoPedido').val()=='8'))
+  {
+    $('#divRecogerMercancia').show()
+    $('#divDevolverMercancia').show()
+  }
+  else
+  {
+    $('#divRecogerMercancia').hide()
+    $('#divDevolverMercancia').hide()
+  }
+});
+*/
+
+$('#txtfac_prenda1').on('change', function(event){
+  $.ajax({
+            
+            data:{
+                txtfac_prenda1 :$('#txtfac_prenda1').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeValorReferencia1',
+            success: function(data){
+            $('#txtValorReferencia1').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda1 :$('#txtfac_prenda1').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeDescripcion1',
+            success: function(data){
+            $('#txtDescripcion1').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda1 :$('#txtfac_prenda1').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeAccesorios1',
+            success: function(data){
+            $('#txtAccesorios1').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda1 :$('#txtfac_prenda1').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txtMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val(),
+                txtTipoPedido:$('#txtTipoPedido').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/IndicarCantidad1',
+            success: function(data){
+            $('#cantidadPrenda1').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+if($('#txtValorReferencia1').val()==''){
+  valor1 = 0
+}
+else{
+  valor1 = $('#txtValorReferencia1').val()
+}
+if($('#txtValorReferencia2').val()==''){
+  valor2 = 0
+}
+else{
+  valor2 = $('#txtValorReferencia2').val()
+}
+if($('#txtValorReferencia3').val()==''){
+  valor3 = 0
+}
+else{
+  valor3 = $('#txtValorReferencia3').val()
+}
+if($('#txtValorReferencia4').val()==''){
+  valor4 = 0
+}
+else{
+  valor4 = $('#txtValorReferencia4').val()
+}
+$('#txtTotal').val(parseInt(valor1) + parseInt(valor2) + parseInt(valor3) + parseInt(valor4));
+
+  
+});
+
+$('#txtfac_prenda2').on('change', function(event){
+  $.ajax({
+            
+            data:{
+                txtfac_prenda2 :$('#txtfac_prenda2').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeValorReferencia2',
+            success: function(data){
+            $('#txtValorReferencia2').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+
+            
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda2 :$('#txtfac_prenda2').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeDescripcion2',
+            success: function(data){
+            $('#txtDescripcion2').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda2 :$('#txtfac_prenda2').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeAccesorios2',
+            success: function(data){
+            $('#txtAccesorios2').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda2 :$('#txtfac_prenda2').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txtMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val(),
+                txtTipoPedido:$('#txtTipoPedido').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/IndicarCantidad2',
+            success: function(data){
+            $('#cantidadPrenda2').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+if($('#txtValorReferencia1').val()==''){
+  valor1 = 0
+}
+else{
+  valor1 = $('#txtValorReferencia1').val()
+}
+if($('#txtValorReferencia2').val()==''){
+  valor2 = 0
+}
+else{
+  valor2 = $('#txtValorReferencia2').val()
+}
+if($('#txtValorReferencia3').val()==''){
+  valor3 = 0
+}
+else{
+  valor3 = $('#txtValorReferencia3').val()
+}
+if($('#txtValorReferencia4').val()==''){
+  valor4 = 0
+}
+else{
+  valor4 = $('#txtValorReferencia4').val()
+}
+$('#txtTotal').val(parseInt(valor1) + parseInt(valor2) + parseInt(valor3) + parseInt(valor4));
+
+});
+
+$('#txtfac_prenda3').on('change', function(event){
+  $.ajax({
+            
+            data:{
+                txtfac_prenda3 :$('#txtfac_prenda3').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeValorReferencia3',
+            success: function(data){
+            $('#txtValorReferencia3').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda3 :$('#txtfac_prenda3').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeDescripcion3',
+            success: function(data){
+            $('#txtDescripcion3').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda3 :$('#txtfac_prenda3').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeAccesorios3',
+            success: function(data){
+            $('#txtAccesorios3').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda3 :$('#txtfac_prenda3').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txtMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val(),
+                txtTipoPedido:$('#txtTipoPedido').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/IndicarCantidad3',
+            success: function(data){
+            $('#cantidadPrenda3').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+if($('#txtValorReferencia1').val()==''){
+  valor1 = 0
+}
+else{
+  valor1 = $('#txtValorReferencia1').val()
+}
+if($('#txtValorReferencia2').val()==''){
+  valor2 = 0
+}
+else{
+  valor2 = $('#txtValorReferencia2').val()
+}
+if($('#txtValorReferencia3').val()==''){
+  valor3 = 0
+}
+else{
+  valor3 = $('#txtValorReferencia3').val()
+}
+if($('#txtValorReferencia4').val()==''){
+  valor4 = 0
+}
+else{
+  valor4 = $('#txtValorReferencia4').val()
+}
+$('#txtTotal').val(parseInt(valor1) + parseInt(valor2) + parseInt(valor3) + parseInt(valor4));
+
+});
+
+$('#txtfac_prenda4').on('change', function(event){
+  $.ajax({
+            
+            data:{
+                txtfac_prenda4 :$('#txtfac_prenda4').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeValorReferencia4',
+            success: function(data){
+            $('#txtValorReferencia4').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda4 :$('#txtfac_prenda4').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeDescripcion4',
+            success: function(data){
+            $('#txtDescripcion4').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda4 :$('#txtfac_prenda4').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/DimeAccesorios4',
+            success: function(data){
+            $('#txtAccesorios4').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda4 :$('#txtfac_prenda4').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txtMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val(),
+                txtTipoPedido:$('#txtTipoPedido').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/IndicarCantidad4',
+            success: function(data){
+            $('#cantidadPrenda4').val(data);
+            //var labelName = 'label label-success';
+            //$("<span class="+labelName+">Funciono</span>").insertAfter("#RowPrenda1");                     
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+if($('#txtValorReferencia1').val()==''){
+  valor1 = 0
+}
+else{
+  valor1 = $('#txtValorReferencia1').val()
+}
+if($('#txtValorReferencia2').val()==''){
+  valor2 = 0
+}
+else{
+  valor2 = $('#txtValorReferencia2').val()
+}
+if($('#txtValorReferencia3').val()==''){
+  valor3 = 0
+}
+else{
+  valor3 = $('#txtValorReferencia3').val()
+}
+if($('#txtValorReferencia4').val()==''){
+  valor4 = 0
+}
+else{
+  valor4 = $('#txtValorReferencia4').val()
+}
+
+$('#txtTotal').val(parseInt(valor1) + parseInt(valor2) + parseInt(valor3) + parseInt(valor4));
+
+}); 
+
+if($('#FechaDePedido').val()=="" ){
+    $('#DivPriFechaFactura').show()
+}
+else{
+    $('#DivPriFechaFactura').hide()
+}
+
+$('#txtMunicipio').on('change', function(event){
+
+if ( ($('#txtDiaRecoger').val() != '') && ($('#txtMesRecoger').val() != '') && ($('#txtAñoRecoger').val() != '') && ($('#txtDiaEntregar').val() != '') && ($('#txtMesEntregar').val() != '') && ($('#txtAñoEntregar').val() != '') ){
+
+    $.ajax({
+            
+            data:{
+                txtCC_Nit :$('#txtCC_Nit').val(),
+                txtfac_prenda1: $('#txtfac_prenda1').val(),
+                txtfac_prenda2: $('#txtfac_prenda2').val(),
+                txtfac_prenda3: $('#txtfac_prenda3').val(),
+                txtfac_prenda4: $('#txtfac_prenda4').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txttMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val()
+            },
+            
+            //data : $('form').serialize(),
+            type: 'POST',
+            url:'/UsuarioNuevoViejo',
+            success: function(data){
+            $('#NuevoViejo').text(data)
+            $('#NuevoViejo').show()
+                        
+  }
+            //success: function(data) {
+              //         window.location = Json.parse(data); 
+                // }
+
+        })
+}
+
+}) 
   /*  
 if( ($('#txtDiaRecoger').val() != '') && ($('#txtMesRecoger').val() != '') && ($('#txtAñoRecoger').val() != '') && ($('#txtDiaEntregar').val() != '') && ($('#txtMesEntregar').val() != '') && ($('#txtAñoEntregar').val() != '')  ) {
   $.ajax({
@@ -103,6 +634,8 @@ $('#SiguienteFactura').click(function(){
                         $('#txtMesCumpleaños').val(data.cli_nacido_mes)
                         $('#txtTelefonoFijo').val(data.cli_telefono)
                         $('#txtExtension').val(data.cli_extension)
+                        $('#txtTelefonoFijo').val(data.cli_telefono)
+                        $('#txtExtension').val(data.cli_extension)
                         $('#txtCelular').val(data.cli_celular)
                         $('#txtEmail').val(data.cli_email)
                         $('#txtDireccion').val(data.cli_direccion)   
@@ -150,6 +683,7 @@ $('#SiguienteFactura').click(function(){
                         $('#txtSaldo').val(data.fac_Saldo)
                         $('#txtRetefuente').val(data.fac_Retefuente)
                         $('#txtNota').val(data.fac_nota)
+                        $('#FechaDePedido').val(data.ac_fechaFactura)  
                          
   }
             //success: function(data) {
@@ -174,6 +708,8 @@ $('#Descargar').click(function(){
                txtMesCumpleaños:$('#txtMesCumpleaños').val(),
                txtTelefonoFijo:$('#txtTelefonoFijo').val(),
                txtExtension:$('#txtExtension').val(),
+               //txtTelefonoFijo:$('#txtTelefonoFijo').val(data.cli_telefono),
+               //txtExtension:$('#txtExtension').val(data.cli_extension),           
                txtCelular:$('#txtCelular').val(),
                txtEmail:$('#txtEmail').val(),
                txtDireccion:$('#txtDireccion').val(),
@@ -403,7 +939,45 @@ $('#Descargar').click(function(){
         });
 });
     
-     
+function Recibo(titulo,ancho,alto){
+  $("#idLogin").dialog({
+    title:titulo,
+      width:ancho,
+      height:alto,
+      modal:true,
+      buttons:{
+      Ingresar:Ingresar_recibo,
+      Cancelar:function(){
+        $(this).dialog('close');
+      }
+    }   
+  });
+}
+
+function Ingresar_recibo(){
+  var usuario = $("#txtusuario").val();
+  var clave = $("#txtclave").val();
+  if(usuario=="" || clave==""){
+    mensaje("QRyS","Debe ingresar el usuario y la contraseña",300,300);
+    return false;
+  }
+  else{
+    $.ajax({
+        type:"post",
+        url:"controlador/usuario.php",
+        data:{txtusuario:usuario,txtclave:clave,opcion:"login"},
+        success:function(resultado){
+          if(resultado==1){
+            $("#iduser").html(usuario);
+          }
+          else{
+            mensaje("QRS","Usuario o contraseña incorrecta",300,250);
+          }
+        }
+      });
+    
+  }
+}    
        
     
 

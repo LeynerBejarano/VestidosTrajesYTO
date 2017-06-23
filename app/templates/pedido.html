@@ -3,203 +3,249 @@
     <link rel="stylesheet" href="/static/css/pedido.css">
 {% endblock %}
 {% block content %}
-<div class="container">
+<div id="PrimerContainer" class="container-fluid" style=" width:100%">
  <form class="form-horizontal" role="form" method = "POST" >
-<div class="form-group">
-<label class="control-label col-sm-2" for="email">Consecutivo Manual</label>
+<div>
     <div class="col-sm-2">
+    <span id="Consecutivo Manual" class="label label-default" >Consecutivo manual</span>
       <input type ="text" name = "txtConsecutivoManual" plaholder="Nombre de la Referencia" id="txtConsecutivoManual"/>
     </div>
-  <label class="control-label col-sm-2" for="email">Buscar factura por consecutivo</label>
+
   <div class="col-sm-2">
+  <span id="Buscar_consecutivo" class="label label-default" >Buscar_Consecutivo</span>
   <input type ="text" name = "txtConsecutivo" plaholder=" " id="txtConsecutivo" />
   </div>
-  <label class="control-label col-sm-2" for="email">Buscar  factura_borrador por consecutivo</label>
-  <div class="col-sm-2">
-  <input type ="text" name = "txtConsecutivo" plaholder=" " id="txtConsecutivoBorrador" />
-  </div>uu
+  <div>
+  <span id="fecha_" class="label label-default">Devolver Mercancia</span>
+  <table>
+          <tr>
+            <th></th>
+            <th><input type = "text" name = "txtDia" placeholder="Dia " class="txtEntregar" id = "txtDia" style="width: 45px"/></th>
+            <th><input type = "text" name = "txtMes" placeholder="Mes " class="txtEntregar" id = "txtMes" style="width: 45px"/></th>
+            <th><input type = "text" name = "txtAño" placeholder="Año " class="txtEntregar" id = "txtAño" style="width: 45px"/></th>
+          </tr>          
+        </table>
+  </div>
 </div>
 
-<!-- disabled -->
+<!--    class="control-label col-sm-2"-->
  <hr>
+ <div class="row" id="DivPriFechaFactura" style="display:none">
+ <span id="fecha_Pedido" class="label label-default">Fecha del pedido</span>
+  <label class="control-label col-sm-2" for="email" id="FechaDePedido" value=""></label>
+  <div>
+  <label class="control-label col-sm-2" for="email" id="DireccionLocal" value="">Carrera 76 N°29-24 Belén. Medellín </label>
+  <label class="control-label col-sm-2" for="email" id="FechaDePedido" value="">Tels: 238 25 23 – 581 87 67 - 300 794 05 06</label>
+  </div>
+ </div>
+
 <div class="row">
-  <label class="control-label col-sm-2" for="email">nombre</label>
-  <div class="col-sm-2 ">
-          <input type = "text" name = "txtNonmbreCliente" id="txtNonmbreCliente"/>
-</div>
-<label class="control-label col-sm-2" for="email">CC/Nit</label>
-  <div class="col-sm-2 ">
+<div class="col-sm-2 ">
+        <span id="CC_Nit" class="label label-default" >CC/Nit</span>
          <input type = "text" name = "txtCC_Nit" id="txtCC_Nit" />
          <span id="NuevoViejo" class="label label-primary" style="display: none"></span>
-        </div>
-        <label class="control-label col-sm-2" for="email">Dia Cumpleaños</label>
+        </div> 
+  <div class="col-sm-2 ">
+          <span id="Nombre" class="label label-default" >Nombre y Apellido</span>
+          <input type = "text" name = "txtNonmbreCliente" id="txtNonmbreCliente"/>
+          </div> 
+
+        <div class="col-sm-2">
+          <span id="Dia_Cumpleaños" class="label label-default" >Dia Cumpleaños</span>
+          <input type = "text" name = "txtDiaCumpleaños"  placeholder="Dia" id="txtDiaCumpleaños" style="width: 85px , padding-right: 0px"/>          
+           <input type = "text" name = "txtMesCumpleaños"  placeholder="Mes" id="txtMesCumpleaños" style="width: 45px , padding-left: 0px, float: left"/>
+ </div> 
+ 
         <div class="col-sm-2 ">
-          <input type = "text" name = "txtDiaCumpleaños" placeholder="Dia_Cumpleaños" id="txtDiaCumpleaños"/>
-          </div>
- </div>        
- <div class="row">
-<label class="control-label col-sm-2" for="email">Mes Cumpleaños</label>
-        <div class="col-sm-2 ">
-           <input type = "text" name = "txtMesCumpleaños" placeholder="Mes-Cumpleaños" id="txtMesCumpleaños"/>
- </div>    
-<label class="control-label col-sm-2" for="email">Telefono fijo</label>
-        <div class="col-sm-2 ">
-          <input type ="text" name = "txtTelefonoFijo" id="txtTelefonoFijo"/>
-          </div>  
-          <label class="control-label col-sm-2" for="email">Ext</label>
-        <div class="col-sm-2 ">
-         <input type ="text" name = "txtExtension" plaholder="Ext" id="txtExtension"/>
-         </div>
-         </div>
-          <div class="row">
-         <label class="control-label col-sm-2" for="email">Celular</label>
-        <div class="col-sm-2 ">
+         <span id="Telefono_fijo" class="label label-default" >Telefono fijo y Ext</span>
+          <input type ="text" name = "txtTelefonoFijo" placeholder="Telefono" id="txtTelefonoFijo"/>
+          <input type ="text" name = "txtExtension" placeholder="Ext" style="width: 45px" id="txtExtension"/>
+          </div> 
+
+          <div class="col-sm-2 ">
+         <span id="Telefono_fijo" class="label label-default" >Telefono fijo y Ext Oficina</span>
+          <input type ="text" name = "txtTelefonoFijoOficina" placeholder="Telefono" id="txtTelefonoFijoOficina"/>
+          <input type ="text" name = "ExtOficina" placeholder="Ext" style="width: 45px" id="ExtOficina"/>
+          </div> 
+
+          <div class="col-sm-2 ">
+          <span id="celular" class="label label-default" >Celular</span>
          <input type ="text" name = "txtCelular" placeholder="Celular" id="txtCelular"/>
           </div>
-          <label class="control-label col-sm-2" for="email">Email</label>
-        <div class="col-sm-2 ">
-          <input type ="text" name = "txtEmail" placeholder="Email" id="txtEmail"/>
-          </div>
-  </div>
-  <div class="row">
-   <label class="control-label col-sm-2" for="email">Direccion</label>
-        <div class="col-sm-2 ">
+          
+</div>
+<br>
+        
+<div class="row">
+<div class="col-sm-2 ">
+        <span id="direccion" class="label label-default" >Direccion</span>
          <input type ="text" name = "txtDireccion" placeholder="Direccion" id="txtDireccion"/>
-         </div> 
-         <label class="control-label col-sm-2" for="email">Municipio</label>
-        <div class="col-sm-2 ">
+         </div>
+<div class="col-sm-2 ">
+        <span id="ciudad" class="label label-default" >Ciudad</span>
          {{form.municipio_enc(class="form-control",id="txtMunicipio", placeholder="¿Cuál?")}}
          <span id="MetroPol" class="label label-warning" style="display: none"></span>
-          </div> 
-          <label class="control-label col-sm-2" for="email">Medio Comunicacion</label>
-        <div class="col-sm-2 ">
+          </div>            
+ <div class="col-sm-2 ">
+        <span id="Medio de comunicacion" class="label label-default" style="width: 85px" >Medio_comunicacion</span>
          {{form.cli_medioConocio( id = "txtMedioConocio")}}
          </div> 
-     </div> 
-    <div class="row">
-         <label class="control-label col-sm-2" for="email">Barrio</label>
-        <div class="col-sm-2 ">
+<div class="col-sm-2 ">
+        <span id="Barrio" class="label label-default"  >Barrio</span>
          <input type ="text" name = "txtBarrio" placeholder="Barrio"  id="txtBarrio"/>
-          </div>
-          <label class="control-label col-sm-2" for="email">Atendido Por</label>
-        <div class="col-sm-2 ">
+          </div>      
+<div class="col-sm-2 ">
+        <span id="AtendidoPorSpan" class="label label-default">Atendido por</span>
          {{form.vendedor( id = "txtAtendidoPor" )}}
-         </div>
-    </div>
-   </div> 
-   <div class="row">
-   
-         <label class="control-label col-sm-2" for="email">Nombre Referencia</label>
-        <div class="col-sm-2 ">
+         </div>       
+        
+  </div>
+  <br>
+<div class="row">
+<div class="col-sm-2 ">
+           <span id="email" class="label label-default" >Email</span>
+          <input type ="text" name = "txtEmail" placeholder="Email" id="txtEmail"/>
+          </div>
+ <div class="col-sm-2 ">
+          <span id="NombreReferenciaSpan" class="label label-default">Nombre_Referencia</span>
          <input type ="text" name = "txtReferenciaNombre" plaholder="Nombre de la Referencia" id="txtReferenciaNombre"/> 
-         </div>
-         <label class="control-label col-sm-2" for="email">Celular Referencia</label>
-        <div class="col-sm-2 ">
+         </div>   
+<div class="col-sm-2 ">
+        <span id="CelularReferenciaSpan" class="label label-default">Celular_Referencia</span>
          <input type ="text" name = "txtReferenciaCelular" plaholder="Celular de la Referencia" id="txtReferenciaCelular"/> 
-         </div>
-          <label class="control-label col-sm-2" for="email">Telefono Referencia</label>
-        <div class="col-sm-2 ">
+         </div>  
+<div class="col-sm-2 ">
+          <span id="TelefonoReferenciaSpan" class="label label-default">Telefono_Referencia</span>
          <input type ="text" name = "txtReferenciaTelefono" plaholder="Telefono de la Referencia" id="txtReferenciaTelefono"/> 
-         </div>
-</div> 
+         </div>   
+
+          
+  </div>
+
+   
+ 
 
 <hr> 
+<br>
  <div class="row">
- <label class="control-label col-sm-2" for="email">Tipo de Pedido</label>
+
         <div class="col-sm-2 ">
+        <span id="TipodePedidoSpan" class="label label-default" >Tipo_Pedido</span>
          {{form.fac_tipoPedido( id = "txtTipoPedido")}}
          </div> 
-         <label class="control-label col-sm-2" for="email">Tipo de Poblacion</label>
-        <div class="col-sm-2 ">
+         <div class="col-sm-2 ">
+         <span id="PoblacionSpan" class="label label-default">Poblacion</span>
          {{form.ped_poblacion( id = "txtPedPoblacion")}}
-         </div> 
-         <label class="control-label col-sm-2" for="email">Tipo de Evento</label>
-        <div class="col-sm-2 ">
+         </div>
+         <div class="col-sm-2 ">
+         <span id="TipoEventoSpan" class="label label-default">Tipo_Evento</span>
           {{form.ped_evento( id = "txtTipoEvento")}}
           </div> 
-         </div> 
- <div class="row">
-     <label class="control-label col-sm-2" for="email">Dia del Evento</label>
-        <div class="col-sm-2 ">
+          <div class="col-sm-2 ">
+         <span id="Dia_Evento" class="label label-default">Dia_Evento</span>
          <input type = "text" name = "txtDiaEvento" placeholder="Dia del evento" id="txtDiaEvento"/>
          </div> 
-      <label class="control-label col-sm-2" for="email">Dia del Evento</label>
-        <div class="col-sm-2 ">
-         <input type = "text" name = "txtMesEvento" placeholder="Dia del evento" id="txtMesEvento"/>
+         <div class="col-sm-2 ">
+        <span id="Mes_Evento" class="label label-default">Mes_Evento</span>
+         <input type = "text" name = "txtMesEvento" placeholder="Mes del Evento" id="txtMesEvento"/>
          </div> 
-      <label class="control-label col-sm-2" for="email">Dia del Evento</label>
-        <div class="col-sm-2 ">
-         <input type = "text" name = "txtAñoEvento" placeholder="Dia del evento" id="txtAñoEvento"/>
+         <div class="col-sm-2 ">
+        <span id="Año_Evento" class="label label-default">Año_Evento</span>
+         <input type = "text" name = "txtAñoEvento" placeholder="Año del evento" id="txtAñoEvento"/>
          </div> 
+</div> 
+<br>
+         
+         
+ <div class="row">
+        
+      
+        
+      
+        
   </div> 
-         <table>
+         <table style="width:100%">
           <tr>
-            <th>Referencia #</th>     
-            <th>Descripción</th>
-            <th>Accesorios</th>
-            <th>Medidas y Arreglos</th>
-            <th>Valor Referencia</th>
+            <th><span id="Referencia_" class="label label-default">Referencia</span></th>  
+            <th><span id="CantidadReferencia_" class="label label-default">Cantidad</span></th>     
+            <th><span id="Descripcion_" class="label label-default">Descripcion</span></th>
+            <th><span id="Accesorios_" class="label label-default">Accesorios</span></th>
+            <th><span id="Medidas_y_Arreglos_" class="label label-default">Medidas y Arreglos</span></th>
+            <th><span id="Valor_Referencia_" class="label label-default">Valor Referencia</span></th>
           </tr>
-          <tr>
-            <td><input type = "text" name = "txtReferencia1" placeholder="txtReferencia1" class="txtReferencia" id = "txtReferencia1"/></td>
-            <td><input type = "text" name = "txtDescripcion1" placeholder="txtDescripcion1" class="txtDescripcion" id = "txtDescripcion1"/></td>
+          <tr id="RowPrenda1">
+            <!--td>style="width: 65px, background-color:gray"<input type = "text" name = "txtReferencia1" placeholder="txtReferencia1" class="txtReferencia" id = "txtReferencia1"/></td-->
+            <td >{{form.fac_prenda(id ="txtfac_prenda1")}}</td>
+            <td><input id="cantidadPrenda1" disabled class="cantidadPrenda" ></input></td>
+            <td width="70%" ><input type = "text" name = "txtDescripcion1" placeholder="txtDescripcion1" class="txtDescripcion" id = "txtDescripcion1" size="64" /></td>
             <td><input type = "text" name = "txtAccesorios1" placeholder="txtAccesorios1" class="txtAccesorios" id = "txtAccesorios1"/></td>
             <td><input type = "text" name = "txtMedidasArreglos1" placeholder="txtMedidasArreglos1" class="txtMedidasArreglos" id = "txtMedidasArreglos1"/></td>
             <td><input type = "text" name = "txtValorReferencia1" placeholder="txtValorReferencia1" class="txtValorReferencia" id = "txtValorReferencia1"/></td>
           </tr>
           <tr>
-            <td><input type = "text" name = "txtReferencia2" placeholder="txtReferencia2" class="txtReferencia" id = "txtReferencia2"/></td>
-            <td><input type = "text" name = "txtDescripcion2" placeholder="txtDescripcion2" class="txtDescripcion" id = "txtDescripcion2"/></td>
+            <!--td><input type = "text" name = "txtReferencia2" placeholder="txtReferencia2" class="txtReferencia" id = "txtReferencia2"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td>{{form.fac_prenda(id ="txtfac_prenda2")}}</td>
+            <td><input id="cantidadPrenda2" disabled class="cantidadPrenda"></input></td>
+            <td><input type = "text" name = "txtDescripcion2" placeholder="txtDescripcion2" class="txtDescripcion" id = "txtDescripcion2" size="64"/></td>
             <td><input type = "text" name = "txtAccesorios2" placeholder="txtAccesorios2" class="txtAccesorios" id = "txtAccesorios2"/></td>
-            <td><input type = "text" name = "txtMedidasArreglos2" placeholder="txtMedidasArreglos2" class="txtMedidasArreglos" id = "txtMedidasArreglos2"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos2" placeholder="txtMedidasArreglos2" class="txtMedidasArreglos" id = "txtMedidasArreglos2" /></td>
             <td><input type = "text" name = "txtValorReferencia2" placeholder="txtValorReferencia2" class="txtValorReferencia" id = "txtValorReferencia2"/></td>
           </tr>
           <tr>
-            <td><input type = "text" name = "txtReferencia3" placeholder="txtReferencia3" class="txtReferencia" id = "txtReferencia3"/></td>
-            <td><input type = "text" name = "txtDescripcion3" placeholder="txtDescripcion3" class="txtDescripcion" id = "txtDescripcion3"/></td>
+            <!--td><input type = "text" name = "txtReferencia3" placeholder="txtReferencia3" class="txtReferencia" id = "txtReferencia3"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td>{{form.fac_prenda(id ="txtfac_prenda3")}}</td>
+            <td><input id="cantidadPrenda3" disabled class="cantidadPrenda"></input></td>
+            <td><input type = "text" name = "txtDescripcion3" placeholder="txtDescripcion3" class="txtDescripcion" id = "txtDescripcion3" size="64"/></td>
             <td><input type = "text" name = "txtAccesorios3" placeholder="txtAccesorios3" class="txtAccesorios" id = "txtAccesorios3"/></td>
             <td><input type = "text" name = "txtMedidasArreglos3" placeholder="txtMedidasArreglos3" class="txtMedidasArreglos" id = "txtMedidasArreglos3"/></td>
             <td><input type = "text" name = "txtValorReferencia3" placeholder="txtMedidasArreglos3" class="txtValorReferencia" id = "txtValorReferencia3"/></td>
           </tr>
           <tr>
-            <td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td>
-            <td><input type = "text" name = "txtDescripcion4" placeholder="txtDescripcion4" class="txtDescripcion" id = "txtDescripcion4"/></td>
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td>{{form.fac_prenda(id ="txtfac_prenda4")}}</td>
+            <td><input id="cantidadPrenda4" disabled class="cantidadPrenda"></input></td>
+            <td><input type = "text" name = "txtDescripcion4" placeholder="txtDescripcion4" class="txtDescripcion" id = "txtDescripcion4" size="64"/></td>
             <td><input type = "text" name = "txtAccesorios4" placeholder="txtAccesorios1" class="txtAccesorios" id = "txtAccesorios4"/></td>
             <td><input type = "text" name = "txtMedidasArreglos4" placeholder="txtMedidasArreglos4" class="txtMedidasArreglos" id = "txtMedidasArreglos4"/></td>
             <td><input type = "text" name = "txtValorReferencia4" placeholder="txtValorReferencia4" class="txtValorReferencia" id = "txtValorReferencia4"/></td>
           </tr>
         </table>
+<br>
+  <div id="divRecogerMercancia">
+        <span id="Recoger_Mercancia" class="label label-default">Recoger Mercancia</span>
         <table>
           <tr>
-            <th>Recoger Mercancia</th>     
-            <th><input type = "text" name = "txtDiaRecoger" placeholder="txtDiaRecoger" class="txtRecoger" id = "txtDiaRecoger"/></th>
-            <th><input type = "text" name = "txtMesRecoger" placeholder="txtMesRecoger" class="txtRecoger" id = "txtMesRecoger"/></th>
-            <th><input type = "text" name = "txtAñoRecoger" placeholder="txtAñoRecoger" class="txtRecoger" id = "txtAñoRecoger"/></th>
+            <th></th>     
+            <th><input type = "text" name = "txtDiaRecoger" placeholder="Dia" class="txtRecoger" id = "txtDiaRecoger" style="width: 45px"/></th>
+            <th><input type = "text" name = "txtMesRecoger" placeholder="Mes" class="txtRecoger" id = "txtMesRecoger" style="width: 45px"/></th>
+            <th><input type = "text" name = "txtAñoRecoger" placeholder="Año" class="txtRecoger" id = "txtAñoRecoger" style="width: 45px"/></th>
           </tr>
+          </table>
+    </div>
+<br>
+  <div id="divDevolverMercancia">
+          <span id="Devolver_Mercancia" class="label label-default">Devolver Mercancia</span>
+          <table>
           <tr>
-            <th>Devolver Mercancia</th>
-            <th><input type = "text" name = "txtDiaEntregar" placeholder="Dia para Entregar" class="txtEntregar" id = "txtDiaEntregar"/></th>
-            <th><input type = "text" name = "txtMesEntregar" placeholder="Mes para Entregar" class="txtEntregar" id = "txtMesEntregar"/></th>
-            <th><input type = "text" name = "txtAñoEntregar" placeholder="Año para Entregar" class="txtEntregar" id = "txtAñoEntregar"/></th>
+            <th></th>
+            <th><input type = "text" name = "txtDiaEntregar" placeholder="Dia " class="txtEntregar" id = "txtDiaEntregar" style="width: 45px"/></th>
+            <th><input type = "text" name = "txtMesEntregar" placeholder="Mes " class="txtEntregar" id = "txtMesEntregar" style="width: 45px"/></th>
+            <th><input type = "text" name = "txtAñoEntregar" placeholder="Año " class="txtEntregar" id = "txtAñoEntregar" style="width: 45px"/></th>
           </tr>          
         </table>
+    </div>
         <table>
+<br>
           <tr>
-            <th>Total</th>
-            <th><input type = "text" name = "txtTotal" placeholder="" class="txtTotal" id = "txtTotal"/></th>
+            <th style="width: 25px"><span id="Total_" class="label label-default" >Total</span></th>
+            <th ><input type = "text" name = "txtTotal" placeholder="" class="txtTotal" id = "txtTotal"/></th>
           </tr>
           <tr>
-            <td>Abono</td>
-            <td><input type = "text" name = "txtAbono" placeholder="" class="txtAbono" id = "txtAbono"/></td>
-          </tr>
-          <tr>
-            <td>Saldo</td>
-            <td><input type = "text" name = "txtSaldo" placeholder="" class="txtSaldo" id = "txtSaldo"/></td>
-          </tr>
-          <tr>
-            <td>Contabilidad</td>
-            <td>Retefuente</td>
-            <td><input type = "text" name = "txtContabilidad" placeholder="" class="txtTotal" id = "txtContabilidad"/></td>
+            <td><span id="Retefuente_" class="label label-default">Retefuente</span></td>
+            <td><input type="checkbox" name="vehicle" value="Retefuente_tiene"> Poner </td>
             <td><input type = "text" name = "txtRetefuente" placeholder="" class="txtRetefuente" id = "txtRetefuente"/></td>
           </tr>
         </table>
@@ -214,10 +260,21 @@
          <button type="button" id="Descargar">Descargar</button>
          <button type="button" id="SiguienteFactura">Siguiente Factura</button>
          <button type="button" id="GuardarEnBorrador">GuardarEnBorrador</button>
+         <button type="button" id="idRecibo">Ingresar Recibo</button>
       </form>
       </div> 
 
       <br>
       <div id="succesAlert" class="alert alert-succes" role="alert" style="display:none;"></div>
       <div id="errorAlert" class="alert alert-danger" role="alert" style="display:none;"></div>
+<table>
+<tr>
+  <td>
+
+  </td>
+  <td>
+    
+  </td>
+</tr>
+</table>
 {% endblock %}

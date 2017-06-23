@@ -72,6 +72,7 @@ class Factura(db.Model):
     fac_tipoToga = db.Column(db.Integer)
     fac_colorToga = db.Column(db.Integer)
     fac_nota = db.Column(db.Integer)
+    fac_fechaFactura = db.Column(db.DateTime)
     fac_fecha_mod = db.Column(db.DateTime)
 
     
@@ -119,6 +120,7 @@ class Factura(db.Model):
         self.fac_AtendidoPor = fac_AtendidoPor
         #self.fac_modifica = fac_modifica
         self.fac_consecutivoManual = fac_consecutivoManual
+        self.fac_fechaFactura = "{:%d.%m.%Y}".format(datetime.now())
         self.fac_nota = fac_nota
         self.fac_fecha_mod = datetime.now(timezone('America/Bogota'))
        
@@ -172,9 +174,10 @@ class Factura(db.Model):
         <fac_colorToga: {}>
         <fac_nota: {}>
         <fac_modifica: {}>
+        <fac_fechaFactura: {}>
         <fac_fecha_mod: {}>
         '''
-        return texto.format(self.fac_tipoPedido, self.fac_cliente, self.fac_ReferenciaNombre,self.fac_ReferenciaCelular,self.fac_ReferenciaMedio,self.fac_poblacion, self.fac_evento, self.fac_eventoDia, self.fac_eventoMes, self.fac_eventoAño, self.fac_ReferenciaProducto1, self.fac_ReferenciaProducto2, self.fac_ReferenciaProducto3, self.fac_ReferenciaProducto4, self.fac_descripcion1, self.fac_descripcion2, self.fac_descripcion3, self.fac_descripcion4, self.fac_accesorios1, self.fac_accesorios2, self.fac_accesorios3, self.fac_accesorios4, self.fac_MedidasArreglos1, self.fac_MedidasArreglos2, self.fac_MedidasArreglos3, self.fac_MedidasArreglos4, self.fac_ValorReferencia1, self.fac_ValorReferencia2, self.fac_ValorReferencia3, self.fac_ValorReferencia4, self.fac_Total, self.fac_Abono, self.fac_Saldo, self.fac_Retefuente, self.fac_ReclamarMercanciaDia, self.fac_ReclamarMercanciaMes, self.fac_ReclamarMercanciaAño, self.fac_DevolverMercanciaDia, self.fac_DevolverMercanciaMes, self.fac_DevolverMercanciaAño, self.fac_AtendioPor, self.fac_consecutivoManual, self.fac_tipoToga, self.fac_colorToga, self.fac_nota)
+        return texto.format(self.fac_tipoPedido, self.fac_cliente, self.fac_ReferenciaNombre,self.fac_ReferenciaCelular,self.fac_ReferenciaMedio,self.fac_poblacion, self.fac_evento, self.fac_eventoDia, self.fac_eventoMes, self.fac_eventoAño, self.fac_ReferenciaProducto1, self.fac_ReferenciaProducto2, self.fac_ReferenciaProducto3, self.fac_ReferenciaProducto4, self.fac_descripcion1, self.fac_descripcion2, self.fac_descripcion3, self.fac_descripcion4, self.fac_accesorios1, self.fac_accesorios2, self.fac_accesorios3, self.fac_accesorios4, self.fac_MedidasArreglos1, self.fac_MedidasArreglos2, self.fac_MedidasArreglos3, self.fac_MedidasArreglos4, self.fac_ValorReferencia1, self.fac_ValorReferencia2, self.fac_ValorReferencia3, self.fac_ValorReferencia4, self.fac_Total, self.fac_Abono, self.fac_Saldo, self.fac_Retefuente, self.fac_ReclamarMercanciaDia, self.fac_ReclamarMercanciaMes, self.fac_ReclamarMercanciaAño, self.fac_DevolverMercanciaDia, self.fac_DevolverMercanciaMes, self.fac_DevolverMercanciaAño, self.fac_AtendioPor, self.fac_consecutivoManual, self.fac_tipoToga, self.fac_colorToga,self.fac_fechaFactura, self.fac_nota)
 
     @property
     def serialize(self):
@@ -225,6 +228,7 @@ class Factura(db.Model):
         'fac_consecutivoManual' : self.fac_consecutivoManual,
         'fac_tipoToga' : self.fac_tipoToga,
         'fac_colorToga' : self.fac_colorToga,
+        'fac_fechaFactura': self.fac_fechaFactura,
         'fac_nota' : self.fac_nota
        }
        
