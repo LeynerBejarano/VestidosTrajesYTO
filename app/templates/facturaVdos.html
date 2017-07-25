@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Factura Losdelastogas</title>
+</head>
+<style type="text/css">
+  div.test table,
+  div.test tr,
+  div.test td,
+  div.test th{
+    border: 1px solid black;
+    border-collapse: collapse;
+    border-radius: 20px;
+}
+
+</style>
+<body>
+            <!-- Simple Invoice - START -->
+<header>
+<table id="table-head">
+    <tr>
+        <!-- <td>
+            <img src="{{path}}/static/img/logo.png" alt="Logo" width="70" height="80">
+        </td> -->
+        <td>
+            Fecha en que se toma el pedido <br>
+            N° Factura de venta
+        </td>
+        <td>
+            {{factura.fac_fecha_mod}} <br>
+            <span style="color: red">N° {{factura.fac_numero}}</span>
+        </td>
+        <td>
+            
+        </td>
+        <td>
+            
+        </td>
+        <td>
+            
+        </td>
+        <td id="info-head">
+            Cra 76 N° 29 - 24 Belen Medellin <br>
+            Teléfono fijo: 238 25 23 - 581 87 67 <br>
+            Celular: 300 794 05 06 <br>
+            Correo electrónico: casaluiferbelen@hotmail.com                        <br>
+        </td>
+    </tr>
+    </table>
+</header>
+<br>
+<br>
+
+<div>
+<label style="font-weight: 900" >Fecha             </label>   <u>{{factura.fac_fechaFactura}}                                                                 </u>
+<label style="font-weight: 900" >Medio             </label>   <u>{{medio}}                                                                                    </u>
+<label style="font-weight: 900" >Tipo              </label>   <u>{{tipo}}                                                                                     </u>
+<label style="font-weight: 900" >Nombre            </label>   <u>{{cliente.cli_nombre}}                                                                       </u>
+<label style="font-weight: 900" >C.C.#             </label>   <u>{{factura.fac_cliente}}                                                                      </u>
+<label style="font-weight: 900" >Direccion         </label>   <u>{{cliente.cli_direccion}}                                                                    </u><br>
+<label style="font-weight: 900" >Atendido          </label>   <u>{{factura.fac_AtendidoPor}}                                                                  </u>
+<label style="font-weight: 900" >Telefono Oficina  </label>   <u>{% if cliente.cli_telefonoFijor %}{{cliente.cli_telefonoFijor}} {% else %} .......... {% endif %}
+
+{% if cliente.cli_telefonoFijo_ext %}, {{cliente.cli_telefonoFijo_ext}}  {% endif %}</u>
+<label style="font-weight: 900" >Telefono Casa     </label>   <u>{% if cliente.cli_telefono %}{{cliente.cli_telefono}} {% else %} .......... {% endif %}{% if cliente.cli_extension %}, {{cliente.cli_extension}} {% endif %}</u><br>
+<label style="font-weight: 900" >Celular           </label>   <u>{{cliente.cli_celular}}                                                                      </u>
+<label style="font-weight: 900" >Reclamar Mercancia</label>   <u>{{factura.fac_ReclamarMercanciaFecha}}                                                       </u>
+<label style="font-weight: 900" >Devolver Mercancia</label>   <u>{{factura.fac_DevolverMercanciaFecha}}                                                       </u>
+</div>
+
+<br>
+<br>
+<div class="test">
+<table >
+  <tr>
+    <th>
+      REF
+    </th>
+    <th>
+      ACCESORIOS
+    </th>
+    <th>
+      MEDIDAS Y ARREGLOS
+    </th>
+    <th>
+      VALOR UNITARIO
+    </th>
+  </tr>
+  {#....................................#}
+  {% for det in detalles%}
+  <tr>
+      <td>{{det.facdet_Referencia}}</td>
+      <td>{{det.facdet_Accesorios}}</td>
+      <td>{{det.facdet_MedidasyArreglos}}</td>
+      <td>{{det.facdet_precio}}</td>
+  </tr>
+  {% endfor %}
+  <tr>
+    <td colspan="3">
+      Por cada día de retraso se cobrarán $ 10,000 presentar esta factura de venta y cedula para reclamar su mercancía, 
+      Es indispensable firmar una letra de cambio por el valor comercial de las prendas' entregadas, Cualquier modificación
+      a esta factura de venta deberá hacerse personalmente, No hay devolución de dinero, HORARIO DE ATENCiÓN: Lunes
+      a Sábado de, 10:00 a.rn. a 7:00 p.rn. Jornada continua, ESTA FACTURA DE VENTA TIENE UNA CADUCIDAD DE 6 MESES,
+    </td>
+    <td colspan="2">
+            TOTAL $:            {{facturaTotalConCommas}} <br>    
+            <br>
+            <br>      
+
+        {% if retefuente %}
+
+            RETEFUENTE:{{retefuente}} <br>
+        {% endif %}
+    </td>
+  </tr>
+</table>  
+</div>
+
+
+    </body>
+</html>

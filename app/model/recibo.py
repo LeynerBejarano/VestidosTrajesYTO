@@ -36,11 +36,11 @@ class Recibo(db.Model):
     reci_FacturaTipo = db.Column(db.String(100))
     reci_nuevoSaldo = db.Column(db.Integer)
     reci_CCNit = db.Column(db.Integer)
-
+    reci_RecibimosDe = db.Column(db.String(200))
     
     
 
-    def __init__(self, reci_Factura, reci_valor, reci_ciudad, reci_fecha, reci_Total, reci_AporteEnLetras, reci_Concepto,  reci_FacturaTipo, reci_nuevoSaldo, reci_CCNit ):
+    def __init__(self, reci_Factura, reci_valor, reci_ciudad, reci_fecha, reci_Total, reci_AporteEnLetras, reci_Concepto,  reci_FacturaTipo, reci_nuevoSaldo, reci_CCNit, reci_reci_RecibimosDe ):
         self.reci_Factura = reci_Factura
         self.reci_valor = reci_valor
         self.reci_ciudad = reci_ciudad
@@ -51,7 +51,7 @@ class Recibo(db.Model):
         self.reci_FacturaTipo = reci_FacturaTipo
         self.reci_nuevoSaldo = reci_nuevoSaldo
         self.reci_CCNit  = reci_CCNit
-        
+        self.reci_RecibimosDe = reci_reci_RecibimosDe
        
 
 
@@ -67,8 +67,9 @@ class Recibo(db.Model):
         <reci_FacturaTipo : {}>
         <reci_nuevoSaldo: {}>
         <reci_CCNit: {}>
+        <reci_RecibimosDe>
         '''
-        return texto.format(self.reci_numero , self.reci_Factura, self.reci_valor, self.reci_ciudad, self.reci_fecha, self.reci_Total, self.reci_AporteEnLetras, self.reci_Concepto, self.reci_FacturaTipo, self.reci_nuevoSaldo, self.reci_CCNit)
+        return texto.format(self.reci_numero , self.reci_Factura, self.reci_valor, self.reci_ciudad, self.reci_fecha, self.reci_Total, self.reci_AporteEnLetras, self.reci_Concepto, self.reci_FacturaTipo, self.reci_nuevoSaldo, self.reci_CCNit, self.reci_RecibimosDe)
 
     @property
     def serialize(self):
@@ -84,7 +85,8 @@ class Recibo(db.Model):
         'concepto': self.reci_Concepto,
         'facturaTipo': self.reci_FacturaTipo,
         'nuevoSaldo': self.reci_nuevoSaldo,
-        'CCNit': self.reci_CCNit
+        'CCNit': self.reci_CCNit,
+        'RecibimosDe':self.reci_RecibimosDe
        }
        
 

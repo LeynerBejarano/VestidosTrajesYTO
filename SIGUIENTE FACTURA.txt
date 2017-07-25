@@ -1,0 +1,12 @@
+                        for(var i = 1; i < data.ReferenciaLista.length; i++){
+                    $('#RowPrenda'+i.toString()).show()
+                    $('#ReferenciaPrenda'+i.toString()).val(data.ReferenciaLista[i])
+                    $('#txtDescripcion'+i.toString()).val(data.DescripcionLista[i])
+                    $('#txtAccesorios'+i.toString()).val(data.AccesoriosLista[i])    
+                    $('#txtValorReferencia'+i.toString()).val(data.ValorREferencia[i])
+                    $('#LineaSexo'+i.toString()).val(data.LineaSExo)
+                    $('#Estilo'+i.toString()).val(data.EstilosLista[i])
+                     }
+                     for(var i = 22; i > data.ReferenciaLista.length; i--){
+                      $('#ReferenciaPrenda'+i.toString()).hide()
+                     }

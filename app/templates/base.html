@@ -9,60 +9,164 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     
     <!-- CSS -->
-    <link rel="stylesheet" href="/static/css/owl.carousel.css">
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" href="/static/css/ionicons.min.css">
-    <link rel="stylesheet" href="/static/css/animate.css">
-    <link rel="stylesheet" href="/static/css/responsive.css">
-    <link rel='stylesheet prefetch' href='./static/css/jquery-ui.css'>
-    <link rel="stylesheet" href="./static/css/login.css">
-    <link rel="stylesheet" href="/static/css/pedido_factura.css">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <link rel="stylesheet" href="/static/css/main.css">
+    <link href="https://bootswatch.com/journal/bootstrap.min.css" rel="stylesheet" type="text/css">
+    
     {% block styles %}{% endblock %}
     <!-- Js -->
-    <script src="/static/js/jquery-1.9.1.min.js"></script>
-    <script src="/static/js/jquery.excoloSlider.min.js"></script>
-    <script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/owl.carousel.min.js"></script>
-    <script src="/static/js/plugins.js"></script>
-    <script src="/static/js/min/waypoints.min.js"></script>
-    <script src="/static/js/jquery.counterup.js"></script>
-    <script src="/static/js/jquery.blockUI.js"></script>
-    <script src="/static/js/main.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!--script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script-->
+    <!--script src="js/jquery.excoloSlider.min.js"></script><link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"-->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="js/jquery.excoloSlider.min.js"></script>
     <script src="/static/js/pedidos.js"></script>
-    <script type=text/javascript>
-    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+    <script>
+     $.datepicker.regional['es'] = {
+     closeText: 'Cerrar',
+     prevText: '< Ant',
+     nextText: 'Sig >',
+     currentText: 'Hoy',
+     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+     monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+     dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+     dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+     dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+     weekHeader: 'Sm',
+     dateFormat: 'dd/mm/yy',
+     firstDay: 1,
+     isRTL: false,
+     showMonthAfterYear: false,
+     yearSuffix: ''
+     };
+     $.datepicker.setDefaults($.datepicker.regional['es']);
+    $(function () {
+    $("#txtfechaRecoger").datepicker();
+    $("#txtfechaDevolver").datepicker();
+    $("#txtfechaEvento").datepicker();
+    $("#txtFechaTallerInicio").datepicker();
+    $("#txtFechaTallerFinal").datepicker();
+    });
     </script>
+    <!--script src="/static/js/min/waypoints.min.js"></script-->
+    <!--script src="/static/js/jquery.counterup.js"></script-->
+    <!--script src="/static/js/jquery.blockUI.js"></script-->
+    <!--script src="/static/js/main.js"></script-->
+    <!--script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script-->
+   
   </head>
   <style>
   .cantidadPrenda{
     width: 65px;
     background-color: lightgray ;
   }
-    
+  .LineasTabla{
+     border: 1px solid black;
+  }
+  .no-close .ui-dialog-titlebar-close {display: none }
+  .dropbtn {
+    background-color: #000099;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
+.bajaloUnpoquito {
+  margin-top: 100px;
+}
+fieldset {
+    font-family: sans-serif;
+    border: 5px solid #1F497D;
+    border-radius: 5px;
+    padding: 15px;  
+    margin-top: 2px;
+    margin-bottom: 100px;
+    margin-right: 20px;
+    margin-left: 40px;  
+}
+legend.scheduler-border {
+    width:inherit; /* Or auto */
+    padding:0 10px; /* To give a bit of padding on the left and right */
+    border-bottom:none;
+}
   </style>
   <body>
     <!-- Header Start -->
     </header>
-    <div class="row">
-    <div>
-      <img src="/static/img/logo2.png" alt="Logo" width="70" height="80">
-    </div>
-    <div> 
-      {{hoy}}
-    </div>         
-    </div>          
+    <script>
+            $(function () {
+                $("#slider").excoloSlider({
+                    height:180
+                });
+                $("#txtfechaRecoger").datepicker({
+                    dateFormat: 'yy-mm-dd', // formato de fecha que se usa en Colombia
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sabado'], // días de la semana
+                    dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'], // días de la semana (versión super-corta)
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'], // días de la semana (versión corta)
+                    firstDay: 1, // primer día de la semana (Lunes)
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'], // meses
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'], // meses
+                    navigationAsDateFormat: true
+                });
+                $("#txtfechaDevolver").datepicker({
+                    dateFormat: 'yy-mm-dd', // formato de fecha que se usa en Colombia
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sabado'], // días de la semana
+                    dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'], // días de la semana (versión super-corta)
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'], // días de la semana (versión corta)
+                    firstDay: 1, // primer día de la semana (Lunes)
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'], // meses
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'], // meses
+                    navigationAsDateFormat: true
+                });
+            });             
+        </script>
+ </div>         
     </header>
             <!-- header close -->
-            <hr>
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               <div class="modal fade" id="modal_messages" role="dialog" >
@@ -71,7 +175,5 @@
             {% endif %}
           {% endwith %}
           {% block content %}{% endblock %}
-          <!-- footer Start -->
-          
         </body>
       </html>

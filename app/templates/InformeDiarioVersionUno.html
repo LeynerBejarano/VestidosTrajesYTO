@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sample table</title>
+<style>
+table {
+    border-collapse: collapse;
+    border: 5px solid black;
+    width: 100%;
+}
+td {
+    width: 50%;
+    height: 2em;
+    border: 1px solid #ccc;
+}
+</style>
+</head>
+<body>
+<table style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
+   
+          <tr>
+            <th><span id="Referencia_" >N°</span></th>
+            <th><span id="Referencia_" >Fecha Factura</span></th>  
+            <th><span id="CantidadReferencia_" >Valor</span></th>     
+            <th><span id="Descripcion_" >Saldo</span></th>
+          </tr>
+          {{for factura in ListaFacturasDiarios}}
+          <tr id="RowPrenda1">
+            <td style="width:10%">{{factura.fac_numero}}</td>
+            <td>{{factura.fac_fechaFactura}}</td>
+            <td>{{factura.fac_Total}}</td>
+            <td width="70%" >{{factura.fac_Saldo}}</td>
+            </tr>
+            {{endfor}}
+          <hr>
+          <tr id="RowPrenda1">
+            <td style="width:10%">Totales</td>
+            <td></td>
+            <td>{{Total}}</td>
+            <td>{{Saldo}}</td>
+            </tr>
+        </table>
+</body>
+</html>

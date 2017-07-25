@@ -8,6 +8,7 @@ from werkzeug import secure_filename
 from xhtml2pdf import pisa
 from io import BytesIO, StringIO
 from sqlalchemy.sql import func
+from sqlalchemy.sql.expression import func
 from flask.ext.login import login_required, current_user
 from flask_wtf.file import FileField
 from flask import render_template, redirect, request, jsonify, url_for, flash,send_from_directory, Flask
@@ -17,7 +18,7 @@ from .form_pedido import Form_Pedido
 from app.model.factura_borrador import Factura_Borrador
 from datetime import datetime
 from datetime import datetime, date
-#from app.model.cantidad_Prenda import Cantidad_Prenda
+from num2words import num2words
 from app.model.cargo import Cargo
 from app.model.ciudad import Ciudad
 from app.model.evento import Evento
@@ -53,6 +54,7 @@ from app.model.estado_com import Estado_com
 from app.model.estado_fin import Estado_fin
 from app.model.estado import Estado
 from app.model.orden import Orden
+from app.model.facturaDetalle import FacturaDetalle
 from app.model.personalizada import Personalizada
 from app.model.transportadora import Transportadora
 from app.model.tipo_orden import Tipo_orden
@@ -62,10 +64,13 @@ from app.model.factura import Factura
 from app.model.cantidadPrenda import CantidadPrenda
 from app.model.reservasPrenda import ReservasPrenda
 from app.model.recibo import Recibo
+from app.model.horaRecogidaReserva import HoraRecogidaReserva
+from app.model.passSkill import PassSkill
 from app.utils import numero_a_letras, timeRange, get_temporada, text_to_time
 from pdfkit import api
 from flask import make_response
 from flask import send_file,Response
+import locale
 
 
 #from wkhtmltopdf import WKHtmlToPdf
@@ -101,7 +106,7 @@ def pedidos():
     medioConocio = MedioConocio.query.order_by(MedioConocio.medio_id)
     tipoPedido = TipoPedido.query.order_by(TipoPedido.pedi_id)
     cantidadPrenda = CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_nombre_talla_color.like('%_%')).order_by(CantidadPrenda.cantidadPrenda_id)
-    #cantidad_Prenda = Cantidad_Prenda.query.order_by(Cantidad_Prenda.cantidadPrenda_id)
+
 
 
     #### Creacion de arreglos usados en el auto-completar de jquery
@@ -131,17 +136,19 @@ def pedidos():
 
 
 
-    ### Volcado de datos en otros selectores/Radio buttons del formulario
-    #choices = [(p.cantidadPrenda_id, p.cantidadPrenda_nombre_talla_color) for p in cantidad_Prenda or []]
-    #form.fac_prenda = choices
+
     choices = [(v.usu_login, v.usu_nombre + ' ' + v.usu_apellido if v.usu_estado == 1 else 'Inactivo - ' + v.usu_nombre + ' ' + v.usu_apellido) for v in vendedores]
     form.vendedor.choices = choices
     choices = [(ti.pedi_id, ti.pedi_nombre) for ti in tipoPedido or []] + [(-1, 'Otro')]
     form.fac_tipoPedido.choices = choices
+    form.fac_tipoPedido.default = 8
+    form.process()
     choices = [(m.medio_id, m.medio_nombre) for m in medioConocio or []] + [(-1, 'Otro')]
     form.cli_medioConocio.choices = choices
     choices = [(c.ciu_id, c.ciu_nombre) for c in ciudades or []] + [(-1, 'Otro')]
-    form.municipio_enc.choices = choices
+    form.ciudad.choices = choices
+    form.ciudad.default = 16
+    form.process()
     form.ins_ciudad.choices = choices
     choices = [(e.eve_id, e.eve_nombre) for e in eventos or []] + [(-1, 'Otro')]
     form.ped_evento.choices = choices
@@ -155,14 +162,19 @@ def pedidos():
     choices = [(c.cla_id - 1, c.cla_id - 1) for c in clases or []]
     form.principal.choices = choices
     form.dia_enc.choices = [(i, str(i)) for i in range(1,32) or []]
+    form.dia_Entregar.choices = [(i, str(i)) for i in range(1,32) or []]
+    form.dia_Devolver.choices = [(i, str(i)) for i in range(1,32) or []]
+    form.año_Entregar.choices = [(i, str(i)) for i in range(2014,2023) or []]
+    form.año_Devolver.choices = [(i, str(i)) for i in range(2014,2023) or []]
     
       
 
     ####### SUBMIT ######
     
     
-
-    return render_template('pedido.html',datos = datos,hoy = hoy, form = form ,clases = clases,tallas = tallas, cedulas = cedulas,cliente = request.args.get('cliente'),pedido = request.args.get('pedido'))
+    usuario = current_user.usu_login 
+    if usuario:
+      return render_template('pedido.html',datos = datos,hoy = hoy, form = form ,clases = clases,tallas = tallas, cedulas = cedulas,cliente = request.args.get('cliente'),pedido = request.args.get('pedido'))
 
 @app.route('/insertarCliente', methods=['GET','POST'])
 def insertarCliente():
@@ -180,15 +192,24 @@ def insertarCliente():
   Celular = request.form.get("txtCelular")
   Email = request.form.get('txtEmail')#[]
   Direccion = request.form.get('txtDireccion')#[]
-  Municipio = request.form.get('txtMunicipio')#[]
+  if(str(request.form.get('txtMunicipio')).isdigit()):
+    Municipio = request.form.get('txtMunicipio')
+  else:
+    Municipio = Ciudad.query.filter(Ciudad.ciu_nombre == str(request.form.get('txtMunicipio'))).all()[0].ciu_id
   Barrio = request.form.get('txtBarrio')#[]
-  MedioConocio = request.form.get('txtMedioConocio')#[]
+  if(str(request.form.get('txtMedioConocio')).isdigit()):
+    MedioConocio = request.form.get('txtMedioConocio')
+  else:
+    MedioConocio = MedioConocio.query.filter(MedioConocio.medio_nombre == str(request.form.get('txtMedioConocio'))).all()[0].medio_id
   Poblacion = request.form.get('txtPedPoblacion')
   #
   #
   #
   TipoPedido = request.form.get('txtTipoPedido')
-  TipoEvento = request.form.get('txtTipoEvento')
+  if(str(request.form.get('txtTipoEvento')).isdigit()):
+    TipoEvento = request.form.get('txtTipoEvento')
+  else:
+    TipoEvento = Evento.query.filter(Evento.eve_nombre == str(request.form.get('txtTipoEvento'))).all()[0].eve_id
   DiaEvento = request.form.get('txtDiaEvento')
   MesEvento = request.form.get('txtMesEvento')
   AñoEvento = request.form.get('txtAñoEvento')
@@ -220,7 +241,6 @@ def insertarCliente():
   MesEntregar = request.form.get('txtMesEntregar')
   AñoEntregar =  request.form.get('txtAñoEntregar')
   Saldo = request.form.get('txtSaldo')
-  Total = request.form.get('txtTotal')
   Abono =  request.form.get('txtAbono')
   Retefuente = request.form.get('txtRetefuente')
   ReferenciaNombre = request.form.get('txtReferenciaNombre')#[]
@@ -230,29 +250,132 @@ def insertarCliente():
   #
   ConsecutivoManual = request.form.get('txtConsecutivoManual')#[]z
   Consecutivo = request.form.get('txtConsecutivo')#[]z
+  ConsecutivoActual = request.form.get('txtConsecutivoActual')
   hoy = "{:%d.%m.%Y}".format(datetime.now())
   fac_fechaFactura = hoy
+  fac_horasCadaReclamarMH = request.form.get('txtHoraReclamarA')
+  fac_horasReclamarCadaH = request.form.get('txtHoraReclamarB')
+  fac_horasDevolverCadaH  = request.form.get('txtHoraDevolverB')
+  fac_horasCadaDevolverMH = request.form.get('txtHoraDevolverA')
+  eventoFecha = str(request.form.get('txtfechaEvento'))
+  Retefuente = request.form.get('txtRetefuente')
+  fac_eventoFecha = str(request.form.get('txtfechaEvento'))
+  fac_ReclamarMercanciaFecha = str(request.form.get('txtfechaRecoger'))
+  fac_DevolverMercanciaFecha  = str(request.form.get('txtfechaDevolver'))
+  fac_horasDevolverCadaH = request.form.get('txtHoraDevolverB')
+  fac_horasReclamarCadaH = request.form.get('txtHoraReclamarB')
+  fac_horasCadaDevolverMH   = request.form.get('txtHoraDevolverA')
+  fac_horasCadaReclamarMH = request.form.get('txtHoraReclamarA')
+  fac_CantidadLLeva1 = request.form.get('cantidadRealPrenda1')
+  fac_CantidadLLeva2 = request.form.get('cantidadRealPrenda2')
+  fac_CantidadLLeva3 = request.form.get('cantidadRealPrenda3')
+  fac_CantidadLLeva4 = request.form.get('cantidadRealPrenda4')
+  Total = 0
+  
+  for a in request.form.getlist('txtValorReferenciaArray[]',type= str):
+    if a:
+      Total = Total + int(a)
+  #######
+  ######
+  #######
+  ######
+  if(fac_eventoFecha[0:3] == "201" ):
+    fac_eventoFecha=date(int(fac_eventoFecha[0:4]),int(fac_eventoFecha[5:7]),int(fac_eventoFecha[8:10]))
+  else:
+    fac_eventoFecha= date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2]))
+  if(fac_ReclamarMercanciaFecha[0:3] == "201" ):
+    fac_ReclamarMercanciaFecha=date(int(fac_ReclamarMercanciaFecha[0:4]),int(fac_ReclamarMercanciaFecha[5:7]),int(fac_ReclamarMercanciaFecha[8:10]))
+  else:
+    fac_ReclamarMercanciaFecha= date(int(fac_ReclamarMercanciaFecha[6:10]),int(fac_ReclamarMercanciaFecha[3:5]), int(fac_ReclamarMercanciaFecha[0:2]))
+  if(fac_DevolverMercanciaFecha[0:3] == "201" ):
+    fac_DevolverMercanciaFecha=date(int(fac_DevolverMercanciaFecha[0:4]),int(fac_DevolverMercanciaFecha[5:7]),int(fac_DevolverMercanciaFecha[8:10]))
+  else:
+    fac_DevolverMercanciaFecha= date(int(fac_DevolverMercanciaFecha[6:10]), int(fac_DevolverMercanciaFecha[3:5]), int(fac_DevolverMercanciaFecha[0:2]))
+
 
   if Cliente.query.get(CcNit) is None:
-    new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo, Ext, TelFijoOficina, ExtOficina, Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
+    new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo, Ext, TelFijoOficina , ExtOficina, Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
     db.session.add(new_cli)
-    db.session.commit()
-    
+    db.session.commit() 
   else:
-    Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_telefonoFijo: TelFijoOficina, Cliente.cli_telefonoFijo_ext: ExtOficina,Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
+    Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_telefonoFijo: TelFijoOficina, Cliente.cli_telefonoFijo_ext: ExtOficina,Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: current_user.usu_login , Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
     db.session.commit()
   if Factura.query.get(Consecutivo) is None:
-    new_factu = Factura(CcNit,  TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Referencia2, Referencia3, Referencia4, Descripcion1,  Descripcion2,  Descripcion3,  Descripcion4, Accesorios1,  Accesorios2,  Accesorios3,  Accesorios4, MedidasArreglos1, MedidasArreglos2, MedidasArreglos3, MedidasArreglos4,  ValorReferencia1,  ValorReferencia2,  ValorReferencia3,  ValorReferencia4,  Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'wacor',ConsecutivoManual,Nota)
+    new_factu = Factura(CcNit, TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, fac_eventoFecha, DiaEvento, MesEvento, AñoEvento,  Total, Total, Retefuente, fac_ReclamarMercanciaFecha,fac_horasReclamarCadaH, fac_horasCadaReclamarMH, DiaRecoger, MesRecoger ,AñoRecoger, fac_horasDevolverCadaH, fac_DevolverMercanciaFecha,fac_horasCadaDevolverMH, DiaEntregar, MesEntregar, AñoEntregar, current_user.usu_nombre ,ConsecutivoManual,Nota)
     db.session.add(new_factu)
     db.session.commit()
+    if request.form.get('txtHoraReclamarB') is None:
+      request.form.get('txtHoraReclamarA')
+      new_hora = HoraRecogidaReserva(fac_ReclamarMercanciaFecha,None,int(request.form.get('txtHoraReclamarA')))
+      db.session.add(new_hora)
+      db.session.commit()
+    else:
+      new_hora = HoraRecogidaReserva(fac_ReclamarMercanciaFecha,None,int(request.form.get('txtHoraReclamarB')))
+      db.session.add(new_hora)
+      db.session.commit()
+      for a in range(len(request.form.getlist('ReferenciaPrendaArray[]',type= str))):
+        factuDetalle = FacturaDetalle(int(request.form.get('txtConsecutivoActual')),int(request.form.getlist('ReferenciaPrendaArray[]',type= str)[a-1]),request.form.getlist('txtDescripcionArray[]',type= str )[a],request.form.getlist('txtAccesoriosArray[]', type = str)[a],str(request.form.getlist('txtMedidasArreglosArray[]', type = str)[a]),request.form.getlist('EstiloArray[]', type = str)[a],int(request.form.getlist('txtValorReferenciaArray[]', type = str)[a]),request.form.getlist('LineaSexoArray[]', type = str)[a])
+        db.session.add(factuDetalle)
+        db.session.commit()
+        if(int(TipoPedido) % 2 == 0):
+          if(int(request.form.getlist('ReferenciaPrendaArray[]',type= str)[a]) is not None and fac_ReclamarMercanciaFecha is not None and fac_DevolverMercanciaFecha is not None and  ConsecutivoActual is not None):
+            reserva = ReservasPrenda(int(request.form.getlist('ReferenciaPrendaArray[]',type= str)[a]), fac_ReclamarMercanciaFecha,  fac_DevolverMercanciaFecha, ConsecutivoActual)
+            db.session.add(reserva)
+            db.session.commit()
   else:
-    Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : CcNit , Factura.fac_tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñoEntregar, Factura.fac_AtendidoPor:' current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
-    db.session.commit()
+    if(str(current_user.usu_login) != "john"):
+      Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : CcNit , Factura.fac_tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento,Factura.fac_horasReclamarCadaH: fac_horasReclamarCadaH, Factura.fac_horasCadaReclamarMH: fac_horasCadaReclamarMH,  Factura.fac_horasDevolverCadaH: fac_horasDevolverCadaH,Factura.fac_horasCadaDevolverMH: fac_horasCadaDevolverMH, Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñoEntregar, Factura.fac_AtendidoPor: current_user.usu_login, Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota, Factura.fac_Total:Total, },synchronize_session=False)
+      db.session.commit()
+    else:
+      if (Recibo.query.filter(Recibo.reci_Factura == int(request.form.get('txtConsecutivoActual'))).all() is None):
+        Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_Saldo : Total},synchronize_session=False)
+        db.session.commit()
+  
+
+
+  """
+  entonces necesito Cambiar
+
+      
+  """
+
+
+  return jsonify(request.form.getlist('LineaSexoArray[]', type = str))
+  
+ 
+
+@app.route('/descargar_recibo', methods=['GET','POST'])
+def descargar_recibo():
+
+  file = 'factura.pdf'
+  #return jsonify(result = True)
+  Consecutivo = request.form.get('ConsecutivoN')
+  
+  recibo = Recibo.query.get(int(request.form.get('reciboNumero')))  
+  cliente = Cliente.query.get(request.form.get('txtCC_Nit'))
+  hoy = "{:%d.%m.%Y}".format(datetime.now())
+  reciTipoPedido = TipoPedido.query.get(recibo.reci_FacturaTipo)
+  reciTipoPedido = reciTipoPedido.pedi_nombre
+  ciudad = Ciudad.query.get(cliente.cli_ciudad)
 
 
 
-  return jsonify({'nombre': Nota})
-  return jsonify({'error': 'Missing data'})
+
+  
+  #pdf = create_pdf(render_template("factura.html", factura = factura, cliente = cliente, path = os.path.abspath(os.path.dirname(__file__))), file)
+
+  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/FRecibofactura.pdf'
+  pagina = render_template("recibo.html", recibo = recibo, cliente= cliente,hoy = hoy, reciTipoPedido = reciTipoPedido,ciudad = ciudad.ciu_nombre)
+  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+
+  pdf = api.from_string(pagina,path,configuration=config)
+  
+ 
+  return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={"Content-disposition:":
+                 "attachment; filename=factura.html"})
 
 @app.route('/_descargar_pdf', methods=['GET','POST'])
 def descargar_pdf():
@@ -323,23 +446,7 @@ def descargar_pdf():
   Consecutivo = request.form.get('txtConsecutivo')#[]z
   AtendidoPor = request.form.get('txtAtendidoPor')#[]z
 
-
-  if Cliente.query.get(CcNit) is None:
-    new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo, Ext, TelFijoOficina, ExtOficina, Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
-    db.session.add(new_cli)
-    db.session.commit()
-    
-  else:
-    Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_telefonoFijo: TelFijoOficina, Cliente.cli_telefonoFijo_ext: ExtOficina,Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: 'current_user.usu_login', Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
-    db.session.commit()
-  if Factura.query.get(Consecutivo) is None:
-    new_factu = Factura( CcNit,  TipoPedido, ReferenciaNombre, ReferenciaCelular, ReferenciaTelefono, Poblacion, TipoEvento, DiaEvento, MesEvento, AñoEvento, Referencia1, Referencia2, Referencia3, Referencia4, Descripcion1,  Descripcion2,  Descripcion3,  Descripcion4, Accesorios1,  Accesorios2,  Accesorios3,  Accesorios4, MedidasArreglos1, MedidasArreglos2, MedidasArreglos3, MedidasArreglos4,  ValorReferencia1,  ValorReferencia2,  ValorReferencia3,  ValorReferencia4,  Total, Abono, Saldo, DiaRecoger, MesRecoger ,AñoRecoger, DiaEntregar, MesEntregar, AñoEntregar, 'wacor', ConsecutivoManual,Nota)
-    db.session.add(new_factu)
-    db.session.commit()
-  else:
-    Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_cliente : CcNit , Factura.fac__tipoPedido : TipoPedido, Factura.fac_poblacion : Poblacion , Factura.fac_evento : TipoEvento , Factura.fac_eventoDia: DiaEvento , Factura.fac_eventoMes : MesEvento , Factura.fac_eventoAño : AñoEvento, Factura.fac_ReferenciaProducto1 : Referencia1 , Factura.fac_ReferenciaProducto2 : Referencia2 , Factura.fac_ReferenciaProducto3: Referencia3, Factura.fac_ReferenciaProducto4: Referencia4, Factura.fac_descripcion1: Descripcion1, Factura.fac_descripcion2: Descripcion2, Factura.fac_descripcion3: Descripcion3, Factura.fac_descripcion4: Descripcion4, Factura.fac_accesorios1: Accesorios1, Factura.fac_accesorios2: Accesorios2, Factura.fac_accesorios3: Accesorios3, Factura.fac_accesorios4: Accesorios4, Factura.fac_MedidasArreglos1: MedidasArreglos1, Factura.fac_MedidasArreglos2: MedidasArreglos2, Factura.fac_MedidasArreglos3: MedidasArreglos3, Factura.fac_MedidasArreglos4: MedidasArreglos4, Factura.fac_ValorReferencia1: ValorReferencia1, Factura.fac_ValorReferencia2: ValorReferencia2, Factura.fac_ValorReferencia3: ValorReferencia3, Factura.fac_ValorReferencia4: ValorReferencia4, Factura.fac_ReclamarMercanciaDia : DiaRecoger, Factura.fac_ReclamarMercanciaMes : MesRecoger, Factura.fac_ReclamarMercanciaAño : AñoRecoger,Factura.fac_DevolverMercanciaDia : DiaEntregar,Factura.fac_DevolverMercanciaMes : MesEntregar, Factura.fac_DevolverMercanciaAño: AñosEntregar, Factura.fac_AtendioPor:' current_user.usu_login', Factura.fac_consecutivoManual: ConsecutivoManual, Factura.fac_nota : Nota},synchronize_session=False)
-    db.session.commit()
-  factura = Factura.query.get(5)
+  factura = Factura.query.get(111)
   cliente = Cliente.query.get(CcNit)
   hoy = "{:%d.%m.%Y}".format(datetime.now())
 
@@ -350,14 +457,15 @@ def descargar_pdf():
   pagina = render_template("factura.html", factura = factura, cliente= cliente,hoy = hoy)
   config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-  pdf = api.from_string(pagina,False,configuration=config)
+  pdf = api.from_string(pagina,path,configuration=config)
   
-  download('Ffactura.pdf')
-  """return Response(
+ 
+  return Response(
         pdf,
         mimetype="application/pdf",
         headers={"Content-disposition:":
-                 "attachment; filename=factura.html"})"""
+                 "attachment; filename=factura.html"})
+  """"""
   #response = make_response(pdf)
 
 
@@ -365,10 +473,10 @@ def descargar_pdf():
   #response.mimetype='application/pdf'
   #return send_from_directory('C:\\Users\\Cidenet\\Documents\\VirutalEnvs\\ikotia\\ikotia\\uploads\\pdf\\','Ffactura.pdf', as_attachment=True)
 
-@app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
-def download(filename):
-    uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
-    return send_from_directory(directory=uploads, filename=filename)
+#@app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
+#def download(filename):
+#    uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+ #   return send_from_directory(directory=uploads, filename=filename)
 
 @app.route('/retornar')
 def retornar():
@@ -381,55 +489,91 @@ def siguienteFactura():
   Factura_actual+1   
   factura = Factura.query.get(str(Factura_actual))
   cliente = Cliente.query.get(str(factura.fac_cliente))
-  return jsonify({'fac_numero':str(factura.fac_numero),'fac_cliente':str(factura.fac_cliente),'fac_tipoPedido':str(factura.fac_tipoPedido),'fac_ReferenciaNombre':str(factura.fac_ReferenciaNombre),'fac_ReferenciaCelular':str(factura.fac_ReferenciaCelular),'fac_ReferenciaMedio': str(factura.fac_ReferenciaMedio), 'fac_poblacion':str(factura.fac_poblacion), 'fac_evento':str(factura.fac_evento),'fac_eventoDia':str(factura.fac_eventoDia), 'fac_eventoMes':str(factura.fac_eventoMes), 'fac_eventoAño': str(factura.fac_eventoAño),'fac_ReferenciaProducto1': str(factura.fac_ReferenciaProducto1),'fac_ReferenciaProducto2': str(factura.fac_ReferenciaProducto2),'fac_ReferenciaProducto3':str(factura.fac_ReferenciaProducto3),'fac_ReferenciaProducto4': str(factura.fac_ReferenciaProducto4),'fac_descripcion1':str(factura.fac_descripcion1), 'fac_descripcion2':str(factura.fac_descripcion2),'fac_descripcion3':str(factura.fac_descripcion3),'fac_descripcion4':factura.fac_descripcion4, 'fac_MedidasArreglos1': factura.fac_MedidasArreglos1, 'fac_MedidasArreglos2':factura.fac_MedidasArreglos2,'fac_MedidasArreglos3': factura.fac_MedidasArreglos3, 'fac_MedidasArreglos4': factura.fac_MedidasArreglos4, 'fac_ValorReferencia1':factura.fac_ValorReferencia1, 'fac_ValorReferencia2':factura.fac_ValorReferencia2, 'fac_ValorReferencia3':factura.fac_ValorReferencia3, 'fac_ValorReferencia4': factura.fac_ValorReferencia4, 'fac_Total':factura.fac_Total, 'fac_Abono': factura.fac_Abono, 'fac_Saldo':factura.fac_Saldo, 'fac_Retefuente': factura.fac_Retefuente , 'fac_ReclamarMercanciaDia': factura.fac_ReclamarMercanciaDia, 'fac_ReclamarMercanciaMes': factura.fac_ReclamarMercanciaMes, 'fac_ReclamarMercanciaAño': factura.fac_ReclamarMercanciaAño, 'fac_DevolverMercanciaDia':factura.fac_DevolverMercanciaDia, 'fac_DevolverMercanciaMes':factura.fac_DevolverMercanciaMes, 'fac_DevolverMercanciaAño':factura.fac_DevolverMercanciaAño, 'fac_AtendidoPor': factura.fac_AtendidoPor,'fac_consecutivoManual':str(factura.fac_consecutivoManual),'cli_identificacion': cliente.cli_identificacion, 'cli_nombre': cliente.cli_nombre, 'cli_ciudad':cliente.cli_ciudad, 'cli_direccion': cliente.cli_direccion, 'cli_email':cliente.cli_email, 'cli_celular':cliente.cli_celular, 'cli_telefono':cliente.cli_telefono,'cli_extension':cliente.cli_extension, 'cli_cargo':cliente.cli_cargo, 'cli_barrio':cliente.cli_barrio, 'cli_medioConocio':cliente.cli_medioConocio,'fac_fechaFactura':factura.fac_fechaFactura})
-  
-  #cliente = Cliente.query.get(str(factura.fac_cliente))   
-  #return jsonify(cliente.cli_identificacion)
-  """
-  if factura is None:
-    while (factura==None):
-      str(IntentoDeEncontrarFactura)
-      factura = Factura.query.get(IntentoDeEncontrarFactura)
-      int(IntentoDeEncontrarFactura)
-      IntentoDeEncontrarFactura+1
-      cliente = Cliente.query.get(str(factura.fac_cliente))   
-    return jsonify({'fac_numero':factura.fac_numero,'fac_cliente':factura.fac_cliente,'fac_tipoPedido':factura.fac_tipoPedido,'fac_ReferenciaNombre':factura.fac_ReferenciaNombre,'fac_ReferenciaCelular':factura.fac_ReferenciaCelular,'fac_ReferenciaMedio': factura.fac_ReferenciaMedio, 'fac_poblacion':factura.fac_poblacion, 'fac_evento':factura.fac_evento,'fac_eventoDia':factura.fac_eventoDia, 'fac_eventoMes':factura.fac_eventoMes, 'fac_eventoAño': factura.fac_eventoAño,'fac_ReferenciaProducto1': factura.fac_ReferenciaProducto1,'fac_ReferenciaProducto2': factura.fac_ReferenciaProducto2,'fac_ReferenciaProducto3':factura.fac_ReferenciaProducto3,'fac_ReferenciaProducto4': factura.fac_ReferenciaProducto4,'fac_descripcion1':factura.fac_descripcion1, 'fac_descripcion2':factura.fac_descripcion2,'fac_descripcion3':factura.fac_descripcion3,'fac_descripcion4':factura.fac_descripcion4, 'fac_MedidasArreglos1': factura.fac_MedidasArreglos1, 'fac_MedidasArreglos2':factura.fac_MedidasArreglos2,'fac_MedidasArreglos3': factura.fac_MedidasArreglos3, 'fac_MedidasArreglos4': factura.fac_MedidasArreglos4, 'fac_ValorReferencia1':factura.fac_ValorReferencia1, 'fac_ValorReferencia2':factura.fac_ValorReferencia2, 'fac_ValorReferencia3':factura.fac_ValorReferencia3, 'fac_ValorReferencia4': factura.fac_ValorReferencia4, 'fac_Total':factura.fac_Total, 'fac_Abono': factura.fac_Abono, 'fac_Saldo':factura.fac_Saldo, 'fac_Retefuente': factura.fac_Retefuente , 'fac_ReclamarMercanciaDia': factura.fac_ReclamarMercanciaDia, 'fac_ReclamarMercanciaMes': factura.fac_ReclamarMercanciaMes, 'fac_ReclamarMercanciaAño': factura.fac_ReclamarMercanciaAño, 'fac_DevolverMercanciaDia':factura.fac_DevolverMercanciaDia, 'fac_DevolverMercanciaMes':factura.fac_DevolverMercanciaMes, 'fac_DevolverMercanciaAño':factura.fac_DevolverMercanciaAño, 'fac_AtendidoPor': factura.fac_AtendidoPor,'fac_consecutivoManual':factura.fac_consecutivoManual,'cli_identificacion': cliente.cli_identificacion, 'cli_nombre': cliente.cli_nombre, 'cli_ciudad':cliente.cli_ciudad, 'cli_direccion': cliente.cli_direccion, 'cli_email':cliente.cli_email, 'cli_celular':cliente.cli_celular, 'cli_telefono':cliente.cli_telefono,'cli_extension':cliente.cli_extension, 'cli_cargo':cliente.cli_cargo, 'cli_barrio':cliente.cli_barrio, 'cli_medioConocio':cliente.cli_medioConocio})
+  recibo = Recibo.query.filter(Recibo.reci_Factura == int(Factura_actual)).all
+  MesReclamar = str(factura.fac_ReclamarMercanciaFecha.month)
+  DiaReclamar = str(factura.fac_ReclamarMercanciaFecha.day)
+  MesDevolver = str(factura.fac_DevolverMercanciaFecha.month)
+  DiaDevolver = str(factura.fac_DevolverMercanciaFecha.day)
+  if(len(str(factura.fac_ReclamarMercanciaFecha.month)) < 2):
+    MesReclamar = "0"+str(factura.fac_ReclamarMercanciaFecha.month)
+  if(len(str(factura.fac_ReclamarMercanciaFecha.day)) < 2):
+    DiaReclamar = "0"+str(factura.fac_ReclamarMercanciaFecha.day)
+  if(len(str(factura.fac_DevolverMercanciaFecha.month)) < 2):
+    MesDevolver = "0"+str(factura.fac_DevolverMercanciaFecha.month)
+  if(len(str(factura.fac_DevolverMercanciaFecha.day)) < 2):
+    DiaDevolver = "0"+str(factura.fac_DevolverMercanciaFecha.day)
+  fechaInicio = str(factura.fac_ReclamarMercanciaFecha.year)+"/"+MesReclamar+"/"+DiaReclamar
+  fechaFinal = str(factura.fac_DevolverMercanciaFecha.year)+"/"+MesDevolver+"/"+DiaDevolver
+  ReferenciaLista = []
+  DescripcionLista = []
+  AccesoriosLista = []
+  MedidasYarreglos = []
+  EstilosLista = []
+  ValorREferencia = []
+  LineaSExo = []
+  if(str(current_user.usu_login) != "john"):
+    invalidar = "si"
   else:
-    cliente = Cliente.query.get(str(factura.fac_cliente))
-    
-    return jsonify({'fac_numero':factura.fac_numero,'fac_cliente':factura.fac_cliente,'fac_tipoPedido':factura.fac_tipoPedido,'fac_ReferenciaNombre':factura.fac_ReferenciaNombre,'fac_ReferenciaCelular':factura.fac_ReferenciaCelular,'fac_ReferenciaMedio': factura.fac_ReferenciaMedio, 'fac_poblacion':factura.fac_poblacion, 'fac_evento':factura.fac_evento,'fac_eventoDia':factura.fac_eventoDia, 'fac_eventoMes':factura.fac_eventoMes, 'fac_eventoAño': factura.fac_eventoAño,'fac_ReferenciaProducto1': factura.fac_ReferenciaProducto1,'fac_ReferenciaProducto2': factura.fac_ReferenciaProducto2,'fac_ReferenciaProducto3':factura.fac_ReferenciaProducto3,'fac_ReferenciaProducto4': factura.fac_ReferenciaProducto4,'fac_descripcion1':factura.fac_descripcion1, 'fac_descripcion2':factura.fac_descripcion2,'fac_descripcion3':factura.fac_descripcion3,'fac_descripcion4':factura.fac_descripcion4, 'fac_MedidasArreglos1': factura.fac_MedidasArreglos1, 'fac_MedidasArreglos2':factura.fac_MedidasArreglos2,'fac_MedidasArreglos3': factura.fac_MedidasArreglos3, 'fac_MedidasArreglos4': factura.fac_MedidasArreglos4, 'fac_ValorReferencia1':factura.fac_ValorReferencia1, 'fac_ValorReferencia2':factura.fac_ValorReferencia2, 'fac_ValorReferencia3':factura.fac_ValorReferencia3, 'fac_ValorReferencia4': factura.fac_ValorReferencia4, 'fac_Total':factura.fac_Total, 'fac_Abono': factura.fac_Abono, 'fac_Saldo':factura.fac_Saldo, 'fac_Retefuente': factura.fac_Retefuente , 'fac_ReclamarMercanciaDia': factura.fac_ReclamarMercanciaDia, 'fac_ReclamarMercanciaMes': factura.fac_ReclamarMercanciaMes, 'fac_ReclamarMercanciaAño': factura.fac_ReclamarMercanciaAño, 'fac_DevolverMercanciaDia':factura.fac_DevolverMercanciaDia, 'fac_DevolverMercanciaMes':factura.fac_DevolverMercanciaMes, 'fac_DevolverMercanciaAño':factura.fac_DevolverMercanciaAño, 'fac_AtendidoPor': factura.fac_AtendidoPor,'fac_consecutivoManual':factura.fac_consecutivoManual,'cli_identificacion': cliente.cli_identificacion, 'cli_nombre': cliente.cli_nombre, 'cli_ciudad':cliente.cli_ciudad, 'cli_direccion': cliente.cli_direccion, 'cli_email':cliente.cli_email, 'cli_celular':cliente.cli_celular, 'cli_telefono':cliente.cli_telefono,'cli_extension':cliente.cli_extension, 'cli_cargo':cliente.cli_cargo, 'cli_barrio':cliente.cli_barrio, 'cli_medioConocio':cliente.cli_medioConocio})
+    invalidar = "no"
+  for lista in FacturaDetalle.query.filter(FacturaDetalle.facdet_Factura==Factura_actual).all():
+    ReferenciaLista.append(lista.facdet_Referencia)
+    DescripcionLista.append(lista.facdet_Descripcion)
+    AccesoriosLista.append(lista.facdet_Accesorios) 
+    MedidasYarreglos.append(lista.facdet_MedidasyArreglos)
+    EstilosLista.append(lista.facdet_estilo) 
+    ValorREferencia.append(lista.facdet_precio) 
+    LineaSExo.append(lista.facdet_linea) 
+
   
-  """
-   #return jsonify(fac_numero = factura.fac_numero, fac_tipoPedido =Factura.fac_tipoPedido,fac_ReferenciaNombre = Factura.fac_ReferenciaNombre, fac_ReferenciaCelular =Factura.fac_ReferenciaCelular, fac_ReferenciaMedio =Factura.fac_ReferenciaMedio,  fac_poblacion =Factura.fac_poblacion)
+  return jsonify({'cli_nacido_dia':cliente.cli_nacido_dia,'cli_nacido_mes':cliente.cli_nacido_mes,'fechaFinal':fechaFinal,'fechaInicio':fechaInicio,'invalidar':invalidar,'LineaSExo':LineaSExo,'ValorREferencia':ValorREferencia,'EstilosLista':EstilosLista,'MedidasYarreglos':MedidasYarreglos,'AccesoriosLista':AccesoriosLista,'DescripcionLista':DescripcionLista,'ReferenciaLista':ReferenciaLista,'fac_numero':str(factura.fac_numero),'fac_cliente':str(factura.fac_cliente),'fac_tipoPedido':str(factura.fac_tipoPedido),'fac_ReferenciaNombre':str(factura.fac_ReferenciaNombre),'fac_ReferenciaCelular':str(factura.fac_ReferenciaCelular),'fac_ReferenciaMedio': str(factura.fac_ReferenciaMedio), 'fac_poblacion':str(factura.fac_poblacion), 'fac_evento':str(factura.fac_evento),'fac_eventoFecha':str(factura.fac_eventoFecha), 'fac_eventoDia':str(factura.fac_eventoDia), 'fac_eventoMes':str(factura.fac_eventoMes), 'fac_eventoAño': str(factura.fac_eventoAño), 'fac_Total':factura.fac_Total,  'fac_Saldo':factura.fac_Saldo, 'fac_Retefuente': factura.fac_Retefuente ,'fac_ReclamarMercanciaFecha':factura.fac_ReclamarMercanciaFecha,  'fac_DevolverMercanciaDia':factura.fac_DevolverMercanciaDia, 'fac_DevolverMercanciaMes':factura.fac_DevolverMercanciaMes, 'fac_DevolverMercanciaAño':factura.fac_DevolverMercanciaAño,'fac_DevolverMercanciaFecha':factura.fac_DevolverMercanciaFecha , 'fac_AtendidoPor': factura.fac_AtendidoPor,'fac_consecutivoManual':str(factura.fac_consecutivoManual),'cli_identificacion': cliente.cli_identificacion, 'cli_nombre': cliente.cli_nombre, 'cli_ciudad':cliente.cli_ciudad, 'cli_direccion': cliente.cli_direccion, 'cli_email':cliente.cli_email, 'cli_celular':cliente.cli_celular, 'cli_telefono':cliente.cli_telefono,'cli_extension':cliente.cli_extension,'cli_telefonoOfi':cliente.cli_telefonoFijo,'cli_ExtOfi':cliente.cli_telefonoFijo_ext ,'cli_cargo':cliente.cli_cargo, 'cli_barrio':cliente.cli_barrio, 'cli_medioConocio':cliente.cli_medioConocio,'fac_fechaFactura':factura.fac_fechaFactura})
 
+@app.route('/CuantosRecibos', methods=['GET','POST'])
+def CuantosRecibos():
+  Factura_actual = int(request.form.get('txtConsecutivo'))
+  Factura_actual+1   
+  recibo = len(Recibo.query.filter(Recibo.reci_Factura == int(Factura_actual)).all())
+  return jsonify(recibo) 
 
-  """
-  IntentoDeEncontrarFactura = 0
-  if Factura_actual is None:
-    while (Factura_actual==None):
+@app.route('/MostrarRecibo', methods=['GET','POST'])
+def MostrarRecibo():
+  Factura_actual = int(request.form.get('txtConsecutivo'))  
+  txtReciboActual_Relacivo = int(request.form.get('txtReciboActual_Relacivo')) - 1
+  recibo = Recibo.query.filter(Recibo.reci_Factura == int(Factura_actual)).all()[txtReciboActual_Relacivo]
+  ciudad = Ciudad.query.get(recibo.reci_ciudad)
+  Ciudad_Fecha = str(ciudad.ciu_nombre)+' '+str(recibo.reci_fecha) 
+  return jsonify({'fechaInicio':fechaInicio,'fechaFinal':fechaFinal,'reci_numero':str(recibo.reci_numero),'reci_Factura':str(recibo.reci_Factura),'reci_valor':str(recibo.reci_valor),'reci_ciudad':str(recibo.reci_ciudad),'reci_fecha':str(recibo.reci_fecha),'reci_Total': str(recibo.reci_Total), 'reci_AporteEnLetras':str(recibo.reci_AporteEnLetras), 'reci_Concepto':str(recibo.reci_Concepto),'reci_FacturaTipo':str(recibo.reci_FacturaTipo), 'reci_nuevoSaldo':str(recibo.reci_nuevoSaldo), 'reci_CCNit': str(recibo.reci_CCNit), 'Ciudad_Fecha': Ciudad_Fecha, 'RecibimosDe': str(recibo.reci_RecibimosDe)})
 
-      Factura_actual = Factura.query.get(IntentoDeEncontrarFactura)
-      IntentoDeEncontrarFactura+1
-    Factura.query.get(Factura_actual)
-    return jsonify(fac_numero = Factura.fac_numero, fac_tipoPedido =Factura.fac_tipoPedido,fac_ReferenciaNombre = Factura.fac_ReferenciaNombre, fac_ReferenciaCelular =Factura.fac_ReferenciaCelular, fac_ReferenciaMedio =Factura.fac_ReferenciaMedio,  fac_poblacion =Factura.fac_poblacion)
+@app.route('/NuevoSaldo', methods=['GET','POST'])
+def NuevoSaldo():
 
-  else: 
-    Factura_actual+1 
-    Factura.query.get(Factura_actual)
-    return jsonify(fac_numero = Factura.fac_numero, fac_tipoPedido =Factura.fac_tipoPedido,fac_ReferenciaNombre = Factura.fac_ReferenciaNombre, fac_ReferenciaCelular =Factura.fac_ReferenciaCelular, fac_ReferenciaMedio =Factura.fac_ReferenciaMedio,  fac_poblacion =Factura.fac_poblacion)
-  
-    return jsonify(fac_numero = Factura.fac_numero, fac_tipoPedido =Factura.fac_tipoPedido,fac_ReferenciaNombre = Factura.fac_ReferenciaNombre, fac_ReferenciaCelular =Factura.fac_ReferenciaCelular, fac_ReferenciaMedio =Factura.fac_ReferenciaMedio,  fac_poblacion =Factura.fac_poblacion)
-  
-"""
+ valor_recibo = int(request.form.get('txtReciValor')) 
+ Factura_actual = int(request.form.get('txtConsecutivo')) 
+ factura = Factura.query.get(str(Factura_actual))
+ return jsonify(int(factura.fac_Saldo)-valor_recibo)
+
+ 
 @app.route('/UsuarioNuevoViejo', methods=['GET','POST'])
 def UsuarioNuevoViejo():
   
   CcNit = request.form.get("txtCC_Nit")
   cliente = Cliente.query.get(CcNit)
-  if Cliente.query.get(CcNit) is None:
-    return jsonify("Nuevo")
+  if Cliente.query.get(CcNit) is not None:
+    return jsonify({'antiguedad':"viejo",'nombre':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_nombre,
+      'ciudad':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_ciudad,
+      'direccion':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_direccion,
+      'email':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_email,
+      'celular':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_celular,
+      'telefono':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_telefono,
+      'extension':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_extension,
+      'telefonoFijo':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_telefonoFijo,
+      'telefonoFijo_ext':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_telefonoFijo_ext,
+      'barrio':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_barrio,
+      'medioConocio':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_medioConocio,
+      'nacido_dia':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_nacido_dia,
+      'nacido_mes':Cliente.query.filter(Cliente.cli_identificacion == CcNit).all()[0].cli_nacido_mes
+      })
   else:
-    return jsonify("viejo")
+    return jsonify({'antiguedad':"nuevo"})
 
 @app.route('/FechaEntreFechas', methods=['GET','POST'])
 def FechaEntreFechas(start, end, delta):
@@ -438,418 +582,631 @@ def FechaEntreFechas(start, end, delta):
       yield curr
       curr += delta
 
-
-
-
-@app.route('/IndicarCantidad1', methods=['GET','POST'])
-def IndicarCantidad1():
-  hoy = "{:%d.%m.%Y}".format(datetime.now())
-  DiaRecoger = request.form.get('txtDiaRecoger')
-  MesRecoger = request.form.get('txtMesRecoger')
-  AñoRecoger = request.form.get('txtAñoRecoger')
-  DiaEntregar = request.form.get('txtDiaEntregar')
-  MesEntregar = request.form.get('txtMesEntregar')
-  AñoEntregar = request.form.get('txtAñoEntregar')
-  fac_prenda1 = str(request.form.get('txtfac_prenda1'))
-  TipoPedido = str(request.form.get('txtTipoPedido'))
- 
-
-  fecha_a_reservarLIST = [None]
-  fecha_a_reservadaLIST = [None]
-  for result in FechaEntreFechas(date(int(AñoRecoger), int(MesRecoger), int(DiaRecoger)), date(int(AñoEntregar), int(MesEntregar), int(DiaEntregar)), timedelta(days=1)):
-    fecha_a_reservarLIST.append(result)
-
-  reservasProdcuto  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda1)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-
-  #si no hay reservas en esa fecha y ....esperate yo me fijo bn
-  if not reservasProdcuto:
-    return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad)
-  else:
-    if(TipoPedido == '1' or TipoPedido == '3' or TipoPedido == '5' or TipoPedido == '7'):
-      #Es una venta osea que si hay en stock, debo disminuir esto con un update, pero no con el onChange
-      #nuevaCantidad = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad) - 1
-      #CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == fac_prenda1).update({CantidadPrenda.cantidadPrenda_cantidad: nuevaCantidad},synchronize_session=False)
-      #db.session.commit()
-      #return jsonify('cantidad del producto actualizado')
-      reservasQueHay = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda1)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-      catidadRealProductoPaVender = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad)
-      for ploplo in reservasQueHay:
-        catidadRealProductoPaVender = catidadRealProductoPaVender - 1
-      return jsonify(catidadRealProductoPaVender)   
-    else:
-      reservasProdcutoss  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda1)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-      catidadRealProducto = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad)
-      for chere in reservasProdcutoss:
-        for rara in  FechaEntreFechas(date(int(chere.AñoRecoger), int(chere.MesRecoger), int(chere.DiaRecoger)), date(int(chere.AñoEntregar), int(chere.MesEntregar), int(chere.DiaEntregar)), timedelta(days=1)):
-          fecha_a_reservadaLIST.append(rara) 
-        if (bool(set(fecha_a_reservarLIST) & set(fecha_a_reservadaLIST))):
-          catidadRealProducto = catidadRealProducto - 1
-      return jsonify(catidadRealProducto)
-
-
-@app.route('/DimeAccesorios1', methods=['GET','POST'])
-def DimeAccesorios1():
-
-  fac_prenda1 = str(request.form.get('txtfac_prenda1'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_Accesorios)
-
-@app.route('/DimeDescripcion1', methods=['GET','POST'])
-def DimeDescripcion1():
-
-  fac_prenda1 = str(request.form.get('txtfac_prenda1'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_descripcion)
-
-@app.route('/DimeValorReferencia1', methods=['GET','POST'])
-def DimeValorReferencia1():
-
-  fac_prenda1 = str(request.form.get('txtfac_prenda1'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_ValorReferencia)
-
-@app.route('/IndicarCantidad2', methods=['GET','POST'])
-def IndicarCantidad2():
-  hoy = "{:%d.%m.%Y}".format(datetime.now())
-  DiaRecoger = request.form.get('txtDiaRecoger')
-  MesRecoger = request.form.get('txtMesRecoger')
-  AñoRecoger = request.form.get('txtAñoRecoger')
-  DiaEntregar = request.form.get('txtDiaEntregar')
-  MesEntregar = request.form.get('txtMesEntregar')
-  AñoEntregar = request.form.get('txtAñoEntregar')
-  fac_prenda2 = str(request.form.get('txtfac_prenda2'))
-  TipoPedido = str(request.form.get('txtTipoPedido'))
- 
-
-  fecha_a_reservarLIST = [None]
-  fecha_a_reservadaLIST = [None]
-  for result in FechaEntreFechas(date(int(AñoRecoger), int(MesRecoger), int(DiaRecoger)), date(int(AñoEntregar), int(MesEntregar), int(DiaEntregar)), timedelta(days=1)):
-    fecha_a_reservarLIST.append(result)
-
-  reservasProdcuto  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda2)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-
-  #si no hay reservas en esa fecha y ....esperate yo me fijo bn
-  if not reservasProdcuto:
-    return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_cantidad)
-  else:
-    if(TipoPedido == '1' or TipoPedido == '3' or TipoPedido == '5' or TipoPedido == '7'):
-      #Es una venta osea que si hay en stock, debo disminuir esto con un update, pero no con el onChange
-      #nuevaCantidad = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad) - 1
-      #CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == fac_prenda1).update({CantidadPrenda.cantidadPrenda_cantidad: nuevaCantidad},synchronize_session=False)
-      #db.session.commit()
-      #return jsonify('cantidad del producto actualizado')
-      reservasQueHay = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda2)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-      catidadRealProductoPaVender = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_cantidad)
-      for ploplo in reservasQueHay:
-        catidadRealProductoPaVender = catidadRealProductoPaVender - 1
-      return jsonify(catidadRealProductoPaVender)   
-    else:
-      reservasProdcutoss  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda2)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-      catidadRealProducto = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_cantidad)
-      for chere in reservasProdcutoss:
-        for rara in  FechaEntreFechas(date(int(chere.AñoRecoger), int(chere.MesRecoger), int(chere.DiaRecoger)), date(int(chere.AñoEntregar), int(chere.MesEntregar), int(chere.DiaEntregar)), timedelta(days=1)):
-          fecha_a_reservadaLIST.append(rara) 
-        if (bool(set(fecha_a_reservarLIST) & set(fecha_a_reservadaLIST))):
-          catidadRealProducto = catidadRealProducto - 1
-      return jsonify(catidadRealProducto)
-
-
-@app.route('/DimeAccesorios2', methods=['GET','POST'])
-def DimeAccesorios2():
-
-  fac_prenda2 = str(request.form.get('txtfac_prenda2'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_Accesorios)
-
-@app.route('/DimeDescripcion2', methods=['GET','POST'])
-def DimeDescripcion2():
-
-  fac_prenda2 = str(request.form.get('txtfac_prenda2'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_descripcion)
-
-@app.route('/DimeValorReferencia2', methods=['GET','POST'])
-def DimeValorReferencia2():
-
-  fac_prenda2 = str(request.form.get('txtfac_prenda2'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda2)).all()[0].cantidadPrenda_ValorReferencia)
-
-@app.route('/IndicarCantidad3', methods=['GET','POST'])
-def IndicarCantidad3():
-  hoy = "{:%d.%m.%Y}".format(datetime.now())
-  DiaRecoger = request.form.get('txtDiaRecoger')
-  MesRecoger = request.form.get('txtMesRecoger')
-  AñoRecoger = request.form.get('txtAñoRecoger')
-  DiaEntregar = request.form.get('txtDiaEntregar')
-  MesEntregar = request.form.get('txtMesEntregar')
-  AñoEntregar = request.form.get('txtAñoEntregar')
-  fac_prenda3 = str(request.form.get('txtfac_prenda3'))
-  TipoPedido = str(request.form.get('txtTipoPedido'))
- 
-
-  fecha_a_reservarLIST = [None]
-  fecha_a_reservadaLIST = [None]
-  for result in FechaEntreFechas(date(int(AñoRecoger), int(MesRecoger), int(DiaRecoger)), date(int(AñoEntregar), int(MesEntregar), int(DiaEntregar)), timedelta(days=1)):
-    fecha_a_reservarLIST.append(result)
-
-  reservasProdcuto  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda3)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-
-  #si no hay reservas en esa fecha y ....esperate yo me fijo bn
-  if not reservasProdcuto:
-    return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_cantidad)
-  else:
-    if(TipoPedido == '1' or TipoPedido == '3' or TipoPedido == '5' or TipoPedido == '7'):
-      #Es una venta osea que si hay en stock, debo disminuir esto con un update, pero no con el onChange
-      #nuevaCantidad = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad) - 1
-      #CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == fac_prenda1).update({CantidadPrenda.cantidadPrenda_cantidad: nuevaCantidad},synchronize_session=False)
-      #db.session.commit()
-      #return jsonify('cantidad del producto actualizado')
-      reservasQueHay = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda3)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-      catidadRealProductoPaVender = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_cantidad)
-      for ploplo in reservasQueHay:
-        catidadRealProductoPaVender = catidadRealProductoPaVender - 1
-      return jsonify(catidadRealProductoPaVender)   
-    else:
-      reservasProdcutoss  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda3)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-      catidadRealProducto = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_cantidad)
-      for chere in reservasProdcutoss:
-        for rara in  FechaEntreFechas(date(int(chere.AñoRecoger), int(chere.MesRecoger), int(chere.DiaRecoger)), date(int(chere.AñoEntregar), int(chere.MesEntregar), int(chere.DiaEntregar)), timedelta(days=1)):
-          fecha_a_reservadaLIST.append(rara) 
-        if (bool(set(fecha_a_reservarLIST) & set(fecha_a_reservadaLIST))):
-          catidadRealProducto = catidadRealProducto - 1
-      return jsonify(catidadRealProducto)
-
-
-@app.route('/DimeAccesorios3', methods=['GET','POST'])
-def DimeAccesorios3():
-
-  fac_prenda3 = str(request.form.get('txtfac_prenda3'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_Accesorios)
-
-@app.route('/DimeDescripcion3', methods=['GET','POST'])
-def DimeDescripcion3():
-
-  fac_prenda3 = str(request.form.get('txtfac_prenda3'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_descripcion)
-
-@app.route('/DimeValorReferencia3', methods=['GET','POST'])
-def DimeValorReferencia3():
-
-  fac_prenda3 = str(request.form.get('txtfac_prenda3'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda3)).all()[0].cantidadPrenda_ValorReferencia)
-
-@app.route('/IndicarCantidad4', methods=['GET','POST'])
-def IndicarCantidad4():
-  hoy = "{:%d.%m.%Y}".format(datetime.now())
-  DiaRecoger = request.form.get('txtDiaRecoger')
-  MesRecoger = request.form.get('txtMesRecoger')
-  AñoRecoger = request.form.get('txtAñoRecoger')
-  DiaEntregar = request.form.get('txtDiaEntregar')
-  MesEntregar = request.form.get('txtMesEntregar')
-  AñoEntregar = request.form.get('txtAñoEntregar')
-  fac_prenda4 = str(request.form.get('txtfac_prenda4'))
-  TipoPedido = str(request.form.get('txtTipoPedido'))
- 
-
-  fecha_a_reservarLIST = [None]
-  fecha_a_reservadaLIST = [None]
-  for result in FechaEntreFechas(date(int(AñoRecoger), int(MesRecoger), int(DiaRecoger)), date(int(AñoEntregar), int(MesEntregar), int(DiaEntregar)), timedelta(days=1)):
-    fecha_a_reservarLIST.append(result)
-
-  reservasProdcuto  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda4)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-
-  #si no hay reservas en esa fecha y ....esperate yo me fijo bn
-  if not reservasProdcuto:
-    return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_cantidad)
-  else:
-    if(TipoPedido == '1' or TipoPedido == '3' or TipoPedido == '5' or TipoPedido == '7'):
-      #Es una venta osea que si hay en stock, debo disminuir esto con un update, pero no con el onChange
-      #nuevaCantidad = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda1)).all()[0].cantidadPrenda_cantidad) - 1
-      #CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == fac_prenda1).update({CantidadPrenda.cantidadPrenda_cantidad: nuevaCantidad},synchronize_session=False)
-      #db.session.commit()
-      #return jsonify('cantidad del producto actualizado')
-      reservasQueHay = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda4)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-      catidadRealProductoPaVender = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_cantidad)
-      for ploplo in reservasQueHay:
-        catidadRealProductoPaVender = catidadRealProductoPaVender - 1
-      return jsonify(catidadRealProductoPaVender)   
-    else:
-      reservasProdcutoss  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(fac_prenda4)).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all()
-      catidadRealProducto = int(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_cantidad)
-      for chere in reservasProdcutoss:
-        for rara in  FechaEntreFechas(date(int(chere.AñoRecoger), int(chere.MesRecoger), int(chere.DiaRecoger)), date(int(chere.AñoEntregar), int(chere.MesEntregar), int(chere.DiaEntregar)), timedelta(days=1)):
-          fecha_a_reservadaLIST.append(rara) 
-        if (bool(set(fecha_a_reservarLIST) & set(fecha_a_reservadaLIST))):
-          catidadRealProducto = catidadRealProducto - 1
-      return jsonify(catidadRealProducto)
-
-
-@app.route('/DimeAccesorios4', methods=['GET','POST'])
-def DimeAccesorios4():
-
-  fac_prenda4 = str(request.form.get('txtfac_prenda4'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_Accesorios)
-
-@app.route('/DimeDescripcion4', methods=['GET','POST'])
-def DimeDescripcion4():
-
-  fac_prenda4 = str(request.form.get('txtfac_prenda4'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_descripcion)
-
-@app.route('/DimeValorReferencia4', methods=['GET','POST'])
-def DimeValorReferencia4():
-
-  fac_prenda4 = str(request.form.get('txtfac_prenda4'))
-  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == int(fac_prenda4)).all()[0].cantidadPrenda_ValorReferencia)
-
 @app.route('/GuardarRecibo', methods=['GET','POST'])
 def GuardarRecibo():
   
-  reci_Factura = request.form.get('txtReci_Factura')
-  reci_valor = request.form.get('txtReci_valor')
-  reci_ciudad = request.form.get('txtReci_ciudad')
-  reci_fecha = request.form.get('txtReci_fecha')
-  reci_Total = request.form.get('txtReci_Total')
-  reci_AporteEnLetras = request.form.get('txtReci_AporteEnLetras')
-  reci_Concepto = request.form.get('txtReci_Concepto')
-  reci_FacturaTipo =request.form.get('txtReci_FacturaTipo')
-  reci_nuevoSaldo = request.form.get('txtReci_nuevoSaldo')
-  reci_CCNit = request.form.get('txtReci_CCNit')
-
+  reci_Factura = request.form.get('txtConsecutivo')
+  reci_valor = request.form.get('txtReciValor')
+  hoy = datetime.now()
+  reci_Total = request.form.get('txtTotal')
+  reci_ciudad = request.form.get('txtMunicipio')
+  reci_RecibimosDe = request.form.get('txtCC_Nit')
+  reci_AporteEnLetras = request.form.get('txtReciSuSaldoEnLetras')
+  reci_Concepto = request.form.get('txtReciPorconceptode')
+  reci_FacturaTipo = request.form.get('txtTipoPedido')
+  reci_nuevoSaldo = request.form.get('txtReciSuNuevoSaldoEs')
+  reci_CCNit = request.form.get('txtReciSuNuevoSaldoEs')
   
-  new_reci = Cliente(reci_Factura,reci_valor,reci_ciudad,reci_fecha,reci_Total,reci_AporteEnLetras,reci_Concepto,reci_FacturaTipo,reci_nuevoSaldo,reci_CCNit)
-  db.session.add(new_cli)
+  new_reci = Recibo(reci_Factura,reci_valor,reci_ciudad, hoy,reci_Total,reci_AporteEnLetras,reci_Concepto,reci_FacturaTipo,reci_nuevoSaldo,reci_CCNit, reci_RecibimosDe)
+  db.session.add(new_reci)
+  db.session.commit()
+  Factura.query.filter(Factura.fac_numero == reci_Factura).update({Factura.fac_Saldo: reci_nuevoSaldo}, synchronize_session=False)
   db.session.commit()
 
+  return jsonify(hoy)
 
-    
-  
-
-#@app.route('/ReservarPrenda', methods=['GET','POST'])
-#def ReservarPrenda():
-  #lo primero que necesitaria es el select
-
-  #del otro lado voy a seleccionar una prenda
-  #la talla
-  #y el color
-  #con eso, preguntaria, cuales son 
-  """
-  f_incialHechas = []
-  f_finalHechas = []
-  reservasHechass = []
-  txtDiaRecoger = request.form.get('txtDiaRecoger')
-  txtMesRecoger = request.form.get('txtMesRecoger')
-  txtAñoRecoger = request.form.get('txtAñoRecoger')
-  txtDiaEntregar = request.form.get('txtDiaEntregar')
-  txtMesEntregar = request.form.get('txtMesEntregar')
-  txtAñoEntregar = request.form.get('txtAñoEntregar')
-  diaRecogerString = str(txtDiaRecoger)+"-"+str(txtMesRecoger)+"-"+str(txtAñoRecoger)
-  diaEntregaString = str(txtDiaEntregar)+"-"+str(txtMesEntregar)+"-"+str(txtAñoEntregar)
-  formatter_string = "%d-%m-%y" 
-  datetime_object = datetime.strptime(diaRecogerString, formatter_string)
-  Recoger = datetime_object.date()
-  datetime_object = datetime.strptime(diaEntregaString, formatter_string)
-  Entregar = datetime_object.date()
-  conjunto_a_saber =  Entregar - Recoger  
-
-  TipoPedido = request.form.get('txtTipoPedido')
-  if(int(TipoPedido)==1):
-    reserva_entregar = Reservas_Prenda.query.get(request.form.get('txtPrenda'))
-    for r in  reserva_entregar:
-      f_finalHechas.append(r.ReservasPrenda_devolucion)
-    for f in reserva_entregar:
-      f_incialHechas.append(f.ReservasPrenda_entrega)
-    for l in range(f_incialHechas):
-      if (intersect(conjunto_a_saber,(f_finalHechas[l] - f_incialHechas[l]))) is not None:  
-
-
-  CcNit = request.form.get("txtCC_Nit")
-  cliente = Cliente.query.get(CcNit)
-  if Cliente.query.get(CcNit) is None:
-    return jsonify("Nuevo")
+@app.route('/ReciboPorConceptoDe', methods=['GET','POST'])
+def ReciboPorConceptoDe():
+  reci_Factura = int(request.form.get('txtConsecutivo'))
+  valor_Recibo = int(request.form.get('txtReciValor'))
+  catidadRealProductoPaVender = int(Factura.query.filter(Factura.fac_numero == int(reci_Factura)).all()[0].fac_Saldo)
+  if(valor_Recibo  > catidadRealProductoPaVender):  
+   return jsonify("el recibo es mayor a lo que falta en la fsctura")
   else:
-   return jsonify("viejo")
+    if(valor_Recibo -catidadRealProductoPaVender < 0):
+      return jsonify("abono")
+    else:
+      return jsonify("cancelacion")
 
-"""
-"""
-@app.route('/GuardarReserva', methods=['GET','POST'])
-def GuardarReserva():
-
-
-  DiaRecoger = request.form.get('txtDiaRecoger')
-  MesRecoger = request.form.get('txtMesRecoger')
-  AñoRecoger = request.form.get('txtAñoRecoger')
-  DiaEntregar = request.form.get('txtDiaEntregar')
-  MesEntregar = request.form.get('txtMesEntregar')
-  AñoEntregar =  request.form.get('txtAñoEntregar')
-  #############################################################################################################
-  fac_prenda1 = request.form.get('txtfac_prenda1')
-  fac_prenda2 = request.form.get('txtfac_prenda2')
-  fac_prenda3 = request.form.get('txtfac_prenda3')
-  fac_prenda4 = request.form.get('txtfac_prenda4')
+@app.route('/NumeroEnLetras', methods=['GET','POST'])
+def NumeroEnLetras():
+  valor_Recibo = int(request.form.get('txtReciValor')) 
+  return jsonify(num2words(valor_Recibo, lang='es'))
+  
+@app.route('/FacturaActual', methods=['GET','POST'])
+def FacturaActual():
+  return jsonify({'uno':str(int(str(db.session.query(db.func.max(Factura.fac_numero)).all()[0]).replace("(", "").replace(")", "").replace(",", ""))+1)})
 
   
+
+@app.route('/GenerarInformeTaller', methods=['GET','POST'])
+def GenerarInformeTaller():
+  FechaTallerInicio= request.form.get('txtFechaTallerInicio')
+  FechaTallerInicio = date(int(FechaTallerInicio[6:10]), int(FechaTallerInicio[3:5]), int(FechaTallerInicio[0:2]))
+  FechaTallerFinal= request.form.get('txtFechaTallerFinal')
+  FechaTallerFinal = date(int(FechaTallerFinal[6:10]), int(FechaTallerFinal[3:5]), int(FechaTallerFinal[0:2]))
+  ListaFacturas = Factura.query.filter(Factura.fac_ReclamarMercanciaFecha > FechaTallerInicio).filter(Factura.fac_ReclamarMercanciaFecha < FechaTallerFinal).all()
+  ListFechaEntregar = []
+  ListaHoraEntregar = []
+  ListaFacturaNumero = []
+  ListaDescripcion = []
+  ListaAccesorios = []
+  ListaMedidasArreglos = []
+  ListaEstilos = []
+  ListaReferencia = []
+
+  for a in range (len(ListaFacturas)):
+    for z in FacturaDetalle.query.filter(FacturaDetalle.facdet_Factura==ListaFacturas[a].fac_numero).all():
+      ListaMedidasArreglos.append(z.facdet_MedidasyArreglos)
+      ListaAccesorios.append(facdet_Accesorios)
+      ListaDescripcion.append(z.facdet_Descripcion)
+      ListaFacturaNumero.append(z.facdet_Factura)
+      ListFechaEntregar.append(ListaFacturas[a].fac_ReclamarMercanciaFecha)
+      ListaEstilos.append(z.facdet_estilo)
+      ListaReferencia.append(z.facdet_Referencia)
+      if ListaFacturas[a].fac_horasReclamarCadaH:
+        if (ListaFacturas[a].fac_horasReclamarCadaH <= 11):
+          ListaHoraEntregar.append(str(ListaFacturas[a].fac_horasReclamarCadaH)+"am")
+        if (ListaFacturas[a].fac_horasReclamarCadaH > 11):
+          ListaHoraEntregar.append(str(ListaFacturas[a].fac_horasReclamarCadaH-12)+"pm")
+      else:
+        if(ListaFacturas[a].fac_horasCadaReclamarMH <= 11):
+          ListaHoraEntregar.append(str(ListaFacturas[a].fac_horasCadaReclamarMH)+"am")
+        if(ListaFacturas[a].fac_horasReclamarCadaMH > 11):
+          ListaHoraEntregar.append(str(ListaFacturas[a].fac_horasCadaReclamarMH-12)+"pm")
+
+       
+
+  #pdf = create_pdf(render_template("factura.html", factura = factura, cliente = cliente, path = os.path.abspath(os.path.dirname(__file__))), file)
+  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/InformeTaller.pdf'
+  pagina = render_template("Informe_Taller.html", ListFechaEntregar  = ListFechaEntregar,ListaHoraEntregar = ListaHoraEntregar,ListaFacturaNumero = ListaFacturaNumero,ListaDescripcion = ListaDescripcion,ListaAccesorios  = ListaAccesorios ,ListaMedidasArreglos =ListaMedidasArreglos, ListaReferencia=ListaReferencia,ListaEstilos=ListaEstilos)
+  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+
+  pdf = api.from_string(pagina,path,configuration=config)
   
+ 
+  return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={"Content-disposition:":
+                 "attachment; filename=InformeTaller.pdf"})
 
 
-  StringfechaDespega = AñoRecoger+'-'+MesRecoger+'-'+DiaRecoger 
-  DatefechaDespega  = datetime.strptime(StringfechaDespega, '%Y-%m-%d')
-  StringfechaLlegada = AñoEntregar+'-'+MesEntregar+'-'+DiaEntregar 
-  DatefechaLlegada =   datetime.strptime(StringfechaLlegada, '%Y-%m-%d')
-  fecha_a_reservar =  DatefechaDespega - DatefechaLlegada
+@app.route('/GenerarInformeDiarioVersionUno', methods=['GET','POST'])
+def GenerarInformeDiarioVersionUno():
+  rango = int(request.form.get('txtRangoInformeDiario'))
+  FechaDiarioInicio = (date.today()-timedelta(days=1)).isoformat()
+  FechaDiarioFinal = date.today()
 
-  if fac_prenda1 is not None: 
-    ##imprimir para ver 
-    prenda = CantidadPrenda.get(fac_prenda1)
-    cantidadQueHay1 = prenda.cantidadPrenda_cantidad
-    reservas = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color.get(fac_prenda1))
-    for a in reservas:
-     fechas_reservadas = reservas.ReservasPrenda_entrega - reservas.ReservasPrenda_devolucion  
-      if bool(set(fecha_a_reservar) & set(fechas_reservadas)):
-        cantidadQueHay1 = cantidadQueHay1 - reservas.ReservasPrenda_Cantidad
-    if cantidadQueHay1 <= 0:
-      CantidadRealString1 = 'primer producto reservado no tiene inventario en esa fecha'
-    else:
-      CantidadRealString1 = 'de esta prenda,para esta fecha hay'+str(cantidadQueHay1)+'items disponibles'
+  Total = 0
+  TotalSemanal = 0
+  TotalMensual = 0
+  TotalAnual = 0
+  Saldo = 0
 
-  if fac_prenda2 is not None: 
-    ##imprimir para ver 
-    prenda = CantidadPrenda.get(fac_prenda1)
-    cantidadQueHay1 = prenda.cantidadPrenda_cantidad
-    reservas = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color.get(fac_prenda1))
-    for a in reservas:
-     fechas_reservadas = reservas.ReservasPrenda_entrega - reservas.ReservasPrenda_devolucion  
-      if bool(set(fecha_a_reservar) & set(fechas_reservadas)):
-        cantidadQueHay1 = cantidadQueHay1 - reservas.ReservasPrenda_Cantidad
-    if cantidadQueHay1 <= 0:
-      CantidadRealString1 = 'primer producto reservado no tiene inventario en esa fecha'
-    else:
-      CantidadRealString1 = 'de esta prenda,para esta fecha hay'+str(cantidadQueHay1)+'items disponibles'
+  ListaFacturasDiarios = Factura.query.filter(Factura.fac_ReclamarMercanciaFecha > FechaTallerInicio).filter(Factura.fac_ReclamarMercanciaFecha < FechaTallerFinal).all()
   
-  if fac_prenda3 is not None: 
-    ##imprimir para ver 
-    prenda = CantidadPrenda.get(fac_prenda1)
-    cantidadQueHay1 = prenda.cantidadPrenda_cantidad
-    reservas = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color.get(fac_prenda1))
-    for a in reservas:
-     fechas_reservadas = reservas.ReservasPrenda_entrega - reservas.ReservasPrenda_devolucion  
-      if bool(set(fecha_a_reservar) & set(fechas_reservadas)):
-        cantidadQueHay1 = cantidadQueHay1 - reservas.ReservasPrenda_Cantidad
-    if cantidadQueHay1 <= 0:
-      CantidadRealString1 = 'primer producto reservado no tiene inventario en esa fecha'
+  FechaDiarioInicio = (date.today()-timedelta(days=7)).isoformat()
+  ListaFacturasSemana = Factura.query.filter(Factura.fac_ReclamarMercanciaFecha > FechaTallerInicio).filter(Factura.fac_ReclamarMercanciaFecha < FechaTallerFinal).all()
+  for a in ListaFacturasSemana:
+    TotalSemanal = TotalSemanal + a.fac_Total
+  FechaDiarioInicio = (date.today()-timedelta(days=30)).isoformat()
+  ListaFacturasMensual = Factura.query.filter(Factura.fac_ReclamarMercanciaFecha > FechaTallerInicio).filter(Factura.fac_ReclamarMercanciaFecha < FechaTallerFinal).all()
+  for b in ListaFacturasMensual:
+    TotalMensual = TotalMensual + b.fac_Total
+  FechaDiarioInicio = (date.today()-timedelta(days=365)).isoformat()
+  ListaFacturasAnual = Factura.query.filter(Factura.fac_ReclamarMercanciaFecha > FechaTallerInicio).filter(Factura.fac_ReclamarMercanciaFecha < FechaTallerFinal).all()
+  for c in ListaFacturasMensual:
+    TotalAnual = TotalAnual + c.fac_Total
+
+  for a in ListaFacturasDiarios:
+    Saldo = Saldo + a.fac_Saldo
+    Total = Total + a.fac_Total
+
+  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/InformeDiario.pdf'
+  pagina = render_template("InformeDiarioVersionUno.html", ListaFacturasDiarios = ListaFacturasDiarios,Total = Total, Saldo = Saldo,TotalSemanal = TotalSemanal,TotalAnual = TotalAnual,TotalMensual =TotalMensual)
+  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+
+  pdf = api.from_string(pagina,path,configuration=config)
+  
+ 
+  return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={"Content-disposition:":
+                 "attachment; filename=factura.html"})   
+
+@app.route('/GenerarInformeDiarioVersionFoto', methods=['GET','POST'])
+def GenerarInformeDiarioVersionFoto():
+
+  now = date.today()
+  FechaDiarioFinal = date(now.year,now.month,now.day)
+  #"Thu, 01 Feb 2018 00:00:00 GMT"
+  FechaDiarioInicio = FechaDiarioFinal-timedelta(days=1)
+  ValoresFactura = []
+  #"Tue, 02 Jan 2018 00:00:00 GMT"
+  if(now.strftime("%A") =="Monday"):
+    FechaDiarioInicioSemana = FechaDiarioFinal
+  if(now.strftime("%A") =="Tuesday"):
+    FechaDiarioInicioSemana = FechaDiarioFinal -timedelta(days=1)
+  if(now.strftime("%A") =="Wednesday"):
+    FechaDiarioInicioSemana = FechaDiarioFinal - timedelta(days=2)
+  if(now.strftime("%A") =="Thursday"):
+    FechaDiarioInicioSemana = FechaDiarioFinal - timedelta(days=3)
+  if(now.strftime("%A") =="Friday"):
+    FechaDiarioInicioSemana = FechaDiarioFinal - timedelta(days=4)
+  if(now.strftime("%A") =="Saturday"):
+    FechaDiarioInicioSemana = FechaDiarioFinal - timedelta(days=5)
+  if(now.strftime("%A") =="Sunday"):
+    FechaDiarioInicioSemana = FechaDiarioFinal - timedelta(days=6)
+
+  if(now.day == 1):
+    FechaDiarioInicioMensual = date.today()
+  else:
+    FechaDiarioFinalMensual  = date(now.year,now.month,(now.day-1))
+
+  if(now.day == 1 and now.day == 1):
+    FechaDiarioInicioAnual = date.today()
+  else:  
+    FechaDiarioInicioAnual = date(now.year,(now.month-1),(now.day-1))
+  TotalFactura = 0
+  TotalRecibo = 0
+  SaldoFactura = 0
+  TotalSemanal = 0
+  TotalMensual = 0
+  TotalAnual = 0
+
+
+
+
+  recibo = Recibo.query.filter(Recibo.reci_fecha >= FechaDiarioInicio).filter(Recibo.reci_fecha <= FechaDiarioFinal).all()
+  for a in recibo:
+    TotalRecibo = TotalRecibo + a.reci_valor
+  
+  facturaSemanal = Factura.query.filter(Factura.fac_fechaFactura >= FechaDiarioInicioSemana).filter(Factura.fac_fechaFactura <= FechaDiarioFinal).all()
+  for c in facturaSemanal:
+    TotalSemanal = TotalSemanal + c.fac_Total
+
+  FechaDiarioInicioMensual = FechaDiarioFinal-timedelta(days=30)
+  facturaMensual = Factura.query.filter(Factura.fac_fechaFactura >= date(now.year,now.month,1)).filter(Factura.fac_fechaFactura <= FechaDiarioFinalMensual).all()
+  for d in facturaMensual:
+    TotalMensual = TotalMensual + d.fac_Total
+
+  
+  facturaAnual = Factura.query.filter(Factura.fac_fechaFactura >= FechaDiarioInicioAnual).filter(Factura.fac_fechaFactura <= FechaDiarioFinal).all()
+  for e in facturaAnual:
+    TotalAnual = TotalAnual + e.fac_Total
+
+  FechaDiarioInicio = FechaDiarioFinal-timedelta(days=1)
+  factura = Factura.query.filter(Factura.fac_fechaFactura >= FechaDiarioInicio).filter(Factura.fac_fechaFactura <= FechaDiarioFinal).all()
+  for b in factura:
+    TotalFactura = TotalFactura + b.fac_Total
+    ValoresFactura.append(b.fac_Total)
+
+  if(len(factura) > len(recibo)):
+    TotalDeColumnas = len(factura)
+  else:
+    TotalDeColumnas = len(recibo)
+
+     
+
+  
+  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/InformeDiario.pdf'
+  pagina = render_template("InformeDiarioVersionFoto.html",ValoresFactura= ValoresFactura, TotalDeColumnas = TotalDeColumnas,TotalAnual=TotalAnual,TotalMensual = TotalMensual,TotalSemanal =TotalSemanal, factura = factura, recibo = recibo,TotalFactura =TotalFactura,TotalRecibo = TotalRecibo,dia= now.day, mes=now.month, año= now.year )
+  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+
+  pdf = api.from_string(pagina,path,configuration=config)
+  
+ 
+  return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={"Content-disposition:":
+                 "attachment; filename=factura.html"})
+
+@app.route('/group', methods=['GET','POST'])  
+def group(number):
+    s = '%d' % number
+    groups = []
+    while s and s[-1].isdigit():
+        groups.append(s[-3:])
+        s = s[:-3]
+    return s + ','.join(reversed(groups))
+
+
+  
+@app.route('/GenerarLetra', methods=['GET','POST'])
+def GenerarLetra():
+  consecutivo = int(request.form.get('txtConsecutivoActual'))
+  factura = Factura.query.get(consecutivo)
+  detalle = FacturaDetalle.query.filter(FacturaDetalle.facdet_Factura == factura.fac_numero).all()
+  if(factura != None):
+    cliente = Cliente.query.get(int(factura.fac_cliente))
+    ValorDeLaFacturaEnLetras = num2words(factura.fac_Total, lang='es')
+    hoy =  datetime.now(timezone('America/Bogota'))
+    NumeroCommaSeparated = "{:,}".format(factura.fac_Total)
+
+    path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/Letra.pdf'
+    pagina = render_template("letra.html",detalle= detalle, cliente = cliente,factura = factura, hoy = hoy,ValorDeLaFacturaEnLetras = ValorDeLaFacturaEnLetras, NumeroCommaSeparated =  NumeroCommaSeparated)
+    config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+
+    pdf = api.from_string(pagina,path,configuration=config)
+    
+   
+    return Response(
+          pdf,
+          mimetype="application/pdf",
+          headers={"Content-disposition:":
+                   "attachment; filename=factura.html"})  
+  else:
+     return jsonify("Factura inexistente") 
+
+@app.route('/PonerPuntosDeMil', methods=['GET','POST'])
+def PonerPuntosDeMil():
+  Total = int(request.form.get('txtConsecutivoActual'))
+  return jsonify(group(Total))
+
+
+@app.route('/BuscarNumeroDeFacturas', methods=['GET','POST'])
+def BuscarNumeroDeFacturas():
+  Busqueda = Factura.query.filter(Factura.fac_cliente == int(request.form.get('txtCC_Nit'))).all()
+  if Busqueda is None:
+    return jsonify(0)
+  else:
+    return jsonify(len(Busqueda))
+
+@app.route('/BuscarFacturaRelativo', methods=['GET','POST'])
+def BBuscarFacturaRelativo():
+
+ return jsonify(Factura.query.filter(Factura.fac_cliente == int(request.form.get('txtCC_Nit'))).all()[int(request.form.get('txtFacturaActual_Relacivo')) - 1].fac_numero)
+
+@app.route('/PonerDiaDosDiasAparte', methods=['GET','POST'])
+def PonerDiaDosDiasAparte():
+  locale.setlocale(locale.LC_TIME, "vie")
+  hoy = date.today()
+  fac_eventoFecha = request.form.get('txtfechaEvento')
+  
+  if(date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2])) == hoy):
+    DosDiasAtras = date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2]))  
+  else:
+    if hoy == date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2]))+ timedelta(days=1):
+      DosDiasAtras = hoy
+    else: 
+      DosDiasAtras = date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2])) - timedelta(days=2)
+  
+  DosDiasAdelante = date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2])) + timedelta(days=2)
+  if(hoy==date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2]))- timedelta(days=1)):
+    DosDiasAtras = hoy
+
+  if(DosDiasAdelante.strftime("%A") =="Sunday"):
+     DosDiasAdelante = DosDiasAdelante + timedelta(days=1)
+
+  listaDeFechas = [date(int(2017),int(7),int(20)),date(int(2017),int(8),int(7)),date(int(2017),int(8),int(21)),date(int(2017),int(10),int(16)), date(int(2017),int(11),int(6)),date(int(2017),int(11),int(13)),date(int(2017),int(12),int(8)),date(int(2017),int(12),int(25))]
+  if date(DosDiasAdelante.year,DosDiasAdelante.month,DosDiasAdelante.day) in listaDeFechas:
+    DosDiasAdelante = DosDiasAdelante + timedelta(days=1)
+
+  return jsonify({'DosDiasAtras':DosDiasAtras,'DosDiasAtrasString':str(DosDiasAtras),'DosDiasDespues':DosDiasAdelante,'DosDiasDespuesString':str(DosDiasAdelante)})
+
+@app.route('/BuscarReserva', methods=['GET','POST'])
+def BuscarReserva():
+  Entrega = request.form.get('txtfechaRecoger')
+  Devolucion =  request.form.get('txtfechaDevolver')
+  reservasProdcuto  = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega > Entrega).filter(ReservasPrenda.ReservasPrenda_devolucion < Devolucion).all()
+  if (reservasProdcuto == None):
+    return jsonify("prenda no disponible en esta fecha, estara disponible el "+str(ReservasPrenda.ReservasPrenda_devolucion + timedelta(days=1)))
+
+@app.route('/GenerarFactura', methods=['GET','POST'])
+def GenerarFactura():
+  factura = Factura.query.get(int(request.form.get('txtConsecutivoActual')))
+  cliente = Cliente.query.get(int(factura.fac_cliente))
+  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/Fffactura.pdf'
+  medio = MedioConocio.query.get(int(cliente.cli_medioConocio))
+  tipo = TipoPedido.query.get(int(factura.fac_tipoPedido))
+  detalles = FacturaDetalle.query.filter(FacturaDetalle.facdet_Factura == factura.fac_numero).all()
+  retefuente = request.form.get('txtRetefuente')
+  facturaTotalConCommas = "{:,}".format(factura.fac_Total)
+  pagina = render_template("facturaVdos.html",detalles= detalles,cliente = cliente,factura = factura,medio =medio.medio_nombre, tipo = tipo.pedi_nombre, retefuente =   retefuente, facturaTotalConCommas = facturaTotalConCommas)
+  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+
+  pdf = api.from_string(pagina,path,configuration=config)
+  
+ 
+  return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={"Content-disposition:":
+                 "attachment; filename=factura.html"})
+
+
+@app.route('/FacturasDeCedula', methods=['GET','POST'])
+def FacturasDeCedula():
+
+  Busqueda = Factura.query.filter(Factura.fac_cliente == int(request.form.get('txtCC_Nit'))).all()
+  if Busqueda is None:
+    return jsonify(0)
+  else:
+    listFacturas = []
+    listValor = []
+    listFecha = []
+    listSaldo = []
+    for a in Busqueda:
+      listFacturas.append(a.fac_numero)
+      listValor.append(a.fac_Saldo)
+      listFecha.append(a.fac_fechaFactura)
+      listSaldo.append(a.fac_Saldo)
+    return jsonify({'FacNumero': listFacturas,'Valor':listValor,'Fecha':listFecha, 'Saldo':listSaldo})
+@app.route('/ReciboDeFactura', methods=['GET','POST'])
+def ReciboDeFactura():
+
+  Busqueda = Recibo.query.filter(Recibo.reci_Factura == int(request.form.get('txtConsecutivoActual'))).all()
+  if Busqueda is None:
+    return jsonify(0)
+  else:
+    listRecibo = []
+    listValor = []
+    listFecha = []
+    listSaldo = []
+    for r in Busqueda:
+      listRecibo.append(r.reci_numero)
+      listValor.append(r.reci_valor)
+      listFecha.append(r.reci_fecha)
+      listSaldo.append(r.reci_nuevoSaldo)
+    return jsonify({'RecNumero': listRecibo,'Valor':listValor,'Fecha':listFecha, 'Saldo':listSaldo})
+
+@app.route('/PonerMedidaYArreglo', methods=['GET','POST'])
+def PonerMedidaYArreglo():
+  InputMeter = str(request.form.get('InputMeter'))
+  if InputMeter is None:
+    InputMeter = " "
+  LMLargoManga = request.form.get('LMLargoManga')
+  if LMLargoManga is None:
+    LMLargoManga = " "
+  else:
+    LMLargoManga = str(LMLargoManga)
+  LMCintura = request.form.get('LMCintura')
+  if LMCintura is None:
+    LMCintura = " "
+  else:
+    LMCintura = str(LMCintura)
+  LMLargoPantalon =  request.form.get('LMLargoPantalon')
+  if LMLargoPantalon is None:
+    LMLargoPantalon = " "
+  else:
+    LMLargoPantalon = str(LMLargoPantalon)
+  HombreArreglo = request.form.get('HombreArreglo')
+  if HombreArreglo is None:
+    HombreArreglo = " "
+  else:
+    HombreArreglo = str(HombreArreglo)
+  LFBusto = request.form.get('LFBusto')
+  if LFBusto is None:
+    LFBusto = " "
+  else:
+    LFBusto = str(LFBusto)
+  LFCintura = request.form.get('LFCintura')
+  if LFCintura is None:
+    LFCintura = " "
+  else:
+    LFCintura = str(LFCintura)
+  LFCadera = request.form.get('LFCadera') 
+  if LFCadera is None:
+    LFCadera = " "
+  else:
+    LFCadera = str(LFCadera)
+  LFLargoTotal = request.form.get('LFLargoTotal')
+  if LFLargoTotal is None:
+    LFLargoTotal = " "
+  else:
+    LFLargoTotal = str(LFLargoTotal)
+  MujerArreglo = request.form.get('MujerArreglo')
+  if MujerArreglo is None:
+    MujerArreglo = " "
+  else:
+    MujerArreglo = str(MujerArreglo)
+
+  if LMLargoManga:
+    StringMasculino = "Largo manga:"+LMLargoManga+",Cintura:"+LMCintura+",Largo pantalon:"+LMLargoPantalon+",Arreglo:"+HombreArreglo
+    return jsonify({'datus':StringMasculino,'input':InputMeter})
+  if LMCintura:
+    StringMasculino = "Largo manga:"+LMLargoManga+",Cintura:"+LMCintura+",Largo pantalon:"+LMLargoPantalon+",Arreglo:"+HombreArreglo
+    return jsonify({'datus':StringMasculino,'input':InputMeter})
+  if LMLargoPantalon:
+    StringMasculino = "Largo manga:"+LMLargoManga+",Cintura:"+LMCintura+",Largo pantalon:"+LMLargoPantalon+",Arreglo:"+HombreArreglo
+    return jsonify({'datus':StringMasculino,'input':InputMeter})
+  if HombreArreglo:
+    StringMasculino = "Largo manga:"+LMLargoManga+",Cintura:"+LMCintura+",Largo pantalon:"+LMLargoPantalon+",Arreglo:"+HombreArreglo
+    return jsonify({'datus':StringMasculino,'input':InputMeter})
+  if LFBusto:
+    StringFemenino = "Busto:"+LFBusto+",Cintura:"+LFCintura+",Cadera:"+LFCadera+",Largo total:"+LFLargoTotal+",Arreglo:"+MujerArreglo
+    return jsonify({'datus':StringFemenino,'input':InputMeter}) 
+  if LFCintura:
+    StringFemenino = "Busto:"+LFBusto+",Cintura:"+LFCintura+",Cadera:"+LFCadera+",Largo total:"+LFLargoTotal+",Arreglo:"+MujerArreglo
+    return jsonify({'datus':StringFemenino,'input':InputMeter})
+  if LFCadera:
+    StringFemenino = "Busto:"+LFBusto+",Cintura:"+LFCintura+",Cadera:"+LFCadera+",Largo total:"+LFLargoTotal+",Arreglo:"+MujerArreglo
+    return jsonify({'datus':StringFemenino,'input':InputMeter})
+  if LFLargoTotal:
+    StringFemenino = "Busto:"+LFBusto+",Cintura:"+LFCintura+",Cadera:"+LFCadera+",Largo total:"+LFLargoTotal+",Arreglo:"+MujerArreglo
+    return jsonify({'datus':StringFemenino,'input':InputMeter})
+  if MujerArreglo:
+    StringFemenino = "Busto:"+LFBusto+",Cintura:"+LFCintura+",Cadera:"+LFCadera+",Largo total:"+LFLargoTotal+",Arreglo:"+MujerArreglo
+    return jsonify({'datus':StringFemenino,'input':InputMeter})  
+
+@app.route('/AlterarPrecioTreinta', methods=['GET','POST'])
+def AlterarPrecioTreinta():
+  #knout out
+  PrecioReferencia = CantidadPrenda.query.get(request.form.get('ReferenciaPrenda')).cantidadPrenda_ValorReferencia
+  precioAlterado = request.form.get('txtValorReferencia')
+
+  if(str(request.form.get('PasswordSAVED')) == "siEra"):
+    return jsonify({'precio':precioAlterado,'respuesta':'cambio permitido','input':request.form.get('w')})  
+  else:
+    if((int(precioAlterado) +(0.30*PrecioReferencia))<PrecioReferencia and str(current_user.usu_login) != "john"):
+      return jsonify({'precio':PrecioReferencia,'respuesta':'excedio el limite de 30%','input':request.form.get('w')})
     else:
-      CantidadRealString1 = 'de esta prenda,para esta fecha hay'+str(cantidadQueHay1)+'items disponibles'
+      return jsonify({'precio':precioAlterado,'respuesta':'cambio permitido','input':request.form.get('w')})
 
-  if fac_prenda4 is not None: 
-    ##imprimir para ver 
-    prenda = CantidadPrenda.get(fac_prenda1)
-    cantidadQueHay1 = prenda.cantidadPrenda_cantidad
-    reservas = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color.get(fac_prenda1))
-    for a in reservas:
-     fechas_reservadas = reservas.ReservasPrenda_entrega - reservas.ReservasPrenda_devolucion  
-      if bool(set(fecha_a_reservar) & set(fechas_reservadas)):
-        cantidadQueHay1 = cantidadQueHay1 - reservas.ReservasPrenda_Cantidad
-    if cantidadQueHay1 <= 0:
-      CantidadRealString1 = 'primer producto reservado no tiene inventario en esa fecha'
+@app.route('/VerificarFestivo', methods=['GET','POST'])
+def VerificarFestivo():
+  ListaDeFestivos = [date(2007,7,20),date(2007,8,7),date(2007,8,21),date(2007,10,16),date(2007,11,6),date(2007,11,13),date(2007,12,8),date(2007,12,25)]
+  fac_ReclamarMercanciaFecha = str(request.form.get('fecha'))
+  if(fac_ReclamarMercanciaFecha[0:3] == "201" ):
+    fac_ReclamarMercanciaFecha=date(int(fac_ReclamarMercanciaFecha[0:4]),int(fac_ReclamarMercanciaFecha[5:7]),int(fac_ReclamarMercanciaFecha[8:10]))
+  else:
+    fac_ReclamarMercanciaFecha= date(int(fac_ReclamarMercanciaFecha[6:10]),int(fac_ReclamarMercanciaFecha[3:5]), int(fac_ReclamarMercanciaFecha[0:2]))
+  if fac_ReclamarMercanciaFecha in ListaDeFestivos:
+    return jsonify("este dia es festivo")
+  else:
+    return jsonify("1")
+
+@app.route('/ObtenerTotal', methods=['GET','POST'])
+def ObtenerTotal():
+  total = 0
+  for a in range(len(request.form.getlist('txtValorReferenciaArray[]',type= int))):
+    total = total + a
+
+  return jsonify(total)
+  
+@app.route('/AutomatizarPrenda', methods=['GET','POST'])
+def AutomatizarPrenda(): 
+  descripcion = CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == request.form.get('txtReferencia')).all()[0].cantidadPrenda_descripcion
+  accesorios = CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == request.form.get('txtReferencia')).all()[0].cantidadPrenda_Accesorios
+  valor = CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == request.form.get('txtReferencia')).all()[0].cantidadPrenda_ValorReferencia
+  sexo = CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == request.form.get('txtReferencia')).all()[0].SexoLinea
+  fac_DevolverMercanciaFecha = str(request.form.get('txtfechaDevolver'))
+  fac_DevolverMercanciaFechaExacto = str(request.form.get('txtfechaDevolver'))
+  fac_ReclamarMercanciaFecha = str(request.form.get('txtfechaRecoger'))
+  fac_ReclamarMercanciaFechaExacto = str(request.form.get('txtfechaRecoger'))
+  hoy = datetime.now()
+  hoy = date(hoy.year, hoy.month, hoy.day)
+  reservaResulT = "no"
+  ListaDeRangos =[]
+  fecha_a_reservarDosDiasLIST =[]
+  fecha_a_reservarMismoDiaLIST =[]
+  fecha_a_reservarCORAZONLIST =[]
+  fecha_a_reservarOUTSIDELIST =[]
+  FINALlist = []
+  
+  if(fac_DevolverMercanciaFecha[0:3] == "201" ):
+    fac_DevolverMercanciaFecha=date(int(fac_DevolverMercanciaFecha[0:4]),int(fac_DevolverMercanciaFecha[5:7]),int(fac_DevolverMercanciaFecha[8:10]))+timedelta(days=2)
+    fac_DevolverMercanciaFechaExacto= date(int(fac_DevolverMercanciaFechaExacto[0:4]),int(fac_DevolverMercanciaFechaExacto[5:7]),int(fac_DevolverMercanciaFechaExacto[8:10]))
+  else:
+    fac_DevolverMercanciaFecha= date(int(fac_DevolverMercanciaFecha[6:10]), int(fac_DevolverMercanciaFecha[3:5]), int(fac_DevolverMercanciaFecha[0:2]))+timedelta(days=2)
+    fac_DevolverMercanciaFechaExacto= date(int(fac_DevolverMercanciaFechaExacto[6:10]), int(fac_DevolverMercanciaFechaExacto[3:5]), int(fac_DevolverMercanciaFechaExacto[0:2]))
+  if(fac_ReclamarMercanciaFecha[0:3] == "201"):
+    fac_ReclamarMercanciaFecha= date(int(fac_ReclamarMercanciaFecha[0:4]),int(fac_ReclamarMercanciaFecha[5:7]),int(fac_ReclamarMercanciaFecha[8:10]))-timedelta(days=2)
+    fac_ReclamarMercanciaFechaExacto= date(int(fac_ReclamarMercanciaFechaExacto[0:4]),int(fac_ReclamarMercanciaFechaExacto[5:7]),int(fac_ReclamarMercanciaFechaExacto[8:10]))
+  else:
+    fac_ReclamarMercanciaFecha= date(int(fac_ReclamarMercanciaFecha[6:10]), int(fac_ReclamarMercanciaFecha[3:5]), int(fac_ReclamarMercanciaFecha[0:2]))-timedelta(days=2)
+    fac_ReclamarMercanciaFechaExacto= date(int(fac_ReclamarMercanciaFechaExacto[6:10]), int(fac_ReclamarMercanciaFechaExacto[3:5]), int(fac_ReclamarMercanciaFechaExacto[0:2]))
+  for rara in  FechaEntreFechas(fac_ReclamarMercanciaFecha, fac_DevolverMercanciaFecha, timedelta(days=1)):
+    fecha_a_reservarDosDiasLIST.append(rara)
+
+
+  reservas = ReservasPrenda.query.filter(ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(request.form.get('txtReferencia'))).all()
+  #primero reservemos
+  for reser in reservas:
+    if reser.ReservasPrenda_devolucion > hoy:
+      ListaDeRangos.append(FechaEntreFechas(reser.ReservasPrenda_entrega,reser.ReservasPrenda_devolucion,timedelta(days=1)))
+      for lista in ListaDeRangos:
+        if (bool(set(fecha_a_reservarDosDiasLIST) & set(lista))):#hasta aqui funciona perfecto ahora necesito saber 
+          for last in  ReservasPrenda.query.filter( ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(request.form.get('txtReferencia'))).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all():
+            FINALlist.append(FechaEntreFechas(last.ReservasPrenda_entrega, last.ReservasPrenda_devolucion, timedelta(days=1)))
+            for fechaFin in FINALlist:
+              if (bool(set(fecha_a_reservarDosDiasLIST) & set(fechaFin))):
+                reservaResulT = "Reservado, coincide con la factura: "+str(last.ReservasPrenda_factura)+"  cuyo dia de devolucion es: "+str(last.ReservasPrenda_devolucion)
+                break
+          #for heart in  FechaEntreFechas(fac_ReclamarMercanciaFechaExacto, fac_DevolverMercanciaFechaExacto, timedelta(days=1)):
+            
+  
+  return jsonify({"descripcion": descripcion ,"accesorios": accesorios,"valor_sugerido": valor,"sexo": sexo,"fecha_prueba1":fac_ReclamarMercanciaFecha,"fecha_prueba2":fac_DevolverMercanciaFecha,"reservaResulT":reservaResulT})
+
+@app.route('/ValorTotalEnLetras', methods=['GET','POST'])
+def ValorTotalEnLetras(): 
+  total = 0
+  for a in request.form.getlist('txtValoresReferenciaArray[]',type= str):
+    if (a.isdigit()):
+      total = total + int(a)
+  return jsonify({"letras":num2words(total, lang='es'),"numeros":total})
+  
+@app.route('/QuitarHoraReservada', methods=['GET','POST'])
+def QuitarHoraReservada():
+
+
+  fac_ReclamarMercanciaFecha = str(request.form.get('txtfechaRecoger'))
+
+  ListaDeHoras = []
+  
+  if(fac_ReclamarMercanciaFecha[0:3] == "201" ):
+    if(int(fac_ReclamarMercanciaFecha[5:7]) > 9):
+      tempo_rada = "alta"
     else:
-      CantidadRealString1 = 'de esta prenda,para esta fecha hay'+str(cantidadQueHay1)+'items disponibles'
-"""
+      tempo_rada = "baja"
+    fac_ReclamarMercanciaFecha=date(int(fac_ReclamarMercanciaFecha[0:4]),int(fac_ReclamarMercanciaFecha[5:7]),int(fac_ReclamarMercanciaFecha[8:10]))
+  else:
+    if(int(fac_ReclamarMercanciaFecha[3:5]) > 9):
+      tempo_rada = "alta"
+    else:
+      tempo_rada = "baja"
+    fac_ReclamarMercanciaFecha = date(int(fac_ReclamarMercanciaFecha[6:10]),int(fac_ReclamarMercanciaFecha[3:5]),int(fac_ReclercanciaFecha[0:2]))
 
 
+  if HoraRecogidaReserva.query.filter(HoraRecogidaReserva.HoraReco_fechaSlash == fac_ReclamarMercanciaFecha) is not None:
+    for hour in range(len(HoraRecogidaReserva.query.filter(HoraRecogidaReserva.HoraReco_fechaSlash == fac_ReclamarMercanciaFecha).all())):
+      ListaDeHoras.append(HoraRecogidaReserva.query.filter(HoraRecogidaReserva.HoraReco_fechaSlash == fac_ReclamarMercanciaFecha).all()[hour].HoraReco_hora)
+    return jsonify({'lista':ListaDeHoras,'tempo':tempo_rada})
+
+  #  #https://stackoverflow.com/questions/7697936/jquery-show-hide-options-from-one-select-drop-down-when-option-on-other-select
 
 
+@app.route('/VendedorIngresandoPassWord', methods=['GET','POST'])
+def VendedorIngresandoPassWord():
+  PassSkill.query.filter(PassSkill.PassSKill_id == 1).update({PassSkill.PassSKill_text : request.form.get('PasswordSkillOwner')})
+  db.session.commit() 
+  return jsonify ("contraseña cambiada") 
+
+@app.route('/CambiarContraseñaDeSistema', methods=['GET','POST'])
+def CambiarContraseñaDeSistema():
+  lista = PassSkill.query.get(1)
+  atributo = lista.PassSKill_text
+  if (atributo == str(request.form.get('txtPassEnviado'))):
+    return jsonify("siEra")
+  else:
+    return jsonify("nuu")
+@app.route('/MostrarBotonCambiadorDePass', methods=['GET','POST'])
+def MostrarBotonCambiadorDePass():
+  if(str(current_user.usu_login) != "john"):
+    return jsonify("mostrar")
+  else:
+    return jsonify("cambiar")
+
+@app.route('/PonerOtros', methods=['GET','POST'])
+def PonerOtros():
+  if(str(request.form.get('opcionOtru')) == "ciudad"):
+    newcity = Ciudad(str(request.form.get('CiudadOtro')),1,1,1,str(current_user),str(current_user))
+    db.session.add(newcity)
+    db.session.commit() 
+
+  if(str(request.form.get('opcionOtru')) == "MedioComuni"):
+    comuni = MedioConocio(request.form.get('Medio_comunicacionOtro'))
+    db.session.add(comuni)
+    db.session.commit() 
+    
+  if(str(request.form.get('opcionOtru')) == "TipoEvento"):
+    eeeve = Evento(request.form.get('Tipo_EventoOtro'))
+    db.session.add(eeeve)
+    db.session.commit()
+
+@app.route('/UncheckDaPrice', methods=['GET','POST'])
+def UncheckDaPrice():
+  return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == request.form.get('ReferenciaPrenda')).all()[0].cantidadPrenda_ValorReferencia)

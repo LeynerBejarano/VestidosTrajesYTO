@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sample table</title>
+<style>
+table {
+    border-collapse: collapse;
+    border: 5px solid black;
+    width: 100%;
+}
+td {
+    width: 15px;
+    height: 15px;
+    border: 1px solid #ccc;
+}
+</style>
+</head>
+<body>
+{% for a in range(ListFechaEntregar|length) %}
+{% if (a+1) == 1  %}
+<table style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
+    <tbody>
+{% endif  %}
+    {% if (a+1) == 1  %}
+        <tr>
+        <td>
+        <span style="color: red">Fecha y hora de entrega</span><br>
+        {{ListFechaEntregar[a]}}<br>
+        <span style="color: red">Hora entregar</span><br>
+        {{ListaHoraEntregar[a]}}<br>
+        <span style="color: red">Factura #</span><br>
+        {{ListaFacturaNumero[a]}}<br>
+        <span style="color: red">Descripcion</span><br>
+        {{ListaDescripcion[a]}}<br>
+        <span style="color: red">Accesorios</span><br>
+        {{ListaAccesorios[a]}}<br>
+        <span style="color: red">medidas y arreglos</span><br>
+        {{ListaMedidasArreglos[a]}}
+        <span style="color: red">estilos</span><br>
+        {{ListaEstilos[a]}}   
+        </td>
+    {% elif ((a+1)-1) is divisibleby(3)  %} 
+        <tr>
+        <td>
+        <span style="color: red">Fecha y hora de entrega</span><br>
+        {{ListFechaEntregar[a]}}<br>
+        <span style="color: red">Hora entregar</span><br>
+        {{ListaHoraEntregar[a]}}<br>
+        <span style="color: red">Factura #</span><br>
+        {{ListaFacturaNumero[a]}}<br>
+        <span style="color: red">Descripcion</span><br>
+        {{ListaDescripcion[a]}}<br>
+        <span style="color: red">Accesorios</span><br>
+        {{ListaAccesorios[a]}}<br>
+        <span style="color: red">medidas y arreglos</span><br>
+        {{ListaMedidasArreglos[a]}}  
+        <span style="color: red">estilos</span><br>
+        {{ListaEstilos[a]}}
+        </td>
+    {%  endif  %}
+    {% if ((a+1)+1) is divisibleby(3)  %}
+        <td>
+        <span style="color: red">Fecha y hora de entrega</span><br>
+        {{ListFechaEntregar[a]}}<br>
+        <span style="color: red">Hora entregar</span><br>
+        {{ListaHoraEntregar[a]}}<br>
+        <span style="color: red">Factura #</span><br>
+        {{ListaFacturaNumero[a]}}<br>
+        <span style="color: red">Descripcion</span><br>
+        {{ListaDescripcion[a]}}<br>
+        <span style="color: red">Accesorios</span><br>
+        {{ListaAccesorios[a]}}<br>
+        <span style="color: red">medidas y arreglos</span><br>
+        {{ListaMedidasArreglos[a]}}<br>
+        <span style="color: red">estilos</span><br>
+        {{ListaEstilos[a]}}
+        </td>  
+    {%  endif  %}
+    {% if (a+1) is divisibleby(3)  %}
+        <td>
+        <span style="color: red">Fecha y hora de entrega</span><br>
+        {{ListFechaEntregar[a]}}<br>
+        <span style="color: red">Hora entregar</span><br>
+        {{ListaHoraEntregar[a]}}<br>
+        <span style="color: red">Factura #</span><br>
+        {{ListaFacturaNumero[a]}}<br>
+        <span style="color: red">Descripcion</span><br>
+        {{ListaDescripcion[a]}}<br>
+        <span style="color: red">Accesorios</span><br>
+        {{ListaAccesorios[a]}}<br>
+        <span style="color: red">medidas y arreglos</span><br>
+        {{ListaMedidasArreglos[a]}} <br> 
+        <span style="color: red">estilos</span><br>
+        {{ListaEstilos[a]}}
+        </td>
+        </tr>
+    {%  endif  %}
+{% if (a+1) is divisibleby(12)  %}
+    </tbody>
+</table>
+<table style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
+    <tbody>
+{%  endif  %}
+{% if (a+1) > (ListFechaEntregar|length)  %}
+    </tbody>
+</table>
+{%  endif  %}
+{%  endfor  %}
+</body>
+</html>

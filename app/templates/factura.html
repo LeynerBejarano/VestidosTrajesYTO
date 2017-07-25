@@ -13,16 +13,18 @@
             <img src="{{path}}/static/img/logo.png" alt="Logo" width="70" height="80">
         </td> -->
         <td>
-            Fecha Actual
-        </td>
-        <td>
-            {{factura.fac_fecha_mod}}
-        </td>
-        <td>
+            Fecha en que se toma el pedido <br>
             N° Factura de venta
         </td>
         <td>
+            {{factura.fac_fecha_mod}} <br>
             <span style="color: red">N° {{factura.fac_numero}}</span>
+        </td>
+        <td>
+            
+        </td>
+        <td>
+            
         </td>
         <td>
             
@@ -31,8 +33,267 @@
             Cra 76 N° 29 - 24 Belen Medellin <br>
             Teléfono fijo: 238 25 23 - 581 87 67 <br>
             Celular: 300 794 05 06 <br>
-            Correo electrónico: casaluiferbelen@hotmail.com <br>
+            Correo electrónico: casaluiferbelen@<hotmail class="com"></hotmail>                          <br>
         </td>
+    </tr>
+    </table>
+    <br>
+        <br>
+        <div style=" display: table;margin: 0 auto;"><h2>DATOS DEL CLIENTE</h2></div>
+    <br>
+    <table style="width:100%">
+    <tr>
+        <td>
+            Nombre del Cliente
+        </td>
+        <td style="width:70%">
+            {{cliente.cli_nombre}}
+        </td>
+        <td>
+            CC/Nit
+        </td>
+        <td>
+            {{cliente.cli_identificacion}}
+        </td>
+        <td>
+            Mes cumpleaños
+        </td>
+        <td>
+            {{cliente.cli_nacido_mes}}
+        </td>
+        <td>
+            Dia Cumpleaños
+        </td>
+        <td> 
+            {{cliente.cli_nacido_dia}}
+        </td>
+        <td>
+            Tel fij
+        </td>
+        <td>
+            {{cliente.cli_telefono}}
+        </td>
+        <td>
+            Ext
+        </td>
+        <td>
+            {{cliente.cli_extension}}
+        </td>
+    </tr>
+    <tr>
+        
+        <td>
+            Tel oficina
+        </td>
+        <td>
+            {{cliente.cli_telefonoFijo}}
+        </td>
+        <td>
+            Ext
+        </td>
+        <td>
+            {{cliente.cli_telefonoFijo_ext}}
+        </td>
+        <td>
+            Celular
+        </td>
+        <td>
+            {{cliente.cli_celular}}
+        </td>
+        <td>
+            Email
+        </td>
+        <td>
+            {{cliente.cli_email}}
+        </td>
+        <td>
+            Direccion
+        </td>
+        <td>
+            {{cliente.cli_direccion}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Municipio
+        </td>
+        <td>
+            {{cliente.cli_ciudad}}
+        </td>
+        <td>
+            {{metropolitana}}
+        </td>
+        <td>
+            Barrio
+        </td>
+        <td>
+            {{cliente.cli_barrio}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Referencia Nombre
+        </td>
+        <td>
+            {{factura.fac_ReferenciaNombre}}
+        </td>
+        <td>
+            Referencia Celular
+        </td>
+        <td>
+            {{factura.fac_ReferenciaCelular}}
+        </td>
+        <td>
+            Referencia Telefono
+        </td>
+        <td>
+            {{factura.fac_ReferenciaMedio}}
+        </td>
+    </tr>
+</table>
+<br>
+        <br>
+        <div style=" display: table;margin: 0 auto;"><h2>PEDIDO</h2></div>
+    <br>
+<table>
+    <tr>
+    <td>
+        Tipo Pedido
+    </td>
+     <td>
+         {{factura.fac_tipoPedido}}
+     </td> 
+     <td>
+         {{factura.fac_poblacion}}
+     </td>  
+     <td>
+         Tipo de Evento
+     </td>
+     <td>
+         {{factura.fac_evento}}
+     </td>
+     <td>
+         Fecha del evento
+     </td>
+     <td>
+         Dia <br>
+         {{factura.fac_eventoDia}}
+     </td>
+     <td>
+         Mes <br>
+         {{factura.fac_eventoMes}}
+     </td>
+     <td>
+         Año <br>
+         {{factura.fac_eventoAño}}
+     </td>
+    </tr>
+    <tr>
+        <table style="width:100%">
+          <tr>
+            <th>Referencia</th>       
+            <th>Descripcion</th>
+            <th>Accesorios</th>
+            <th>Medidas y Arreglos</th>
+            <th>Valor Referencia</th>
+          </tr>
+          <tr id="RowPrenda1">
+            <!--td>style="width: 65px, background-color:gray"<input type = "text" name = "txtReferencia1" placeholder="txtReferencia1" class="txtReferencia" id = "txtReferencia1"/></td-->
+            <td >{{factura.fac_ReferenciaProducto1 }}</td>
+            <td>{{factura.fac_descripcion1}}</td>
+            <td width="70%" >{{factura.fac_accesorios1}}</td>
+            <td>{{factura.fac_MedidasArreglos1}}</td>
+            <td>{{factura.fac_ValorReferencia1}}</td>
+          </tr>
+          <tr>
+            
+            <td>{{factura.fac_ReferenciaProducto2}}</td>
+            <td>{{factura.fac_descripcion2}}</td>
+            <td>{{factura.fac_accesorios2}}</td>
+            <td>{{factura.fac_MedidasArreglos2}}</td>
+            <td>{{factura.fac_ValorReferencia2}}</td>
+          </tr>
+          <tr>
+            
+            <td>{{factura.fac_ReferenciaProducto3}}</td>
+            <td>{{factura.fac_descripcion3}}</td>
+            <td>{{factura.fac_accesorios3}}</td>
+            <td>{{factura.fac_MedidasArreglos3}}</td>
+            <td>{{factura.fac_ValorReferencia3}}</td>
+          </tr>
+          <tr>
+           
+            <td>{{factura.fac_ReferenciaProducto4}}</td>
+            <td>{{factura.fac_descripcion4}}</td>
+            <td>{{factura.fac_accesorios4}}</td>
+            <td>{{factura.fac_MedidasArreglos4}}</td>
+            <td>{{factura.fac_ValorReferencia14}}</td>
+             <table>
+                  <tr>
+                    <th style="width: 25px">Total</th>
+                    <th >{{factura.fac_Total}}</th>
+                  </tr>
+        </table>
+          </tr>
+          <tr>
+              <td>
+                  Reclamar Mercancia
+              </td>
+              <td>
+                  Hora
+              </td>
+              <td>
+                  Hora
+              </td>
+              <td>
+                  Dia
+              </td>
+              <td>
+                  {{factura.fac_ReclamarMercanciaDia}}
+              </td>
+              <td>
+                  Mes
+              </td>
+              <td>
+                  {{factura.fac_ReclamarMercanciaMes}}
+              </td>
+              <td>
+                  Año
+              </td>
+              <td>
+                  {{factura.fac_ReclamarMercanciaAño}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                  Devolver Mercancia
+              </td>
+              <td>
+                  Hora
+              </td>
+              <td>
+                  Hora
+              </td>
+              <td>
+                  Dia
+              </td>
+              <td>
+                  {{factura.fac_DevolverMercanciaDia}}
+              </td>
+              <td>
+                  Mes
+              </td>
+              <td>
+                  {{factura.fac_DevolverMercanciaMes}}
+              </td>
+              <td>
+                  Año
+              </td>
+              <td>
+                  {{factura.fac_DevolverMercanciaAño}}
+              </td>
+          </tr>
+        </table>
     </tr>
 </table>
 </header>
@@ -50,7 +311,7 @@
 - No hay devolución de dinero
 
 
-    <style>
+    <!--style>
 
 
     body {
@@ -119,7 +380,7 @@
     @page {
       margin: 0.2cm;
     }
-    </style>
+    </style-->
     <!-- Simple Invoice - END -->
         
     </body>

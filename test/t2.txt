@@ -1,0 +1,14 @@
+1)guarda y carga
+2)imprime
+3)guarda, muestra e imprime recibos 
+4)informe diario
+5)dice si es viejo y lo carga
+6)el "otro" de la ciudad, tipo de evento y medio de comunicacion estan programados
+7)john puede cambiar la contraseña
+8)se pone dos cortesias por cada novia
+9)los otros empleados pueden ingresar una contraseña que les permite meter contraseñas si john envia, o bajaar un precio mas del 30%
+10)guarda una reserva y elimina las horas de esa reserva para la misma fecha,
+11)si cambio la fecha se puede salir de otra reserva
+12)la reserva indica si esta reservada, para saber si coje una antes, debe ponerse temporalmente otro numero
+
+ 

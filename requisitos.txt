@@ -1,4 +1,9 @@
 
+
+
+
+
+
 indica la cantidad de un producto  cuando no hay reservas o hay  reservas ya vencidas -------> 	YA CASI (FALTA TESTEAR EL SPAN, ), YA FUNCIONA EL ALERT
 
 indica la cantidad de un producto  cuando  HAY reservas o hay  reservas NO vencidas -------> 	
@@ -8,6 +13,12 @@ puede ingresar recibos en un pop up--------->
 puede ver los pasados recibos de una factura---------->
 
 dependiendo si es alquiler o si es venta aparece o no las fechas de recoger y entregar---------->
+
+linea 15 a la 27 en pedido.js que hace que se muestre o no las fechas de recogida y devolucion--------->
+
+ingresar recibo---->
+
+mostrar recibos pasados ----->
 
 
 

@@ -77,6 +77,7 @@ class Form_Pedido(Form):
     otro_cargo_enc = StringField(validators=[DataRequired()])
     ins_data_check = RadioField('¿Hay datos de la institucion?', coerce = int, choices = [(1,'Si'), (2, 'No')], default = 1, validators = [Optional()])
     municipio_enc = SelectField(coerce = int, validators=[DataRequired()])
+    ciudad = SelectField(coerce = int, validators=[DataRequired()])
     otro_municipio_enc = StringField(validators=[DataRequired()])
 
 
@@ -141,6 +142,18 @@ class Form_Pedido(Form):
     fac_consecutivoManual = StringField('el equivalente en los manuales', validators=[DataRequired()])
     fac_nota = StringField('observaciones sobre la factura', validators=[DataRequired()])
     fac_prenda = SelectField('Tipo de devolución', coerce = int, validators=[Optional()])
+    EntregarMes = SelectField('Mes', coerce = int, choices = [(1, 'Enero'),(2, 'Febrero'),(3, 'Marzo'),(4, 'Abril'),(5, 'Mayo'),(6, 'Junio'),(7, 'Julio'),(8, 'Agosto'),(9, 'Septiembre'),(10, 'Octubre'),(11, 'Noviembre'),(12, 'Diciembre')], validators=[Optional()])
+    DevolverMes = SelectField('Mes', coerce = int, choices = [(1, 'Enero'),(2, 'Febrero'),(3, 'Marzo'),(4, 'Abril'),(5, 'Mayo'),(6, 'Junio'),(7, 'Julio'),(8, 'Agosto'),(9, 'Septiembre'),(10, 'Octubre'),(11, 'Noviembre'),(12, 'Diciembre')], validators=[Optional()])
+    dia_Entregar = SelectField('Día', coerce = int, validators=[Optional()])
+    dia_Devolver = SelectField('Día', coerce = int, validators=[Optional()])
+    año_Entregar = SelectField('Año', coerce = int, validators=[Optional()])
+    año_Devolver = SelectField('Año', coerce = int, validators=[Optional()])
+    fac_horasReclamarCadaH = SelectField('hora de entregada en temporada baja', coerce = int, choices = [(10, '10 am'),(11, '11 am'),(12, '12 am'),(13, '1 pm'),(14, '2 pm'),(15, '3 pm'),(16, '4 pm'),(17, '5 pm'),(18, '6 pm'),(19, '7 pm')], validators=[Optional()])
+    fac_horasDevolverCadaH = SelectField('hora de entregada en temporada baja', coerce = int, choices = [(14, '2 pm'),(15, '3 pm'),(16, '4 pm'),(17, '5 pm'),(18, '6 pm'),(19, '7 pm')], validators=[Optional()])
+    fac_horasCadaReclamarMH = SelectField('hora de entregada en temporada alta', coerce = float, choices = [(10, '10 am'),(10.5, '10:30 am'),(11, '11 am'),(11.5, '11:30 am'),(12, '12 am'),(12.5, '12:30 am'),(13, '1 pm'),(13.5, '1:30 pm'),(14, '2 pm'),(14.5, '2:30 pm'),(15, '3 pm'),(15.5, '3:30 pm'),(16, '4 pm'),(16.5, '4:30 pm'),(17, '5 pm'),(17.5, '5:30 pm'),(18, '6 pm'),(18.5, '6:30 pm'),(19, '7 pm')], validators=[Optional()])
+    fac_horasCadaDevolverMH = SelectField('hora de entregada en temporada alta', coerce = float, choices = [(14, '2 pm'),(14.5, '2:30 pm'),(15, '3 pm'),(15.5, '3:30 pm'),(16, '4 pm'),(16.5, '4:30 pm'),(17, '5 pm'),(17.5, '5:30 pm'),(18, '6 pm'),(18.5, '6:30 pm'),(19, '7 pm')], validators=[Optional()])
+    RangoHorasInformeDiario = SelectField('Rango hora para generar informe', coerce = int, choices = [(1, 'Diario'),(7, 'Semanal'),(30, 'Mensual'),(300, 'Anual')], validators=[Optional()])
+
 
     abonos = DecimalField('Abonos', validators = [Optional()])
     

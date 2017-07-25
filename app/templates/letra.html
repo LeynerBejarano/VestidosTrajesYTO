@@ -14,21 +14,21 @@
                     <td colspan="3"></td>
                 </tr>
                 <tr>
-                    <td class="light-grey" style="font-family: Arial;"><strong>PEDIDO No.</strong> <span style="color: red;">{{pedido.ped_numero}}</span></td>
+                    <td class="light-grey" style="font-family: Arial;"><strong>FACTURA No.</strong> <span style="color: red;">{{factura.fac_numero}}</span></td>
                     <td style="text-align: center;" style="font-family: Arial;"><strong style="font-size: 1.3em">LETRA DE CAMBIO</strong> <br><span style="font-size: 0.7em">(SIN PROTESTO)</span></td>
-                    <td class="light-grey" style="font-family: Arial;"><strong>POR $</strong> {{det_letra.valor}}</td>
+                    <td class="light-grey" style="font-family: Arial;"><strong>POR $</strong> {{ NumeroCommaSeparated}}</td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="font-style: italic;">Señor(a) {{cliente}} con C.C. {{cedula}}, <br> El día {{det_letra.rec_fecha}} se servirá usted pagar solidariamente en Medellín a la orden de John Jairo Cardona Mejia</td>
+                    <td colspan="3" style="font-style: italic;">Señor(a) {{cliente.cli_nombre}} con C.C. {{factura.fac_cliente}}, <br> El día {{factura.fac_fechaFactura}} se servirá usted pagar solidariamente en Medellín a la orden de John Jairo Cardona Mejia</td>
                 </tr>
                 <tr>
-                    <td colspan="3" class="light-grey" style="font-family: Arial;"><strong>EXACTOS</strong> {{det_letra.valorLetras}}</td>
+                    <td colspan="3" class="light-grey" style="font-family: Arial;"><strong>EXACTOS</strong> {{ValorDeLaFacturaEnLetras}}</td>
                 </tr>
                 <tr>
                     <td colspan="3" style="font-style: italic;">Pesos moneda legal, más intereses durante el plazo del 0% mensual y de mora a la tasa máxima legal autorizada. Todas las partes de esta letra quedan obligadas solidariamente y renuncian a la presentación para la aceptación y el pago a los avisos de rechazo.</td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="text-align: center;">Medellín {{det_letra.fecha}}</td>
+                    <td colspan="3" style="text-align: center;">Medellín {{hoy}}</td>
                 </tr>
                 <tr>
                     <td class="light-grey" style="font-size: 0.7em" colspan="2">Atentamente,</td>
@@ -36,57 +36,46 @@
                 </tr>
             </table> 
         </td>
+        <td style="width: 5%" >
+        <div>
+            <div id="firma">
+                firma
+            </div>
+        </div>
+        </td>
     </tr>
-</table>  
- 
-
-{% if detalles.all() %} 
+</table>   
+ {% if detalle %} 
     <table class="detalles">
         <tr>
+            <th>referencia</th>
+            <th>estilo</th>
+            <th>Accesorios</th>
+            <th colspan="2">Descripcion</th>
             <th></th>
-            <th>Color</th>
-            <th>Estilo</th>
-            <th colspan="2">Detalle</th>
-            <th>Despachada</th>
         </tr>
-        {% set cla = 0 %}
-        {% set col = 0 %}
-        {% set est = 0 %}
-        {% for detalle in detalles %}
+        {% for det in detalle %}
             <tr>
-                <th>
-                    {%if detalle.det_clase %}
-                        {{clases[cla].cla_nombre}}
-                        {% set cla = cla + 1 %}
-                    {% endif %}
-                </th>
                 <td>
-                    {%if detalle.det_color %}
-                        {{colores[col].col_nombre}}
-                        {% set col = col + 1 %}
-                    {% endif %}
+                {{det.facdet_Referencia}}
                 </td>
                 <td>
-                    {%if detalle.det_estilo %}
-                        {{estilos[est].est_nombre}}
-                        {% set est = est + 1 %}
-                    {% endif %}
+                {{det.facdet_estilo}}
+                </td>
+                <td>
+                {{det.facdet_Accesorios}}
                 </td>
                 <td colspan="2">
-                    {%if detalle.det_detalle %}
-                        {{ detalle.det_detalle}}
-                    {% endif %}
+                {{det.facdet_Descripcion}}
                 </td>
                 <td>
-                    {%if det_letra.cantidad %}
-                        {{det_letra.cantidad}}
-                    {% endif %}
                 </td>
             </tr>
-        {% endfor %}
+             {% endfor %}
     </table>
 {% endif %}
 
+ 
 
 <style>
 
@@ -98,6 +87,15 @@
       font-size: 14px; 
       font-family: Arial;
     } 
+    #firma{
+    -webkit-transform:rotate(90deg);
+    border-style: solid;
+    border-bottom: thick double #ff0000;
+    padding-top: 50px;
+    padding-right: 80px;
+    padding-bottom: 10px;
+    padding-left: 100px;
+   }
 
     tr.bordered{
         border: 1px solid black;
@@ -109,6 +107,7 @@
 
     table.main{
         margin: 10px;
+        width: 100%;
     }
 
     table.detalles{

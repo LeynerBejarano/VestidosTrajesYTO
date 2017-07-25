@@ -33,39 +33,25 @@ class Factura(db.Model):
     fac_ReferenciaMedio = db.Column(db.Integer)
     fac_poblacion = db.Column(db.String(100))
     fac_evento = db.Column(db.String(100))
+    fac_eventoFecha = db.Column(db.DateTime)
     fac_eventoDia = db.Column(db.Integer)
     fac_eventoMes = db.Column(db.Integer)
     fac_eventoAño = db.Column(db.Integer)
-    fac_ReferenciaProducto1 = db.Column(db.String(100))
-    fac_ReferenciaProducto2 = db.Column(db.String(100))
-    fac_ReferenciaProducto3 = db.Column(db.String(100))
-    fac_ReferenciaProducto4 = db.Column(db.String(100))
-    fac_descripcion1 = db.Column(db.String(200))
-    fac_descripcion2 = db.Column(db.String(200))
-    fac_descripcion3 = db.Column(db.String(200))
-    fac_descripcion4 = db.Column(db.String(200))
-    fac_accesorios1 = db.Column(db.String(100))
-    fac_accesorios2 = db.Column(db.String(100))
-    fac_accesorios3 = db.Column(db.String(100))
-    fac_accesorios4 = db.Column(db.String(100))
-    fac_MedidasArreglos1 = db.Column(db.String(100))
-    fac_MedidasArreglos2 = db.Column(db.String(100))
-    fac_MedidasArreglos3 = db.Column(db.String(100))
-    fac_MedidasArreglos4 = db.Column(db.String(100))
-    fac_ValorReferencia1 = db.Column(db.Integer)
-    fac_ValorReferencia2 = db.Column(db.Integer)
-    fac_ValorReferencia3 = db.Column(db.Integer)
-    fac_ValorReferencia4 = db.Column(db.Integer)
     fac_Total = db.Column(db.Integer)
-    fac_Abono = db.Column(db.Integer)
     fac_Saldo = db.Column(db.Integer)
     fac_Retefuente = db.Column(db.Integer)
-    fac_ReclamarMercanciaDia = db.Column(db.Integer)
+    fac_ReclamarMercanciaFecha = db.Column(db.DateTime)
+    fac_horasReclamarCadaH = db.Column(db.Integer)
+    fac_horasCadaReclamarMH =  db.Column(db.Float)
+    fac_NombreCliente = db.Column(db.String(200))
     fac_ReclamarMercanciaMes = db.Column(db.Integer)
     fac_ReclamarMercanciaAño = db.Column(db.Integer)
+    fac_horasDevolverCadaH = db.Column(db.Integer)
+    fac_horasCadaDevolverMH = db.Column(db.Float)
     fac_DevolverMercanciaDia = db.Column(db.Integer)
     fac_DevolverMercanciaMes = db.Column(db.Integer)
     fac_DevolverMercanciaAño = db.Column(db.Integer)
+    fac_DevolverMercanciaFecha = db.Column(db.DateTime)
     fac_AtendidoPor = db.Column(db.String(100))
     fac_modifica = db.Column(db.Integer)
     fac_consecutivoManual = db.Column(db.Integer)
@@ -77,7 +63,7 @@ class Factura(db.Model):
 
     
 
-    def __init__(self, fac_cliente, fac_tipoPedido, fac_ReferenciaNombre, fac_ReferenciaCelular, fac_ReferenciaMedio, fac_poblacion, fac_evento, fac_eventoDia, fac_eventoMes, fac_eventoAño,  fac_ReferenciaProducto1,  fac_ReferenciaProducto2,  fac_ReferenciaProducto3, fac_ReferenciaProducto4,  fac_descripcion1, fac_descripcion2, fac_descripcion3, fac_descripcion4, fac_accesorios1, fac_accesorios2, fac_accesorios3, fac_accesorios4,  fac_MedidasArreglos1, fac_MedidasArreglos2, fac_MedidasArreglos3, fac_MedidasArreglos4, fac_ValorReferencia1, fac_ValorReferencia2, fac_ValorReferencia3, fac_ValorReferencia4, fac_Total, fac_Abono, fac_Saldo, fac_ReclamarMercanciaDia, fac_ReclamarMercanciaMes, fac_ReclamarMercanciaAño, fac_DevolverMercanciaDia, fac_DevolverMercanciaMes, fac_DevolverMercanciaAño, fac_AtendidoPor, fac_consecutivoManual, fac_nota):
+    def __init__(self, fac_cliente, fac_tipoPedido, fac_ReferenciaNombre, fac_ReferenciaCelular, fac_ReferenciaMedio, fac_poblacion, fac_evento, fac_eventoFecha,  fac_eventoDia, fac_eventoMes, fac_eventoAño, fac_Total,  fac_Saldo, fac_Retefuente, fac_ReclamarMercanciaFecha, fac_horasReclamarCadaH, fac_horasCadaReclamarMH,  fac_NombreCliente, fac_ReclamarMercanciaMes, fac_ReclamarMercanciaAño, fac_horasDevolverCadaH, fac_DevolverMercanciaFecha,fac_horasCadaDevolverMH, fac_DevolverMercanciaDia, fac_DevolverMercanciaMes, fac_DevolverMercanciaAño, fac_AtendidoPor, fac_consecutivoManual, fac_nota):
         self.fac_tipoPedido= fac_tipoPedido
         self.fac_cliente = fac_cliente
         self.fac_ReferenciaNombre= fac_ReferenciaNombre
@@ -85,42 +71,29 @@ class Factura(db.Model):
         self.fac_ReferenciaMedio= fac_ReferenciaMedio
         self.fac_poblacion =  fac_poblacion 
         self.fac_evento = fac_evento
+        self.fac_eventoFecha = fac_eventoFecha
         self.fac_eventoDia = fac_eventoDia
         self.fac_eventoMes = fac_eventoMes
         self.fac_eventoAño  = fac_eventoAño
-        self.fac_ReferenciaProducto1 = fac_ReferenciaProducto1
-        self.fac_ReferenciaProducto2 = fac_ReferenciaProducto2
-        self.fac_ReferenciaProducto3 = fac_ReferenciaProducto3
-        self.fac_ReferenciaProducto4 = fac_ReferenciaProducto4
-        self.fac_descripcion1 = fac_descripcion1
-        self.fac_descripcion2 = fac_descripcion2
-        self.fac_descripcion3 = fac_descripcion3
-        self.fac_descripcion4 = fac_descripcion4
-        self.fac_accesorios1 = fac_accesorios1
-        self.fac_accesorios2 = fac_accesorios2
-        self.fac_accesorios3 = fac_accesorios3
-        self.fac_accesorios4 = fac_accesorios4
-        self.fac_MedidasArreglos1 = fac_MedidasArreglos1
-        self.fac_MedidasArreglos2 = fac_MedidasArreglos2
-        self.fac_MedidasArreglos3 = fac_MedidasArreglos3
-        self.fac_MedidasArreglos4 = fac_MedidasArreglos4
-        self.fac_ValorReferencia1 = fac_ValorReferencia1
-        self.fac_ValorReferencia2 = fac_ValorReferencia2
-        self.fac_ValorReferencia3 = fac_ValorReferencia3
-        self.fac_ValorReferencia4 = fac_ValorReferencia4
         self.fac_Total = fac_Total
-        self.fac_Abono = fac_Abono
         self.fac_Saldo = fac_Saldo
-        self.fac_ReclamarMercanciaDia = fac_ReclamarMercanciaDia
+        self.fac_Retefuente = fac_Retefuente
+        self.fac_ReclamarMercanciaFecha = fac_ReclamarMercanciaFecha
+        self.fac_horasReclamarCadaH = fac_horasReclamarCadaH
+        self.fac_horasCadaReclamarMH = fac_horasCadaReclamarMH
+        self.fac_NombreCliente = fac_NombreCliente
         self.fac_ReclamarMercanciaMes = fac_ReclamarMercanciaMes
         self.fac_ReclamarMercanciaAño = fac_ReclamarMercanciaAño
+        self.fac_horasDevolverCadaH = fac_horasDevolverCadaH
+        self.fac_horasCadaDevolverMH = fac_horasCadaDevolverMH
         self.fac_DevolverMercanciaDia = fac_DevolverMercanciaDia
         self.fac_DevolverMercanciaMes = fac_DevolverMercanciaMes
         self.fac_DevolverMercanciaAño = fac_DevolverMercanciaAño
+        self.fac_DevolverMercanciaFecha = fac_DevolverMercanciaFecha
         self.fac_AtendidoPor = fac_AtendidoPor
         #self.fac_modifica = fac_modifica
         self.fac_consecutivoManual = fac_consecutivoManual
-        self.fac_fechaFactura = "{:%d.%m.%Y}".format(datetime.now())
+        self.fac_fechaFactura = datetime.now(timezone('America/Bogota'))
         self.fac_nota = fac_nota
         self.fac_fecha_mod = datetime.now(timezone('America/Bogota'))
        
@@ -135,39 +108,25 @@ class Factura(db.Model):
         <fac_ReferenciaMedio: {}>
         <fac_poblacion: {}>
         <fac_evento: {}>
+        <fac_eventoFecha: {}>
         <fac_eventoDia : {}>
         <fac_eventoMes: {}>
         <fac_eventoAño: {}>
-        <fac_ReferenciaProducto1: {}>
-        <fac_ReferenciaProducto2: {}>
-        <fac_ReferenciaProducto3: {}>
-        <fac_ReferenciaProducto4: {}>
-        <fac_descripcion1: {}>
-        <fac_descripcion2: {}>
-        <fac_descripcion3: {}>
-        <fac_descripcion4: {}>
-        <fac_accesorios1: {}>
-        <fac_accesorios2: {}>
-        <fac_accesorios3: {}>
-        <fac_accesorios4: {}>
-        <fac_MedidasArreglos1: {}>
-        <fac_MedidasArreglos2: {}>
-        <fac_MedidasArreglos3: {}>
-        <fac_MedidasArreglos4: {}>
-        <fac_ValorReferencia1: {}>
-        <fac_ValorReferencia2: {}>
-        <fac_ValorReferencia3: {}>
-        <fac_ValorReferencia4: {}>
         <fac_Total : {}>
-        <fac_Abono: {}>
         <fac_Saldo: {}>
         <fac_Retefuente: {}>
-        <fac_ReclamarMercanciaDia: {}>
+        <fac_ReclamarMercanciaFecha: {}>
+        <fac_horasReclamarCadaH: {}>
+        <fac_horasCadaReclamarMH: {}>
+        <fac_NombreCliente: {}>
         <fac_ReclamarMercanciaMes: {}>
         <fac_ReclamarMercanciaAño: {}>
+        <fac_horasDevolverCadaH:{}>
+        <fac_horasCadaDevolverMH: {}>
         <fac_DevolverMercanciaDia: {}>
         <fac_DevolverMercanciaMes: {}>
-        <fac_DevolverMercanciaAño: {}> 
+        <fac_DevolverMercanciaAño: {}>
+        <fac_DevolverMercanciaFecha: {}> 
         <fac_AtendioPor: {}>
         <fac_consecutivoManual: {}>
         <fac_tipoToga: {}>
@@ -177,7 +136,7 @@ class Factura(db.Model):
         <fac_fechaFactura: {}>
         <fac_fecha_mod: {}>
         '''
-        return texto.format(self.fac_tipoPedido, self.fac_cliente, self.fac_ReferenciaNombre,self.fac_ReferenciaCelular,self.fac_ReferenciaMedio,self.fac_poblacion, self.fac_evento, self.fac_eventoDia, self.fac_eventoMes, self.fac_eventoAño, self.fac_ReferenciaProducto1, self.fac_ReferenciaProducto2, self.fac_ReferenciaProducto3, self.fac_ReferenciaProducto4, self.fac_descripcion1, self.fac_descripcion2, self.fac_descripcion3, self.fac_descripcion4, self.fac_accesorios1, self.fac_accesorios2, self.fac_accesorios3, self.fac_accesorios4, self.fac_MedidasArreglos1, self.fac_MedidasArreglos2, self.fac_MedidasArreglos3, self.fac_MedidasArreglos4, self.fac_ValorReferencia1, self.fac_ValorReferencia2, self.fac_ValorReferencia3, self.fac_ValorReferencia4, self.fac_Total, self.fac_Abono, self.fac_Saldo, self.fac_Retefuente, self.fac_ReclamarMercanciaDia, self.fac_ReclamarMercanciaMes, self.fac_ReclamarMercanciaAño, self.fac_DevolverMercanciaDia, self.fac_DevolverMercanciaMes, self.fac_DevolverMercanciaAño, self.fac_AtendioPor, self.fac_consecutivoManual, self.fac_tipoToga, self.fac_colorToga,self.fac_fechaFactura, self.fac_nota)
+        return texto.format(self.fac_tipoPedido, self.fac_cliente, self.fac_ReferenciaNombre,self.fac_ReferenciaCelular,self.fac_ReferenciaMedio,self.fac_poblacion, self.fac_evento, self.fac_eventoFecha, self.fac_eventoDia, self.fac_eventoMes, self.fac_eventoAño, self.fac_Total, self.fac_Saldo, self.fac_Retefuente, self.fac_ReclamarMercanciaFecha, self.fac_horasReclamarCadaH,self.fac_horasCadaReclamarMH, self.fac_NombreCliente, self.fac_ReclamarMercanciaMes, self.fac_ReclamarMercanciaAño, self.fac_DevolverMercanciaDia, self.fac_DevolverMercanciaMes, self.fac_DevolverMercanciaAño, self.fac_DevolverMercanciaFecha, self.fac_AtendioPor, self.fac_consecutivoManual, self.fac_tipoToga, self.fac_colorToga,self.fac_fechaFactura, self.fac_nota)
 
     @property
     def serialize(self):
@@ -191,39 +150,25 @@ class Factura(db.Model):
         'ReferenciaMedio': self.fac_ReferenciaMedio,
         'poblacion': self.fac_poblacion,
         'evento': self.fac_evento,
+        'eventoFecha': self.fac_eventoFecha,
         'eventoDia': self.fac_eventoDia,
         'eventoMes': self.fac_eventoMes,
         'eventoAño': self.fac_eventoAño,
-        'ReferenciaProducto1': self.fac_ReferenciaProducto1,
-        'ReferenciaProducto2': self.fac_ReferenciaProducto2,
-        'ReferenciaProducto3': self.fac_ReferenciaProducto3,
-        'ReferenciaProducto4': self.fac_ReferenciaProducto4,
-        'descripcion1': self.fac_descripcion1,
-        'descripcion2': self.fac_descripcion2,
-        'descripcion3': self.fac_descripcion3,
-        'descripcion4': self.fac_descripcion4,
-        'accesorios1': self.fac_accesorios1,
-        'accesorios2': self.fac_accesorios2,
-        'accesorios3': self.fac_accesorios3,
-        'accesorios4': self.fac_accesorios4,
-        'MedidasArreglos1': self.fac_MedidasArreglos1,
-        'MedidasArreglos2': self.fac_MedidasArreglos2,
-        'MedidasArreglos3': self.fac_MedidasArreglos3,
-        'MedidasArreglos4': self.fac_MedidasArreglos4,
-        'ValorReferencia1': self.fac_ValorReferencia1,
-        'ValorReferencia2': self.fac_ValorReferencia2,
-        'ValorReferencia3': self.fac_ValorReferencia3,
-        'ValorReferencia4': self.fac_ValorReferencia4,
         'Total': self.fac_Total,
-        'Abono': self.fac_Abono,
         'Saldo': self.fac_Saldo,
         'Retefuente': self.fac_Retefuente,
-        'ReclamarMercanciaDia': self.fac_ReclamarMercanciaDia,
+        'ReclamarMercanciaFecha': self.fac_ReclamarMercanciaFecha,
+        'fac_horasReclamarCadaH': self.fac_horasReclamarCadaH,
+        'fac_horasCadaReclamarMH': self.fac_horasCadaReclamarMH,
+        'NombreCliente': self.fac_NombreCliente,
         'ReclamarMercanciaMes': self.fac_ReclamarMercanciaMes,
         'ReclamarMercanciaAño': self.fac_ReclamarMercanciaAño,
+        'fac_horasDevolverCadaH': self.fac_horasDevolverCadaH,
+        'fac_horasCadaDevolverMH': self.fac_horasCadaDevolverMH,
         'DevolverMercanciaDia': self.fac_DevolverMercanciaDia,
         'DevolverMercanciaMes': self.fac_DevolverMercanciaMes,
-        'DevolverMercanciaAño': self.DevolverMercanciaAño,
+        'DevolverMercanciaAño': self.fac_DevolverMercanciaAño,
+        'DevolverMercanciaFecha': self.fac_DevolverMercanciaFecha,
         'AtendioPor': self.fac_AtendioPor,
         'fac_consecutivoManual' : self.fac_consecutivoManual,
         'fac_tipoToga' : self.fac_tipoToga,

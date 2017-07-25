@@ -1,0 +1,8 @@
+1-----la lista de recibos, recibos:::::::::::::::::::::::::::::::::::::::Ya tengo la logica, ya hice el de buscar faCTURA POR cedula como me dijeron
+2----probemos guardaruna factura-----YA
+3-----lo del cuadro que salga para guardar-----
+4-----que cuando se vaya a guardar 
+5-----Lo del informe diario, me tocaria analizar si la suma de la semana, el año y el mes si me da....porque no creo
+6------la del taller funciona bn, falta hacer una bn grande para probar esa monda
+7------lo de las medidas ya esta programado falta testear y arreglar sobre el testeo
+8-------lo del valor sugerido con el acceso

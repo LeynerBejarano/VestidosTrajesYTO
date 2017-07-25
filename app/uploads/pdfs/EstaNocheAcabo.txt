@@ -1,0 +1,41 @@
+1))))testear el informeTaller --->fallo
+2))))Testear el informe diario --->no suma
+3))))Testear la letra
+4))))Testear el recibo
+5))))Testear la factura
+6))))Testear el sistema de reservas
+7))))testear el sistema de las fechas (que aparesca en español)
+8)))))arreglar suma y testearla
+9))))testear el retefuente
+******)))))esa tabla como que ya no la pude arreglar
+
+
+
+
+cuando se busque con una cedula
+numero de la factura, valor, fecha,saldo---->esto es un pop-up y la lista son enlaces 
+
+
+----el sistema de reservas me fallo
+
+
+el evento de que ponga las fechas, 
+
+el evento que tenia que poner para que diga la fecha dos dias depues y dos dias antes ( era un lost-focus), asi dijo william que se llamaba, buscar ese evento como se llama hoy en dia, dice en internet que se llama "focusout" 
+
+
+cuando el sistema dice "RESERVADO", DEBE DECIR CON QUE FACTURAS Y CON QUE FECHAS
+
+
+tres columnas que
+
+
+en fotos del celular estan unas cuestiones de medida segun el hombre o mujer, con un , largo total , largo manga, cintura 
+
+el retefuente con un 4%
+
+
+la linea  de la letra no tiene que ir detras de la letra
+
+
+en la factura primero se ve la referencia, color y descripcion

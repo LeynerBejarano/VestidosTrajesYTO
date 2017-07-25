@@ -1,22 +1,58 @@
 {% extends "base.html" %}
-{% block styles %}
-    <link rel="stylesheet" href="/static/css/pedido.css">
-{% endblock %}
 {% block content %}
+ <fieldset class="scheduler-border">
+<legend class="scheduler-border">.</legend>
 <div id="PrimerContainer" class="container-fluid" style=" width:100%">
  <form class="form-horizontal" role="form" method = "POST" >
-<div>
-    <div class="col-sm-2">
-    <span id="Consecutivo Manual" class="label label-default" >Consecutivo manual</span>
-      <input type ="text" name = "txtConsecutivoManual" plaholder="Nombre de la Referencia" id="txtConsecutivoManual"/>
-    </div>
-
-  <div class="col-sm-2">
-  <span id="Buscar_consecutivo" class="label label-default" >Buscar_Consecutivo</span>
-  <input type ="text" name = "txtConsecutivo" plaholder=" " id="txtConsecutivo" />
+ <nav class="navbar navbar-default">
+<div class="col-sm-2" >
+ <div class="dropdown">
+  <button class="dropbtn">Generar Documentos</button>
+  <div class="dropdown-content">
+    <a  id="idInformeTallerButton"  href="#">Informe Taller</a>
+    <a  id="idInformeDiarioButton" href="#">Informe Diario</a>
+    <a  id="idLetraButton" href="#">Generar Letra</a>
+    <a  id="idFacturaButton" href="#">Generar Factura</a>
   </div>
-  <div>
-  <span id="fecha_" class="label label-default">Devolver Mercancia</span>
+</div>
+</div>
+<div class="col-sm-2" >
+ <div class="dropdown">
+  <button class="dropbtn">Recibos</button>
+  <div class="dropdown-content">
+    <a  id="idReciboButton"  href="#">Ingresar Recibo</a>
+    <a  id="idReciboPorFacturaButton" href="#">Recibo por Factura</a>
+  </div>
+</div>
+</div>
+   <div class="col-sm-2" style="float:right;">
+   <label >Consecutivo actual</label>
+  <input  class="form-control" type ="text" name = "txtConsecutivoActual" id="txtConsecutivoActual" placeholder=" " id="txtConsecutivoActual" style="float:right;"/>
+ </div>
+  <div class="col-sm-4" >
+<legend class="scheduler-border">TRAJES VESTIDOS Y TOGAS</legend>
+</div>
+  <div class="col-sm-2"  style="float:right;">
+  <label >Buscar consecutivo</label>
+  <div class="input-group">
+            <input type="text" class="form-control" class="bajaloUnpoquito"   name = "txtConsecutivo" id="txtConsecutivo" style="float:right;"/>
+            <span class="input-group-addon">
+                <a id="SiguienteFactura" href="#" ><i class="glyphicon glyphicon-search" id="SiguienteFactura"></i></a>
+                </span>
+        </div>
+        </div>
+ </nav>
+
+
+
+<div class="row">
+    <div class="col-sm-2" >
+    <span id="Consecutivo Manual" class="label label-default" >Consecutivo manual</span>
+    <br>
+      <input class="form-control" type ="text" name = "txtConsecutivoManual" plaholder="Nombre de la Referencia" id="txtConsecutivoManual"/>
+    </div>
+  <div style="display:none">
+  <span id="fecha_" class="label label-default" >Devolver Mercancia</span>
   <table>
           <tr>
             <th></th>
@@ -27,50 +63,48 @@
         </table>
   </div>
 </div>
-
+<br>
 <!--    class="control-label col-sm-2"-->
- <hr>
- <div class="row" id="DivPriFechaFactura" style="display:none">
- <span id="fecha_Pedido" class="label label-default">Fecha del pedido</span>
-  <label class="control-label col-sm-2" for="email" id="FechaDePedido" value=""></label>
-  <div>
-  <label class="control-label col-sm-2" for="email" id="DireccionLocal" value="">Carrera 76 N°29-24 Belén. Medellín </label>
-  <label class="control-label col-sm-2" for="email" id="FechaDePedido" value="">Tels: 238 25 23 – 581 87 67 - 300 794 05 06</label>
-  </div>
- </div>
+ 
 
 <div class="row">
 <div class="col-sm-2 ">
-        <span id="CC_Nit" class="label label-default" >CC/Nit</span>
-         <input type = "text" name = "txtCC_Nit" id="txtCC_Nit" />
+        <label for="inputEmail3" class="col-sm-2 col-form-label">CC/Nit</label>
+        <!--span id="CC_Nit" class="label label-default" >CC/Nit</span-->
+         <input type = "text" name = "txtCC_Nit" id="txtCC_Nit" class="form-control"/>
          <span id="NuevoViejo" class="label label-primary" style="display: none"></span>
         </div> 
   <div class="col-sm-2 ">
-          <span id="Nombre" class="label label-default" >Nombre y Apellido</span>
-          <input type = "text" name = "txtNonmbreCliente" id="txtNonmbreCliente"/>
+          <!--span id="Nombre" class="label label-default" >Nombre y Apellido</span-->
+          <label  class=" col-form-label">Nombre y apellido</label>
+          <input type = "text" name = "txtNonmbreCliente" id="txtNonmbreCliente" class="form-control"/>
           </div> 
 
         <div class="col-sm-2">
+
           <span id="Dia_Cumpleaños" class="label label-default" >Dia Cumpleaños</span>
-          <input type = "text" name = "txtDiaCumpleaños"  placeholder="Dia" id="txtDiaCumpleaños" style="width: 85px , padding-right: 0px"/>          
-           <input type = "text" name = "txtMesCumpleaños"  placeholder="Mes" id="txtMesCumpleaños" style="width: 45px , padding-left: 0px, float: left"/>
+          <br>
+          <div class="input-group">
+          {{form.dia_Devolver(id = "txtDiaCumpleaños")}}
+          {{form.EntregarMes(id = "txtMesCumpleaños")}}
+          </div>
  </div> 
  
         <div class="col-sm-2 ">
-         <span id="Telefono_fijo" class="label label-default" >Telefono fijo y Ext</span>
-          <input type ="text" name = "txtTelefonoFijo" placeholder="Telefono" id="txtTelefonoFijo"/>
-          <input type ="text" name = "txtExtension" placeholder="Ext" style="width: 45px" id="txtExtension"/>
+         <span id="Telefono_fijo" class="label label-default" >Telefono fijo y Ext (casa)</span>
+          <input type ="text" name = "txtTelefonoFijo"  id="txtTelefonoFijo"/>
+          <input type ="text" name = "txtExtension" id = "txtExtension"   style="width: 45px" id="txtExtension"/>
           </div> 
 
           <div class="col-sm-2 ">
-         <span id="Telefono_fijo" class="label label-default" >Telefono fijo y Ext Oficina</span>
-          <input type ="text" name = "txtTelefonoFijoOficina" placeholder="Telefono" id="txtTelefonoFijoOficina"/>
-          <input type ="text" name = "ExtOficina" placeholder="Ext" style="width: 45px" id="ExtOficina"/>
+         <span id="Telefono_fijo" class="label label-default" >Telefono fijo y Ext (Oficina)</span>
+          <input type ="text" name = "txtTelefonoFijoOficina"  id="txtTelefonoFijoOficina"/>
+          <input type ="text" name = "ExtOficina" id = "ExtOficina"  style="width: 45px" />
           </div> 
 
           <div class="col-sm-2 ">
           <span id="celular" class="label label-default" >Celular</span>
-         <input type ="text" name = "txtCelular" placeholder="Celular" id="txtCelular"/>
+         <input type ="text" name = "txtCelular"  id="txtCelular"/>
           </div>
           
 </div>
@@ -79,33 +113,33 @@
 <div class="row">
 <div class="col-sm-2 ">
         <span id="direccion" class="label label-default" >Direccion</span>
-         <input type ="text" name = "txtDireccion" placeholder="Direccion" id="txtDireccion"/>
+         <input type ="text" name = "txtDireccion"  id="txtDireccion"/>
          </div>
 <div class="col-sm-2 ">
+        <span id="Barrio" class="label label-default"  >Barrio</span>
+         <input type ="text" name = "txtBarrio"   id="txtBarrio"/>
+          </div>
+<div class="col-sm-2 ">
         <span id="ciudad" class="label label-default" >Ciudad</span>
-         {{form.municipio_enc(class="form-control",id="txtMunicipio", placeholder="¿Cuál?")}}
+         {{form.ciudad(class="form-control",id="txtMunicipio")}}
          <span id="MetroPol" class="label label-warning" style="display: none"></span>
           </div>            
  <div class="col-sm-2 ">
         <span id="Medio de comunicacion" class="label label-default" style="width: 85px" >Medio_comunicacion</span>
          {{form.cli_medioConocio( id = "txtMedioConocio")}}
-         </div> 
-<div class="col-sm-2 ">
-        <span id="Barrio" class="label label-default"  >Barrio</span>
-         <input type ="text" name = "txtBarrio" placeholder="Barrio"  id="txtBarrio"/>
-          </div>      
+         </div>       
 <div class="col-sm-2 ">
         <span id="AtendidoPorSpan" class="label label-default">Atendido por</span>
          {{form.vendedor( id = "txtAtendidoPor" )}}
          </div>       
-        
+  <div class="col-sm-2 ">
+           <span id="email" class="label label-default" >Email</span>
+          <input type ="text" name = "txtEmail"  id="txtEmail"/>
+          </div>      
   </div>
   <br>
 <div class="row">
-<div class="col-sm-2 ">
-           <span id="email" class="label label-default" >Email</span>
-          <input type ="text" name = "txtEmail" placeholder="Email" id="txtEmail"/>
-          </div>
+
  <div class="col-sm-2 ">
           <span id="NombreReferenciaSpan" class="label label-default">Nombre_Referencia</span>
          <input type ="text" name = "txtReferenciaNombre" plaholder="Nombre de la Referencia" id="txtReferenciaNombre"/> 
@@ -115,22 +149,11 @@
          <input type ="text" name = "txtReferenciaCelular" plaholder="Celular de la Referencia" id="txtReferenciaCelular"/> 
          </div>  
 <div class="col-sm-2 ">
-          <span id="TelefonoReferenciaSpan" class="label label-default">Telefono_Referencia</span>
+          <span id="TelefonoReferenciaSpan" class="label label-default">Telefono Fijo Referencia</span>
          <input type ="text" name = "txtReferenciaTelefono" plaholder="Telefono de la Referencia" id="txtReferenciaTelefono"/> 
-         </div>   
-
-          
-  </div>
-
-   
- 
-
-<hr> 
-<br>
- <div class="row">
-
-        <div class="col-sm-2 ">
-        <span id="TipodePedidoSpan" class="label label-default" >Tipo_Pedido</span>
+         </div> 
+          <div class="col-sm-2 ">
+        <span id="TipodePedidoSpan" class="label label-default" >Tipo de Factura</span>
          {{form.fac_tipoPedido( id = "txtTipoPedido")}}
          </div> 
          <div class="col-sm-2 ">
@@ -138,114 +161,357 @@
          {{form.ped_poblacion( id = "txtPedPoblacion")}}
          </div>
          <div class="col-sm-2 ">
-         <span id="TipoEventoSpan" class="label label-default">Tipo_Evento</span>
+         <span id="TipoEventoSpan" class="label label-default">Tipo Evento</span>
           {{form.ped_evento( id = "txtTipoEvento")}}
-          </div> 
-          <div class="col-sm-2 ">
-         <span id="Dia_Evento" class="label label-default">Dia_Evento</span>
-         <input type = "text" name = "txtDiaEvento" placeholder="Dia del evento" id="txtDiaEvento"/>
-         </div> 
-         <div class="col-sm-2 ">
-        <span id="Mes_Evento" class="label label-default">Mes_Evento</span>
-         <input type = "text" name = "txtMesEvento" placeholder="Mes del Evento" id="txtMesEvento"/>
-         </div> 
-         <div class="col-sm-2 ">
-        <span id="Año_Evento" class="label label-default">Año_Evento</span>
-         <input type = "text" name = "txtAñoEvento" placeholder="Año del evento" id="txtAñoEvento"/>
-         </div> 
-</div> 
+          </div>     
+</div>
 <br>
-         
-         
  <div class="row">
-        
-      
-        
-      
-        
-  </div> 
-         <table style="width:100%">
-          <tr>
-            <th><span id="Referencia_" class="label label-default">Referencia</span></th>  
-            <th><span id="CantidadReferencia_" class="label label-default">Cantidad</span></th>     
-            <th><span id="Descripcion_" class="label label-default">Descripcion</span></th>
-            <th><span id="Accesorios_" class="label label-default">Accesorios</span></th>
-            <th><span id="Medidas_y_Arreglos_" class="label label-default">Medidas y Arreglos</span></th>
-            <th><span id="Valor_Referencia_" class="label label-default">Valor Referencia</span></th>
-          </tr>
-          <tr id="RowPrenda1">
-            <!--td>style="width: 65px, background-color:gray"<input type = "text" name = "txtReferencia1" placeholder="txtReferencia1" class="txtReferencia" id = "txtReferencia1"/></td-->
-            <td >{{form.fac_prenda(id ="txtfac_prenda1")}}</td>
-            <td><input id="cantidadPrenda1" disabled class="cantidadPrenda" ></input></td>
-            <td width="70%" ><input type = "text" name = "txtDescripcion1" placeholder="txtDescripcion1" class="txtDescripcion" id = "txtDescripcion1" size="64" /></td>
-            <td><input type = "text" name = "txtAccesorios1" placeholder="txtAccesorios1" class="txtAccesorios" id = "txtAccesorios1"/></td>
-            <td><input type = "text" name = "txtMedidasArreglos1" placeholder="txtMedidasArreglos1" class="txtMedidasArreglos" id = "txtMedidasArreglos1"/></td>
-            <td><input type = "text" name = "txtValorReferencia1" placeholder="txtValorReferencia1" class="txtValorReferencia" id = "txtValorReferencia1"/></td>
-          </tr>
-          <tr>
-            <!--td><input type = "text" name = "txtReferencia2" placeholder="txtReferencia2" class="txtReferencia" id = "txtReferencia2"/></td-->
-            <!--td>{{form.cantidad_Prenda}}</td-->
-            <td>{{form.fac_prenda(id ="txtfac_prenda2")}}</td>
-            <td><input id="cantidadPrenda2" disabled class="cantidadPrenda"></input></td>
-            <td><input type = "text" name = "txtDescripcion2" placeholder="txtDescripcion2" class="txtDescripcion" id = "txtDescripcion2" size="64"/></td>
-            <td><input type = "text" name = "txtAccesorios2" placeholder="txtAccesorios2" class="txtAccesorios" id = "txtAccesorios2"/></td>
-            <td><input type = "text" name = "txtMedidasArreglos2" placeholder="txtMedidasArreglos2" class="txtMedidasArreglos" id = "txtMedidasArreglos2" /></td>
-            <td><input type = "text" name = "txtValorReferencia2" placeholder="txtValorReferencia2" class="txtValorReferencia" id = "txtValorReferencia2"/></td>
-          </tr>
-          <tr>
-            <!--td><input type = "text" name = "txtReferencia3" placeholder="txtReferencia3" class="txtReferencia" id = "txtReferencia3"/></td-->
-            <!--td>{{form.cantidad_Prenda}}</td-->
-            <td>{{form.fac_prenda(id ="txtfac_prenda3")}}</td>
-            <td><input id="cantidadPrenda3" disabled class="cantidadPrenda"></input></td>
-            <td><input type = "text" name = "txtDescripcion3" placeholder="txtDescripcion3" class="txtDescripcion" id = "txtDescripcion3" size="64"/></td>
-            <td><input type = "text" name = "txtAccesorios3" placeholder="txtAccesorios3" class="txtAccesorios" id = "txtAccesorios3"/></td>
-            <td><input type = "text" name = "txtMedidasArreglos3" placeholder="txtMedidasArreglos3" class="txtMedidasArreglos" id = "txtMedidasArreglos3"/></td>
-            <td><input type = "text" name = "txtValorReferencia3" placeholder="txtMedidasArreglos3" class="txtValorReferencia" id = "txtValorReferencia3"/></td>
-          </tr>
-          <tr>
-            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
-            <!--td>{{form.cantidad_Prenda}}</td-->
-            <td>{{form.fac_prenda(id ="txtfac_prenda4")}}</td>
-            <td><input id="cantidadPrenda4" disabled class="cantidadPrenda"></input></td>
-            <td><input type = "text" name = "txtDescripcion4" placeholder="txtDescripcion4" class="txtDescripcion" id = "txtDescripcion4" size="64"/></td>
-            <td><input type = "text" name = "txtAccesorios4" placeholder="txtAccesorios1" class="txtAccesorios" id = "txtAccesorios4"/></td>
-            <td><input type = "text" name = "txtMedidasArreglos4" placeholder="txtMedidasArreglos4" class="txtMedidasArreglos" id = "txtMedidasArreglos4"/></td>
-            <td><input type = "text" name = "txtValorReferencia4" placeholder="txtValorReferencia4" class="txtValorReferencia" id = "txtValorReferencia4"/></td>
-          </tr>
-        </table>
-<br>
-  <div id="divRecogerMercancia">
+          <div class="col-sm-2 ">
+          <span id="Fecha_Evento" class="label label-default">Fecha_Evento</span>
+          <input type = "text" name = "txtfechaEvento" id= "txtfechaEvento" onblur="QuitarHora()"/>
+         <span id="Dia_Evento" class="label label-default" style="display:none">Dia_Evento</span>
+         <input type = "text" name = "txtDiaEvento"  id="txtDiaEvento" onchange="AlterarFechasParaReserva()" style="display:none"/>
+         </div> 
+        <div id="divRecogerMercancia" class="col-sm-2" >
         <span id="Recoger_Mercancia" class="label label-default">Recoger Mercancia</span>
         <table>
           <tr>
-            <th></th>     
-            <th><input type = "text" name = "txtDiaRecoger" placeholder="Dia" class="txtRecoger" id = "txtDiaRecoger" style="width: 45px"/></th>
-            <th><input type = "text" name = "txtMesRecoger" placeholder="Mes" class="txtRecoger" id = "txtMesRecoger" style="width: 45px"/></th>
-            <th><input type = "text" name = "txtAñoRecoger" placeholder="Año" class="txtRecoger" id = "txtAñoRecoger" style="width: 45px"/></th>
+            <th></th> 
+            <th style="display:none" id="txtReclamarB">{{form.fac_horasReclamarCadaH(id="txtHoraReclamarB")}}</th> 
+            <th style="display:none" id="txtReclamarA">{{form.fac_horasCadaReclamarMH(id="txtHoraReclamarA")}}</th> 
+            <th style="display:none"><input type="text" name="txtfechaRecogerVisible" id="txtfechaRecogerVisible" value=""/></th> 
+            <th ><input type="text" name="txtfechaRecoger" id="txtfechaRecoger" value="" onblur="QuitarHora()" onchange="VerificarFecha(this.id)" onchange="AlterarFechasParaReserva()" size="9"/></th>  
           </tr>
           </table>
-    </div>
-<br>
-  <div id="divDevolverMercancia">
-          <span id="Devolver_Mercancia" class="label label-default">Devolver Mercancia</span>
-          <table>
+</div> 
+<div id="divDevolverMercancia" class="col-sm-2">
+<span id="Devolver_Mercancia" class="label label-default">Devolver Mercancia</span>
+<input type="text" name="txtfechaDevolver" id="txtfechaDevolver" onchange="AlterarFechasParaReserva()" value=""/>
+</div>
+<div class="col-sm-2">
+  <button type="button" id="PonerUnaFilaMas" onclick="AdherirFila()">Adherir Fila</button>
+</div>
+<div class="col-sm-2">
+  <button type="button" id="QuitarFila" onclick="DisminuirFilaFila()">Quitar Fila</button>
+</div>
+</div> 
+    <div>
+      <span style="display:none" id="ExcesoEnPrecio" class="label label-default"></span>
+      <span style="display:none" id="EstaReservado_1" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_2" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_3" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_4" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_5" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_6" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_7" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_8" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_9" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_10" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_11" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_12" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_13" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_14" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_15" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_16" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_17" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_18" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_19" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_20" class="label label-warning"></span>
+      <span style="display:none" id="EstaReservado_21" class="label label-warning"></span>
+    </div> 
+  </div> 
+    <div id ="detalles">
+         <table style="width:100%">
           <tr>
-            <th></th>
-            <th><input type = "text" name = "txtDiaEntregar" placeholder="Dia " class="txtEntregar" id = "txtDiaEntregar" style="width: 45px"/></th>
-            <th><input type = "text" name = "txtMesEntregar" placeholder="Mes " class="txtEntregar" id = "txtMesEntregar" style="width: 45px"/></th>
-            <th><input type = "text" name = "txtAñoEntregar" placeholder="Año " class="txtEntregar" id = "txtAñoEntregar" style="width: 45px"/></th>
-          </tr>          
+            <th><span id="Referencia_" class="label label-default"> #</span></th>     
+            <th><span id="Descripcion_" class="label label-default">Descripcion</span></th>
+            <th><span id="Accesorios_" class="label label-default">Accesorios</span></th>
+            <th><span id="Medidas_y_Arreglos_" class="label label-default">Medidas y Arreglos</span></th>
+            <th style="display:none"><span id="Valor_Sugerido_" class="label label-default">Estilo</span></th>
+            <th style="display:none"><span id="Valor_Sugerido_" class="label label-default">Sexo</span></th>
+            <th><span id="Valor_Referencia_" class="label label-default">Valor Sugerido</span></th>
+            <th><span id="Cortesia_" class="label label-default">C</span></th>
+          </tr>
+          <tr id="RowPrenda1">
+            <!--td>style="width: 65px, background-color:gray"<input type = "text" name = "txtReferencia1" placeholder="txtReferencia1" class="txtReferencia" id = "txtReferencia1"/></td-->
+            <td ><input id="ReferenciaPrenda1" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td ><input type = "text" name = "txtDescripcion1" " class="txtDescripcion" id = "txtDescripcion1" size="64" /></td>
+            <td ><input type = "text" name = "txtAccesorios1"  class="txtAccesorios" id = "txtAccesorios1"/></td>
+            <td ><input type = "text" name = "txtMedidasArreglos1"  class="txtMedidasArreglos" id = "txtMedidasArreglos1" onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo1"   id = "Estilo1" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo1"   id = "LineaSexo1" size="8" /></td>
+            <td ><input type = "text" name = "txtValorReferencia1"   id = "txtValorReferencia1" size="8" onchange="AlterarPrecio(this.id)" onblur="ObtenerTotal()" value="0" /></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia1"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr id="RowPrenda2" style="display:none">
+            <!--td><input type = "text" name = "txtReferencia2" placeholder="txtReferencia2" class="txtReferencia" id = "txtReferencia2"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda2" size="1"  onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion2"  class="txtDescripcion" id = "txtDescripcion2" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios2" class="txtAccesorios"                id = "txtAccesorios2"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos2"  class="txtMedidasArreglos" id = "txtMedidasArreglos2" onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo2"   id = "Estilo2" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo2"   id = "LineaSexo2" size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia2"  class="txtValorReferencia"  onchange="AlterarPrecio(this.id)" id = "txtValorReferencia2" size="8" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia2"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr id="RowPrenda3" style="display:none">
+            <!--td><input type = "text" name = "txtReferencia3" placeholder="txtReferencia3" class="txtReferencia" id = "txtReferencia3"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda3" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion3"  class="txtDescripcion" id = "txtDescripcion3" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios3"  class="txtAccesorios"       id = "txtAccesorios3"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos3"                 id = "txtMedidasArreglos3" onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo3"   id = "Estilo3" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo3"   id = "LineaSexo3" size="8"/></td>    
+            <td><input type = "text" name = "txtValorReferencia3"  class="txtValorReferencia" id = "txtValorReferencia3" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia3"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr id="RowPrenda4" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda4" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion4"  class="txtDescripcion" id = "txtDescripcion4" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios4" class="txtAccesorios" id = "txtAccesorios4"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos4"  class="txtMedidasArreglos"   id = "txtMedidasArreglos4"  onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo4"   id = "Estilo4"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo4"   id = "LineaSexo4"  size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia4" class="txtValorReferencia" id = "txtValorReferencia4" size="8"   onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia4"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr id="RowPrenda5" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda5" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion5"  class="txtDescripcion" id = "txtDescripcion5" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios5" class="txtAccesorios" id = "txtAccesorios5"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos5"  class="txtMedidasArreglos"  id = "txtMedidasArreglos5" onfocus="alerta(this.id)" size="38" /></td>
+            <td style="display:none"><input type = "text" name = "Estilo5"   id = "Estilo5"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo5"   id = "LineaSexo5" size="8" size="8" /></td>
+            <td><input type = "text" name = "txtValorReferencia5"  class="txtValorReferencia" id = "txtValorReferencia5" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia5"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr id="RowPrenda6" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda6" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion6"  class="txtDescripcion" id = "txtDescripcion6" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios6"  class="txtAccesorios" id = "txtAccesorios6"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos6"  class="txtMedidasArreglos"   id = "txtMedidasArreglos6" onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo6"   id = "Estilo6" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo6"   id = "LineaSexo6" size="8" /></td>
+            <td ><input type = "text" name = "txtValorReferencia6"   id = "txtValorReferencia6"  size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia6"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr id="RowPrenda7" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda7" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion7"  class="txtDescripcion" id = "txtDescripcion7" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios7" class="txtAccesorios" id = "txtAccesorios7"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos7"  class="txtMedidasArreglos"    id = "txtMedidasArreglos7" onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo7"   id = "Estilo7" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo7"   id = "LineaSexo7"  size="8"/></td>
+            <td ><input type = "text" name = "txtValorReferencia7"   id = "txtValorReferencia7"  size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia7"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr  id="RowPrenda8" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda8" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion8"  class="txtDescripcion" id = "txtDescripcion8" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios8" class="txtAccesorios" id = "txtAccesorios8"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos8"  class="txtMedidasArreglos"   id = "txtMedidasArreglos8" onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo8"   id = "Estilo8"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo8"   id = "LineaSexo8" size="8"/></td>
+            <td ><input type = "text" name = "txtValorReferencia8"   id = "txtValorReferencia8" size="8"  onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia8"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr id="RowPrenda9" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda9" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion9"  class="txtDescripcion" id = "txtDescripcion9" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios9" class="txtAccesorios"   id = "txtAccesorios9"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos9"  class="txtMedidasArreglos"   id = "txtMedidasArreglos9" onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo9"   id = "Estilo9"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo9"   id = "LineaSexo9"  size="8"/></td>
+            <td ><input type = "text" name = "txtValorReferencia9"   id = "txtValorReferencia9" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia9"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr id="RowPrenda10" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda10" size="1"  onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion10"  class="txtDescripcion" id = "txtDescripcion10" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios10" class="txtAccesorios"                 id = "txtAccesorios10"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos10"  class="txtMedidasArreglos"   id = "txtMedidasArreglos10"  onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo10"   id = "Estilo10"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo10"   id = "LineaSexo10"  size="8"/></td>
+            <td ><input type = "text" name = "txtValorReferencia10"   id = "txtValorReferencia10"  size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia10"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr id="RowPrenda11" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda11" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion11" class="txtDescripcion" id = "txtDescripcion11" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios11" class="txtAccesorios"      id = "txtAccesorios11"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos11"  class="txtMedidasArreglos"    id = "txtMedidasArreglos11" onfocus="alerta(this.id)" size="38"/></td>
+            <td  style="display:none"><input type = "text" name = "Estilo11"   id = "Estilo11"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo11"   id = "LineaSexo11"  size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia11"  class="txtValorReferencia" id = "txtValorReferencia11" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia11"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+           <tr id="RowPrenda12" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda12" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion12"  class="txtDescripcion" id = "txtDescripcion12" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios12" class="txtAccesorios" id = "txtAccesorios12"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos12"  class="txtMedidasArreglos" id = "txtMedidasArreglos12"  onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo12"   id = "Estilo12"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo12"   id = "LineaSexo12"  size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia12"  class="txtValorReferencia" id = "txtValorReferencia12" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia12"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+        <tr id="RowPrenda13" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda13" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion13"  class="txtDescripcion" id = "txtDescripcion13" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios13" class="txtAccesorios"     id = "txtAccesorios13"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos13"  class="txtMedidasArreglos"    id = "txtMedidasArreglos13"  onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo13"   id = "Estilo13"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo13"   id = "LineaSexo13"  size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia13"  class="txtValorReferencia" id = "txtValorReferencia13" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia13"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+         <tr  id="RowPrenda14" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda14" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion14"  class="txtDescripcion" id = "txtDescripcion14" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios14" class="txtAccesorios" id = "txtAccesorios14" /></td>
+            <td><input type = "text" name = "txtMedidasArreglos14"  class="txtMedidasArreglos"  id = "txtMedidasArreglos14"  onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo14"   id = "Estilo14"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo14"   id = "LineaSexo14"  size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia14"  class="txtValorReferencia" id = "txtValorReferencia14" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia14"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+          <tr   id="RowPrenda15" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda15" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion15"  class="txtDescripcion" id = "txtDescripcion15" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios15"  class="txtAccesorios"       id = "txtAccesorios15"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos15"  class="txtMedidasArreglos"    id = "txtMedidasArreglos15" onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo15"   id = "Estilo15"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo15"   id = "LineaSexo15"  size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia15"  class="txtValorReferencia" id = "txtValorReferencia15" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia15"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+                    <tr  id="RowPrenda16"  style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda16" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion16"  class="txtDescripcion" id = "txtDescripcion16" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios16" class="txtAccesorios" id = "txtAccesorios16"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos16"  class="txtMedidasArreglos"   id = "txtMedidasArreglos16"  onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo16"   id = "Estilo16" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo16"   id = "LineaSexo16" size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia16"  class="txtValorReferencia" id = "txtValorReferencia16" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia16"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+                    <tr  id="RowPrenda17"  style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda17" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion17"  class="txtDescripcion" id = "txtDescripcion17" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios17" class="txtAccesorios" id = "txtAccesorios17"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos17"  class="txtMedidasArreglos" id = "txtMedidasArreglos17"  onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo17"   id = "Estilo17"  /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo17"   id = "LineaSexo17"  size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia17"  class="txtValorReferencia" id = "txtValorReferencia17" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia17"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+                    <tr id="RowPrenda18"  style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda18" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion18"  class="txtDescripcion" id = "txtDescripcion18" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios18"  class="txtAccesorios" id = "txtAccesorios18"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos18"  class="txtMedidasArreglos"  id = "txtMedidasArreglos18"  onfocus="alerta(this.id)" size="38"/></td> 
+            <td style="display:none"><input type = "text" name = "Estilo18"   id = "Estilo18" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo18"   id = "LineaSexo18"  size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia18"  class="txtValorReferencia" id = "txtValorReferencia18" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia18"  size="2" onchange="AutomatizarCortesia(this.id)""></td>
+          </tr>
+                    <tr id="RowPrenda19" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda19" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion19" id= "txtDescripcion19" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios19" id="txtAccesorios19"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos19"  class="txtMedidasArreglos"     id = "txtMedidasArreglos19"  onfocus="alerta(this.id)"  size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo19"   id = "Estilo19" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo19"   id = "LineaSexo19" size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia19"  class="txtValorReferencia" id = "txtValorReferencia19" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia19"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+                    <tr  id="RowPrenda20" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda20" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion20"  class="txtDescripcion" id = "txtDescripcion20" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios20"  class="txtAccesorios" id = "txtAccesorios20"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos20"  class="txtMedidasArreglos" id = "txtMedidasArreglos20"  onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo20"   id = "Estilo20" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo20"   id = "LineaSexo20" size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia20"  class="txtValorReferencia" id = "txtValorReferencia20"  size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia20"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+                    <tr  id="RowPrenda21" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda21" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion21"  class="txtDescripcion" id = "txtDescripcion21" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios21"  class="txtAccesorios" id = "txtAccesorios21"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos21"  class="txtMedidasArreglos" id = "txtMedidasArreglos21"  onfocus="alerta(this.id)" size="38"/></td>
+           <td style="display:none"><input type = "text" name = "Estilo21"   id = "Estilo21" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo21"   id = "LineaSexo21" size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia21"  class="txtValorReferencia" id = "txtValorReferencia21"  size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia21"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>
+                    <tr  id="RowPrenda22" style="display: none">
+            <!--td><input type = "text" name = "txtReferencia4" placeholder="txtReferencia4" class="txtReferencia" id = "txtReferencia4"/></td-->
+            <!--td>{{form.cantidad_Prenda}}</td-->
+            <td ><input id="ReferenciaPrenda22" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
+            <td><input type = "text" name = "txtDescripcion22"  class="txtDescripcion" id = "txtDescripcion22" size="64"/></td>
+            <td><input type = "text" name = "txtAccesorios22"  class="txtAccesorios" id = "txtAccesorios22"/></td>
+            <td><input type = "text" name = "txtMedidasArreglos22"  class="txtMedidasArreglos" id = "txtMedidasArreglos22"  onfocus="alerta(this.id)" size="38"/></td>
+            <td style="display:none"><input type = "text" name = "Estilo22"   id = "Estilo22" /></td>
+            <td style="display:none"><input type = "text" name = "LineaSexo22"   id = "LineaSexo22" size="8"/></td>
+            <td><input type = "text" name = "txtValorReferencia22"  class="txtValorReferencia" id = "txtValorReferencia22" onchange="AlterarPrecio(this.id)" value="0" /></td>
+            <td><input type="checkbox" class="filled-in" id="Cortesia22"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
+          </tr>        
         </table>
-    </div>
-        <table>
+        </div>
+<br>
+
+         <table cellspacing="10">
 <br>
           <tr>
             <th style="width: 25px"><span id="Total_" class="label label-default" >Total</span></th>
-            <th ><input type = "text" name = "txtTotal" placeholder="" class="txtTotal" id = "txtTotal"/></th>
+            <th style="display: none"><input type = "text" name = "txtTotalVisible" placeholder="" class="txtTotalVisible" id = "txtTotalVisible"/></th>
+            <th ><input type = "text" name = "txtTotal" placeholder="" class="txtTotal" id = "txtTotal" size="3" onchange="ValorTotalEnLetras()"/></th>
+            <th ><button type="button" id="idTotalButton">Generar total</button></th>
+            <th ><input type="text" id="idTotalenTexto" disabled></input></th>
           </tr>
           <tr>
             <td><span id="Retefuente_" class="label label-default">Retefuente</span></td>
-            <td><input type="checkbox" name="vehicle" value="Retefuente_tiene"> Poner </td>
+            <td><input type="checkbox" class="filled-in" id="Retefuente_tiene"  size="2"> Poner </td>
             <td><input type = "text" name = "txtRetefuente" placeholder="" class="txtRetefuente" id = "txtRetefuente"/></td>
           </tr>
         </table>
@@ -254,27 +520,156 @@
          
         </textarea>
 
-<hr>
 
-         <input type = "submit" class="Grabar" value="Grabar"/>
-         <button type="button" id="Descargar">Descargar</button>
-         <button type="button" id="SiguienteFactura">Siguiente Factura</button>
-         <button type="button" id="GuardarEnBorrador">GuardarEnBorrador</button>
-         <button type="button" id="idRecibo">Ingresar Recibo</button>
+ 
+         <section id="mensaje"></section>
+         <input type="button"  id="idButtonGrabar"  value="Grabar" />
+         <!--button type="button" id="Descargar">Descargar</button-->
+         <!--button type="button" id="GuardarEnBorrador">GuardarEnBorrador</button-->
+
+         <button type="button" id="idFacturaPorCedulaButton">Factura por Cedula</button>
+         <input  style="display: none" type="button"  id="idButtonMeterPassWord"  value="Ingresar contraseña"  onclick="MeterPassword()"/>
+          <input style="display: none" type="button"  id="idButtonCambiarWord"  value="cambiar contraseña"  onclick="CambiarPassword()"/>
       </form>
-      </div> 
+
 
       <br>
       <div id="succesAlert" class="alert alert-succes" role="alert" style="display:none;"></div>
       <div id="errorAlert" class="alert alert-danger" role="alert" style="display:none;"></div>
-<table>
-<tr>
-  <td>
+      <section id="idListaRecibo" style="display: none">
+          <form >
+            <table id="idTablaReciboFactura">
+            <tr class="TablaRecibo">
+                <th>
+                Recibo 
+                </th>
+                <th>
+                  Valor
+                </th>
+                <th>
+                  Fecha
+                </th>
+                <th>
+                  Saldo
+                </th>
+                <th>
+                  
+                </th>
+              </tr>
+          </table>
+          </form>
+        </section>
+      <section id="idRecibo" style="display: none">
+          <form id="frmLogin">
+            <section>Valor</section>
+            <section><input type="text" id="txtReciValor" name="txtReciValor" value="" placeholder="Ingrese el valor"/></section>
+            <section>Nuevo Saldo</section>
+            <section><input type="text" id="txtReciSuNuevoSaldoEs" name="txtReciSuNuevoSaldoEs" value="" disabled/></section>
+             <section>Valor en letras</section>
+            <section><input type="text" id="txtReciSuSaldoEnLetras" name="txtReciSuSaldoEnLetras" value="" disabled/></section>
+            <section style="display: none"><input type="text" id="txtReciPorconceptode" name="txtReciPorconceptode" value="" disabled/></section>
+          </form>
+        </section>
+        <section id="idMostrarRecibo" style="display: none">
+          <form id="frmLoginMostrar">
+            <section>Valor</section>
+            <section><input type="text" id="txtReciValorMostrar" name="txtReciValorMostrar" value="" placeholder="Ingrese el valor" disabled/></section>  
+            <section>Su saldo despues de este recibo</section>
+            <section><input type="text" id="txtReciSuNuevoSaldoEsMostrar" name="txtReciSuNuevoSaldoEsMostrar" value="" disabled/></section>
+          </form>
+        </section>
+        <section id="idInformeTaller" style="display: none">
+          <form id="frmFechasTaller">
+            <section>Fecha Inicio</section>
+            <section><input type="text" id="txtFechaTallerInicio" name="txtFechaTallerInicio" value=""/></section>  
+            <section>Fecha Final</section>
+            <section><input type="text" id="txtFechaTallerFinal" name="txtFechaTallerFinal" value=""/></section>
+          </form>
+        </section>
+        <section id="idInformeDiarioFoto" style="display: none">
+          <form id="frmInformeDiarioFoto">
+            <section>Rango de tiempo</section>
+            <section>{{form.RangoHorasInformeDiario(id ="txtRangoInformeDiarioFoto")}}</section>  
+          </form>
+        </section>
+        <section id="idPopUpFacturasCedula" style="display: none; border-collapse: collapse">
+          <form >
+            <table id="idTablaFacturaCedula">
+            <tr class="LineasTabla">
+                <th>
+                Factura #
+                </th>
+                <th>
+                  Valor
+                </th>
+                <th>
+                  Fecha
+                </th>
+                <th>
+                  Saldo
+                </th>
+              </tr>
+          </table>
+          </form>
+        </section>
+        <section id="idMedidasLineaMasculina" style="display: none">
+          <form >
+          <table>
+            <tr>
+              <th>Largo Manga</th>
+              <th>Cintura</th>
+              <th>Largo pantalon</th>
+            </tr>
+            <tr>
+              <td><input type="text" id="LMLargoManga" name="LMLargoManga" value="" size="1"/></td>
+              <td><input type="text" id="LMCintura" name="LMCintura" value="" size="1"/></td>
+              <td><input type="text" id="LMLargoPantalon" name="LMLargoPantalon" value="" size="1"/></td>
+            </tr>
+            </table>
+            <br>
+            <table>
+            <tr>
+              Arreglo
+            </tr>
+            <tr>
+              <textarea id="HombreArreglo" name="HombreArreglo" value="">
+              </textarea>
+            </tr>
+          </table>
+          </form>
+        </section>
+        <section style="display: none"><input type="text" id="InputMeter" name="InputMeter" value="" disabled="" /></section>
+        <section id="idMedidasLineaFemenina" style="display: none">
+          <form >
+          <table>
+            <tr>
+              <th>Busto</th>
+              <th>Cintura</th>
+              <th>Cadera</th>
+              <th>Largo Total</th>
+            </tr>
+            <tr>
+              <td><input type="text" id="LFBusto" name="LFBusto" value="" size="1"/></td>
+              <td><input type="text" id="LFCintura" name="LFCintura" value="" size="1"/></td>
+              <td><input type="text" id="LFCadera" name="LFCadera" value="" size="1"/></td>
+              <td><input type="text" id="LFLargoTotal" name="LFLargoTotal" value="" size="1"/></td>
+            </tr>
+            </table>
+            <br>
+            <table>
+            <tr>Arreglo</tr><br>
+            <tr>
+              <textarea id="MujerArreglo" name="MujerArreglo" value="">
+              </textarea>
+            </tr>
+          </table>
+        </section>
+<section id="idCiudadOtro" style="display: none"><form><label><input type="text" name="CiudadOtro" id="CiudadOtro"></label></form></section>
+<section id="idMedio_comunicacionOtro" style="display: none"><form><label><input type="text" name="Medio_comunicacionOtro" id="Medio_comunicacionOtro"></label></form></section>
+<section id="idTipo_EventoOtro" style="display: none"><form><label><input type="text" name="Tipo_EventoOtro" id="Tipo_EventoOtro"></label></form></section>
+<section id="SectionPassword" style="display: none"><input type="" name="" id="txtPassEnviado"><input style="display: none" type="" name="" id="PasswordSAVED"></section>
+<section id="SectionPasswordOwner" style="display: none"><input type="text" name="PasswordSkillOwner" id="PasswordSkillOwner"></section>
+          </form>
 
-  </td>
-  <td>
-    
-  </td>
-</tr>
-</table>
+</fieldset>
 {% endblock %}

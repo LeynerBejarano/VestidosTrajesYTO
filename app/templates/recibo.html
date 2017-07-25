@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Factura Losdelastogas</title>
+</head>
+<body>
+<header>
+<table>
+<tr>
+
+  <td>
+  Carrera 76 N° 29-24 Belen Parque -Medellin Colombia <br>
+  Telefonos Fijos 238-25-23,581-87-67 <br>
+   Celulares: 300-794-0506    
+<br>
+Alquiler confeccion y venta de trajes y vestidos
+</td>
+<td >
+  ---VESTIDOS TRAJES Y TOGAS---
+</td>
+<td  style="text-align: right;float: right;" class="TirarPrimeraTablaRight">
+    <div id="#TirarADerechaTabla" >
+    <div class="bordeTabla">
+      Recibo N°: <span style="color: red">{{recibo.reci_numero}}</span>  <br>
+    </div>
+    <div class="bordeTabla">
+      Valor $: {{recibo.reci_valor}} <br>
+    </div>
+    <div class="bordeTabla">
+      Factura: <span style="color: red">{{recibo.reci_Factura}}</span> 
+    </div>
+    </div>
+</td>
+</tr>
+</table>
+<table class="bordeTabla">
+  <tr class="bordeTabla">
+  <td class="bordeTabla">
+  Ciudad y fecha: <br>
+  </td>
+  <td class="bordeTabla">
+  {{ciu_nombre}} , {{recibo.reci_fecha}} 
+  </td>
+  </tr>
+  <tr class="bordeTabla">
+   <td class="bordeTabla">
+  Recibimos de: <br>
+  </td>
+  <td class="bordeTabla">
+   {{cliente.cli_nombre}} 
+  </td> 
+  </tr>
+  <tr class="bordeTabla">
+  <td class="bordeTabla">
+  la suma de (en letras):<br>
+  </td>
+  <td class="bordeTabla">
+    {{recibo.reci_AporteEnLetras}}
+  </td class="bordeTabla">
+  <tr class="bordeTabla">
+    <td class="bordeTabla">
+      Por concepto de:<br>
+    </td>
+    <td class="bordeTabla">
+     {{recibo.reci_Concepto}} 
+    </td>
+  </tr>
+  <tr class="bordeTabla">
+    <td class="bordeTabla">
+    Tipo de pedido:<br>    
+    </td>
+    <td class="bordeTabla">
+      {{reciTipoPedido}}
+    </td>
+  </tr>
+  <tr class="bordeTabla">
+      <td class="bordeTabla">
+      Su nuevo saldo es:<br>
+    </td>
+    <td class="bordeTabla">
+      {{recibo.reci_nuevoSaldo}}
+    </td>
+  </tr>
+</table>
+Recibi:<br>
+    <br>
+    <hr>
+    CC./Nit
+<div>
+<br>
+JOHN CARDONA NIT 98.533.266.6
+</div>
+<div id="TirarADerecha">
+No hay Devoluciones de dinero
+</div>
+</header>
+
+
+ <style>
+  #TirarADerecha{
+    position: absolute;
+    right: 0px;
+    width: 300px;
+    padding: 10px;
+  }
+  #TirarADerechaTabla{
+    right: 0px;
+    padding: 10px;
+  }
+  .bordeTabla{
+    border: 3px solid #73AD21;
+  }
+  .TirarPrimeraTablaRight{
+    padding-left: 80px;
+  }
+
+    
+  </style>
+        
+    </body>
+</html>

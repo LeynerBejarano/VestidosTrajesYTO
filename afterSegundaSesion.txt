@@ -1,0 +1,200 @@
+1)))))buscar como poner el valor en letras------->Ya!!!!!!
+
+
+2)))))el valor guardado sale 2 menos que el ingresado, del valor en numeros
+
+
+3)))))))Tambien la ciudad sale mal------->No hay que arreglarlo!!!!!!!!
+
+
+4)))))que el numero de la factura sea visible------->YA!!!!!
+
+
+5))))))poner el boton de buscar arriba----------YA!!!!
+
+
+6))))))horas de entrega y recogida son cada hora de las  10 am a 7 pm,,,,,cada media hora en octubre noviembre y diciembre--->YA!!!!
+
+
+7)))))las entregas de 2 pm en adelante
+
+
+8))))))) Que solo se ponga el valor y el nombre de la persona------> Esperar la iteracion!!!!!!
+
+
+9))))) telefono fijo cambiarlo por telefono fijo casa, y telefono fijo trabajo
+
+10)))))poner medellin por preseleccionado---->ya!!!
+
+
+11) poner barrio despues de la direccion----->primero era el barrio!!!!!
+
+
+12)))))cambiar telefono referencia por "telefono fijo referencia"---->yA !!!!!!!!
+
+12.5))))El retefuente con el checkbox-------------->FALTA EL TEST
+
+13)))))poblacion se va a poner por defecto segun la prenda------>esperar el excel!!!!!
+
+13))))))arreglar las sumas
+
+
+14))))))))donde aparesca un otro debe aparecer espacio para escribir----->aun no??-?-?-?-?-?-?-?-?-?-?-?-?-?-??-?-?-?-?-?-?-??-?-?-?-?-?-?-?-?-?-?-?-?-?-?-
+
+
+15)))))))poner las fechas por calendario---->ya!!!!!!!
+
+15.5))))))))cambiar tipo de pedido por "tipo de factura"----->Factura!!!!!
+
+
+16))))))las referencias por numero, lo que tenia en referencia pasarlo a descripcion ,,,,,,no es un select, es un digitable
+
+
+17))))))))informe diario total del dia, total acumulado de la semana, total acumulado del año, del mes,
+
+
+en el dia , la relacion de las facturas del dia y la relacion -------------------por cada tipo de factura
+
+
+18))))))del tal factura las referencias, las medidas y arreglo y los accesorios y tambien las cantidades y las fechas para las que debe salir
+
+
+
+
+19))))))el informe de 
+
+
+20))) El recibo guarda bn------>
+
+21))) El recibo imprime decentemente---->
+
+
+22)))) que haya punto separador de miles en el recibo y la factura
+
+
+23)))))quitar la hora de la devolucion
+
+24)))))las fechas con dia de semana (sabado , domingo y asi....)
+
+
+25))))en recibo, que diga tipo de factura
+
+
+26)))))Informe de taller y el diario es diferente:::---------ya estan los dos (para testing)
+
+	el de taller (filas):------en fase de testeo , falta el test
+	en pantalla: con rango de fechas que ropa sale
+	
+incluye
+	impreso: Referencia de un vestido,  fecha y hora de entrega, Nombre del cliente, estilo,  numero de la factura, descripcion, accesorios, medidas y arreglos, poblacion 
+	progress and subTareas:::
+		----que guarde y cargue bn la factura
+		---que guarde una verdadera fecha y no un string
+
+
+27)))))una verdadera descarga
+
+
+28))))))ponerle bn la ciudad y la fecha a el recibo
+
+
+30))))))informe diario, el de la foto
+
+
+32))))))arreglar lo de las cedulas cuando ya se guardo una
+
+33))*****************))))))
+31))))))fechas para probar el informe de taller, bn lejas, 2018 enero a marzo-------------hize cambios en metodo "GenerarInformeDiarioVersionFoto()"  cambie fechas, estaba asi, tambien cambie el filtro de la fecha y lo pase a la fecha de generacion
+
+@app.route('/GenerarInformeDiarioVersionFoto', methods=['GET','POST'])
+def GenerarInformeDiarioVersionFoto():
+  rango = int(request.form.get('txtRangoInformeDiarioFoto'))
+  FechaDiarioInicio = (date.today()-timedelta(days=rango)).isoformat()
+  FechaDiarioFinal = date.today()
+
+  TotalFactura = 0
+  TotalRecibo = 0
+  SaldoFactura = 0
+
+  factura = Factura.query.filter(Factura.fac_ReclamarMercanciaFecha > FechaTallerInicio).filter(Factura.fac_ReclamarMercanciaFecha < FechaTallerFinal).all()
+  recibo = Recibo.query.filter(Recibo.reci_fecha > FechaTallerInicio).filter(Recibo.reci_fecha < FechaTallerFinal).all()
+
+  if(len(factura) > len(recibo)):
+    TotalDeColumnas = len(factura)
+    for a in range(len(factura)):
+      TotalFactura = TotalFactura + factura[a].fac_Total
+      if recibo[a]:
+        TotalRecibo = TotalRecibo + recibo[a].reci_valor
+  else:
+    TotalDeColumnas = len(recibo)
+    for a in range(len(recibo)):
+      TotalRecibo = TotalRecibo + recibo[a].reci_valor
+      if factura[a]:
+        TotalFactura = TotalFactura + factura[a].fac_Total
+
+
+
+
+
+
+
+
+
+            {% for a in range(TotalDeColumnas) %}
+            <tr>
+                 {% if factura[a].fac_numero is defined %}
+                <td>{{factura[a].fac_numero}}</td>
+                {% else %}
+                <td></td>
+                {% endif %} 
+                {% if factura[a].fac_Total is defined %}
+                <td>{{factura[a].fac_Total}}</td>
+                {% else %}
+                <td></td>
+                {% endif %}  
+                {% if recibo[a].reci_numero is defined %}
+                <td>{{ recibo[a].reci_numero }} </td>
+                {% else %}
+                <td></td>
+                {% endif %}
+                {% if recibo[a].reci_valor is defined %}
+                <td>{{ recibo[a].reci_valor }} </td>
+                {% else %}
+                <td></td>
+                {% endif %}
+                {% if recibo[a].reci_Concepto is defined %}
+                <td>{{ recibo[a].reci_Concepto }} </td>
+                {% else %}
+                <td></td>
+                {% endif %}
+                <td></td>
+                <td></td>
+                <td></td>  
+            </tr>
+            {% endfor %}
+
+
+
+VT RI alquiler por defecto, fecha del evento dos dias antes recoger y dos dias depues devolucion (pero no desabilitar), si hay festivos, ese dia ni hay entregas ni devoluciones,, valor sugerido, antes del valor de la sugerencia,
+
+
+en la letra poner que estallevando el cliente, las prendas y los accesorios.......
+
+
+1)))))buscar facturas por cedula las facturas---->falta test ,,,,,,,,,,,,,,,$('#txtCC_Nit').on('input', function(event){------------> en js
+@app.route('/BuscarNumeroDeFacturas', methods=['GET','POST'])
+@app.route('/BuscarFacturaRelativo', methods=['GET','POST'])
+
+
+2)))))))ya cambie barrio y direccion!!
+
+
+3)))))))lo de dos dias despues y antes en la de devolucion, 
+
+4)))))))lo del valor sugerido
+
+
+5)))))))lo de festivos
+
+
+6)))))))crear factura 

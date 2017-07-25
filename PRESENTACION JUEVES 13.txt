@@ -1,0 +1,122 @@
+1----el sistema solo ingresa con contraseña, use las que habia en la otra base de datos, me dicen si la cambio
+2-----
+
+
+que falto:
+
+
+quitar sexo
+poner espacio para arreglos e medidas,
+volver a hacer los espacios de informe taller
+que aparte de poder poner mas filas de detalle, se pueda ocultar espacios
+quitar el arreglo de la letra
+dos dias antes, y dos dias despues fallo !!!!!!!!!!! arreglarlo
+devolver mercancia y recoger mercancia, subirlo a la row de "tipo de factura"
+subir la factura actual, y los que estan en ese row al header
+
+------
+desde estilo hasta acabado sale en descripcion como una unica linea( quitar la columna estilo)
+ponerlo en letras al ladito de los valores
+
+
+en el informe diario:
+
+era el semanal desde el lunes (habil) mensual desde el primer dia habil del mes, el anual desde el 2 de enero
+
+
+
+testeo::::
+
+la reserva------>
+que no se pueda seleccionar los dias FESTIVOS------>ya
+dos dias atras y dos adelante-------->ya
+sumar los totales------>ya
+automatizar la puesta de las referencias------>ya
+que la suma sea onchange y la alteracion del precio onblur------->ya
+quitar sexo(ocultar) y estilo(este si)------>ya
+cambiar como se ponen las medidas-------->ya
+poner boton para ocultar-------->ya
+dia de cumpleaños------->
+ver los papeles------->
+si faltan datos que no guarde------->
+que los otros abran un pop up para guardar---->
+validacion que no se pueda automatizar con el valor de la referencia si no se tiene una fecha------->
+el total, que funcione con el click------->
+que guarde y muestre adecuadamente los detalles---->
+el total, el cumpleaños y durmamos un ratico
+
+desde aqui:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+que adherir fila y quotar fila esten en una misma linea, y tiralo a la derecha
+que en ciudad no salga el otro, por defecto-------------------------------------------------------------------------------->
+si dos pedidos tienen el mismo dia de recogida, entonces, la hora del primero, no debe aparecer para el segundo--------------------------->CHAAAAAAAAA
+
+programar la opcion otro-------------------------------------------------------------------------------------------------------->CHAAAAAAAAA
+
+si el cliente es viejo que se cargue -------------------------------------------------------------------------------------------->CHAAAAAAAAAAAAAAA
+
+cortesias, por una de novia, son 4 cortesias,si john lo envia, es una sola cortesia,una columna checkbox para indicar que ese no suma --------------------------------------------------------------------->programar los enviados de johnn y testear
+
+las opciones inhabilitadas podrian usarse,
+ con contraseña, TODO LO QUE DIGA JOHN
+ /AlterarPrecioTreinta---.-.-.-.-.-.-.-..-.-..--.-.-.-.-.-.-..-.-.-.-.-.-.-.--.-..-.-.--.-.-.-.-.-.-.-.-.-.-.-.-.-.>CCCCHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+ el de /insertarCliente no, el de or /siguienteFactura Tampoco
+falta el de las cortesias---.-.-.-.-.-.-.-.-.-.-.-.-.-.--.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.->
+ ----------------------------------------------->testear
+en la letra y la factura sale todo lo que lleva el cliente, incluyenndo las cortesias----------------------->Testear
+aparte de los festivos, tampoco puede recibir los domingos, sumale un dia a la de recogida------------------>CHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+en medidas y arreglos, si se deja algun espacio en blanco, que pasen los que si se pusieron-------------->CHAAAAAAAAAAAAAAAAAAAAAA
+medidas y arreglos no salen cuando se carga una factura---------------------------------------->testear
+todas las fechas pasarlas a español------------->
+en el imprimible del recibo correr el cuadro hacia la derecha,
+poner puntos de miles, y en el espacio que deja el cuadro poner, vestidos Trajes y togas-------->testear
+el cuadro de los abonos de la factura, que aparesca de una vez en cuanto se carga una factura--------------------------------------->TESTEAR
+ya empezar a montar esto en el servidor----------------------------------------------------------------------------------------->
+que la fecha tenga la funcion de decir si esta reservado onchange------------------------------------->testear
+los botones de adherir y quitar fila, darle un poco mas de margen, pero dejarla en esa fila, y tirarlas a la derecha ------------------>
+si se guarda una reserva debe anularse tambien la hora de esa hora------------------------------------------------------------------->
+si la fecha escogida es temporada alta aparece el horario a, si no aparece el b---------------------------------------->
+que no se pueda repetir prenda-------------------------------------------------------------------------------------------->
+
+si el evento fuese hoy, el dia de recogida es hoy---->CHAAAAAA
+si la fecha del la factura es un dia antes de la fecha del evento, la fecha de recogida es la fecha de la factura---->CHHHHAAAAAAAA
+poner tantas section para arreglos(osea 22), como medidas pueda haber ------>CHHHHHAAAAAAAAA
+alteraciones del total, no guardo apropiadamente------>	CCCCHHHHHHAAAAAAAAAAA
+en factura:	
+	de la descripcion solo poner estilo y color---------------------------->esperemos el inventario
+	referencia, solo ref----------------------------------------------------------------->CCCCHHHHAAAAAAAAA
+	poner separador de miles-------------------------------------------------------------->CCCHAAAAAAAAAA
+	atendido por "que no salga wacor pordefecto"-------------------------------------------->CHAAAAAAAAA
+	que aparesca el celular----------------------------------------------------------------->CHAAAAAAAAA
+diseño de la factura:
+	no sale la fecha de devolucion de factura---------------------------------------------->CHAAAAAAAA
+	si no hay ext, que ponga un espacio y no el "None"------------------------------------->CHAAAAAA
+	si no hay telefono oficina ni casa, poner unos puntos------------------------------------>CHHHHHAAAAA
+
+boton para limpiar fila de un detalle-------->CHAAAAAAAAA
+cambiar las fechas cuando se cargue un pedido, que aparesca en numeros.------->CCHAAAAAAA
+cuando se cargan los valor, aparece una fila de mas-------------------------------->testear
+el recibo tambien fallo-------->testear
+precio no se puede modificar(excepto john)----------------------------------------------->CHHAAAAAA, PERO TESTIEMOS MAS
+el cumpleaños--------------------------------------------------------------------------->CHHHHHAAAAA
+empezar a montar el theme:::::::::::::::::::::::::::::
+1)))))iniciare el diseño con el theme "journal" de https://bootswatch.com/ 
+2))))))me gustaria hacer un navbar, en un 
+dropdown "generar documentos"({dos informes,generar letra y factura})
+, los dos recibos en uno, factura por cedula hacerlo uno.
+consecutivo actual y buscar-consecutivo en el nav-bar 
+3)los inputs me gustarian de esta forma
+
+
+
+
+
+  function VerificarFecha(x){
+    var fecha = $('#'+x.toString()).val().toString()
+    var DiasFestivo = ["20/07/2017","2017-07-20", "07/08/2017","2017-08-07", "21/08/2017","2017-08-21", "16/10/2017","2017-10-16","06/11/2017","2017-11-06","13/11/2017","2017-11-13","08/12/2017","2017-12-08","25/12/2017","2017-12-25"];
+    for(var i = 0; i < DiasFestivo.length; i++){
+      if(fecha == DiasFestivo[i]){
+        alert("es festivo, ingrese otra fecha")
+        $('#'+x.toString()).val("")
+      }
+    }
+}

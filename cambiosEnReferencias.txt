@@ -1,0 +1,647 @@
+$('#ReferenciaPrenda1').on('keyup', function(event){
+  var prenda ;
+ if($('#ReferenciaPrenda1').val()=="n") {
+  $('#cantidadRealPrenda1').val("")
+  $('#cantidadPrenda1').val("")
+  $('#txtDescripcion1').val("")
+  $('#txtAccesorios1').val("")
+  $('#txtMedidasArreglos1').val("")
+  $('#txtValorReferencia1').val("")  
+ }
+ else {
+     $.ajax({
+        type:"post",
+        url:"/AlterarMasDeTreintaPorciento",
+        data:{
+                txtValorReferencia1 :$('#txtValorReferencia1').val(),
+                txtSugerencia1: $('#txtSugerencia1').val(),
+                txtValorReferencia2 :$('#txtValorReferencia2').val(),
+                txtSugerencia2: $('#txtSugerencia2').val(),
+                txtValorReferencia3 :$('#txtValorReferencia3').val(),
+                txtSugerencia3: $('#txtSugerencia3').val()},
+        success: function(data){
+          $('#ExcesoEnPrecio').text(data)
+          if($('#ExcesoEnPrecio').text()=="Excedio limite inferior del valor"){
+            $('#ExcesoEnPrecio').show()
+            }
+          else{
+            $('#ExcesoEnPrecio').hide()}}})
+        $.ajax({
+            data:{
+                txtCC_Nit :$('#txtCC_Nit').val(),
+                txtfechaEvento:$('#txtfechaEvento').val(),
+                txtfechaEvento:$('#txtfechaDevolver').val(),
+                txtAñoEntregar:$('#txtfechaRecoger').val(),
+                txtfechaRecogerVisible: $('#txtfechaRecogerVisible').val(),
+                txtfechaDevolverVisible: $('#txtfechaDevolverVisible').val(),
+                ReferenciaPrenda1: $('#ReferenciaPrenda1').val()},
+            type: 'POST',
+            url:'/IndicaroNoReserva',
+            success: function(data){
+            $('#EstaReservado_').text(data)
+            $('#EstaReservado_').show()}})
+      $.ajax({
+            data:{
+            txtfac_prenda1 :$('#ReferenciaPrenda1').val()},
+            type: 'POST',
+            url:'/DimeValorReferencia1',
+            success: function(data){
+            $('#txtValorReferencia1').val(data);}})
+  $.ajax({
+            data:{
+            txtfac_prenda1 :$('#ReferenciaPrenda1').val()},
+            type: 'POST',
+            url:'/DimeDescripcion1',
+            success: function(data){
+            $('#txtDescripcion1').val(data);}})
+  $.ajax({
+            data:{txtfac_prenda1 :$('#ReferenciaPrenda1').val()},
+            type: 'POST',
+            url:'/DimeAccesorios1',
+            success: function(data){
+            $('#txtAccesorios1').val(data);                    
+  }})
+  $.ajax({
+            data:{fac_prenda :$('#ReferenciaPrenda1').val(),},
+            type: 'POST',
+            url:'/IndicarCantidad1',
+            success: function(data){
+            $('#cantidadPrenda1').val(data);})
+    $.ajax({data:{
+                prenda :$('#ReferenciaPrenda1').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txtMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val(),
+                txtTipoPedido:$('#txtTipoPedido').val()},
+            type: 'POST',
+            url:'/IndicarSexo1',
+            success: function(data){
+            $('#LineaSexo1').val(data);}})}});
+
+$('#ReferenciaPrenda2').on('keyup', function(event){
+   if($('#ReferenciaPrenda2').val()=="n") {
+  $('#cantidadRealPrenda2').val("")
+  $('#cantidadPrenda2').val("")
+  $('#txtDescripcion2').val("")
+  $('#txtAccesorios2').val("")
+  $('#txtMedidasArreglos2').val("")
+  $('#txtValorReferencia2').val("") 
+  }
+  else{
+    $.ajax({
+            
+            data:{
+                txtfac_prenda2 :$('#ReferenciaPrenda2').val()
+            },
+            type: 'POST',
+            url:'/DimeValorReferencia2',
+            success: function(data){
+            $('#txtValorReferencia2').val(data);                  
+  }
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda2 :$('#ReferenciaPrenda2').val()
+            },
+            type: 'POST',
+            url:'/DimeDescripcion2',
+            success: function(data){
+            $('#txtDescripcion2').val(data);                 
+  }
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda2 :$('#ReferenciaPrenda2').val()
+            },
+            type: 'POST',
+            url:'/DimeAccesorios2',
+            success: function(data){
+            $('#txtAccesorios2').val(data);                    
+  }
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda2 :$('#ReferenciaPrenda2').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txtMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val(),
+                txtTipoPedido:$('#txtTipoPedido').val()
+            },
+            type: 'POST',
+            url:'/IndicarCantidad2',
+            success: function(data){
+            $('#cantidadPrenda2').val(data);                   
+  }
+        })
+  }
+  
+});
+
+$('#ReferenciaPrenda3').on('keyup', function(event){
+   if($('#ReferenciaPrenda3').val()=="n") {
+  $('#cantidadRealPrenda3').val("")
+  $('#cantidadPrenda3').val("")
+  $('#txtDescripcion3').val("")
+  $('#txtAccesorios3').val("")
+  $('#txtMedidasArreglos3').val("")
+  $('#txtValorReferencia3').val("") 
+  }
+  else{
+    $.ajax({
+            
+            data:{
+                txtfac_prenda3 :$('#ReferenciaPrenda3').val()
+            },
+            type: 'POST',
+            url:'/DimeValorReferencia3',
+            success: function(data){
+            $('#txtValorReferencia3').val(data);                 
+  }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda3 :$('#ReferenciaPrenda3').val()
+            },
+            type: 'POST',
+            url:'/DimeDescripcion3',
+            success: function(data){
+            $('#txtDescripcion3').val(data);                   
+  }
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda3 :$('#ReferenciaPrenda3').val()
+            },
+            type: 'POST',
+            url:'/DimeAccesorios3',
+            success: function(data){
+            $('#txtAccesorios3').val(data);                   
+  }
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda3 :$('#ReferenciaPrenda3').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txtMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val(),
+                txtTipoPedido:$('#txtTipoPedido').val()
+            },
+            type: 'POST',
+            url:'/IndicarCantidad3',
+            success: function(data){
+            $('#cantidadPrenda3').val(data);                 
+  }
+        })
+  }
+  
+});
+
+$('#ReferenciaPrenda4').on('keyup', function(event){
+  if($('#ReferenciaPrenda4').val()=="n") {
+  $('#cantidadRealPrenda4').val("")
+  $('#cantidadPrenda4').val("")
+  $('#txtDescripcion4').val("")
+  $('#txtAccesorios4').val("")
+  $('#txtMedidasArreglos4').val("")
+  $('#txtValorReferencia4').val("") 
+  }
+  else{
+    $.ajax({           
+            data:{
+                txtfac_prenda4 :$('#ReferenciaPrenda4').val()
+            },
+            type: 'POST',
+            url:'/DimeValorReferencia4',
+            success: function(data){
+            $('#txtValorReferencia4').val(data);                
+  }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda4 :$('#ReferenciaPrenda4').val()
+            },
+            type: 'POST',
+            url:'/DimeDescripcion4',
+            success: function(data){
+            $('#txtDescripcion4').val(data);                  
+  }
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda4 :$('#ReferenciaPrenda4').val()
+            },
+            type: 'POST',
+            url:'/DimeAccesorios4',
+            success: function(data){
+            $('#txtAccesorios4').val(data);               
+  }
+
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda4 :$('ReferenciaPrenda4').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txtMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val(),
+                txtTipoPedido:$('#txtTipoPedido').val()
+            },
+            type: 'POST',
+            url:'/IndicarCantidad4',
+            success: function(data){
+            $('#cantidadPrenda4').val(data);                     
+  }
+        })
+
+
+  }
+  
+}); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$('#ReferenciaPrenda1').on('keyup', function(event){
+  var prenda ;
+ if($('#ReferenciaPrenda1').val()=="n") {
+  $('#cantidadRealPrenda1').val("")
+  $('#cantidadPrenda1').val("")
+  $('#txtDescripcion1').val("")
+  $('#txtAccesorios1').val("")
+  $('#txtMedidasArreglos1').val("")
+  $('#txtValorReferencia1').val("")  
+ }
+ else {
+     $.ajax({
+        type:"post",
+        url:"/AlterarMasDeTreintaPorciento",
+        data:{
+                txtValorReferencia1 :$('#txtValorReferencia1').val(),
+                txtSugerencia1: $('#txtSugerencia1').val(),
+                txtValorReferencia2 :$('#txtValorReferencia2').val(),
+                txtSugerencia2: $('#txtSugerencia2').val(),
+                txtValorReferencia3 :$('#txtValorReferencia3').val(),
+                txtSugerencia3: $('#txtSugerencia3').val()
+        },
+        success: function(data){
+          $('#ExcesoEnPrecio').text(data)
+          if($('#ExcesoEnPrecio').text()=="Excedio limite inferior del valor"){
+            $('#ExcesoEnPrecio').show()
+          }
+          else{
+            $('#ExcesoEnPrecio').hide()
+          }
+        }
+      })
+
+        $.ajax({
+            
+            data:{
+                txtCC_Nit :$('#txtCC_Nit').val(),
+                txtfechaEvento:$('#txtfechaEvento').val(),
+                txtfechaEvento:$('#txtfechaDevolver').val(),
+                txtAñoEntregar:$('#txtfechaRecoger').val(),
+                txtfechaRecogerVisible: $('#txtfechaRecogerVisible').val(),
+                txtfechaDevolverVisible: $('#txtfechaDevolverVisible').val(),
+                ReferenciaPrenda1: $('#ReferenciaPrenda1').val()
+            },
+            type: 'POST',
+            url:'/IndicaroNoReserva',
+            success: function(data){
+            $('#EstaReservado_').text(data)
+            $('#EstaReservado_').show()
+                        
+  }
+        })
+
+      $.ajax({
+            
+            data:{
+                txtfac_prenda1 :$('#ReferenciaPrenda1').val()
+            },
+            type: 'POST',
+            url:'/DimeValorReferencia1',
+            success: function(data){
+            $('#txtValorReferencia1').val(data);                   
+  }
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda1 :$('#ReferenciaPrenda1').val()
+            },
+            type: 'POST',
+            url:'/DimeDescripcion1',
+            success: function(data){
+            $('#txtDescripcion1').val(data);                     
+  }
+        })
+
+  $.ajax({
+            
+            data:{
+                txtfac_prenda1 :$('#ReferenciaPrenda1').val()
+            },
+            type: 'POST',
+            url:'/DimeAccesorios1',
+            success: function(data){
+            $('#txtAccesorios1').val(data);                    
+  }
+        })
+
+  $.ajax({
+            
+            data:{
+                fac_prenda :$('#ReferenciaPrenda1').val(),
+
+            },
+            type: 'POST',
+            url:'/IndicarCantidad1',
+            success: function(data){
+            $('#cantidadPrenda1').val(data);                    
+  }
+
+        })
+    $.ajax({
+            
+            data:{
+                prenda :$('#ReferenciaPrenda1').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txtMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val(),
+                txtTipoPedido:$('#txtTipoPedido').val()
+            },
+            type: 'POST',
+            url:'/DimeSExo',
+            success: function(data){
+            $('#LineaSexo1').val(data);                    
+  }
+
+        })
+
+  }
+
+  
+});
+$('#ReferenciaPrenda1').on('keyup', function(event){
+  var prenda ;
+    var temp = $('#ReferenciaPrenda1')id.toString().slice((w.length)-2,(w.length));
+    if($.isNumeric(temp)){
+      number = w.toString().slice((w.length)-2,(w.length));
+    }
+    else
+    {
+      number = w.toString().slice((w.length)-1,(w.length))
+    }
+ if($('#ReferenciaPrenda1').val()=="n") {
+  $('#cantidadRealPrenda1').val("")
+  $('#cantidadPrenda1').val("")
+  $('#txtDescripcion1').val("")
+  $('#txtAccesorios1').val("")
+  $('#txtMedidasArreglos1').val("")
+  $('#txtValorReferencia1').val("")  
+ }
+ else {
+     $.ajax({
+        type:"post",
+        url:"/AlterarMasDeTreintaPorciento",
+        data:{
+                txtValorReferencia1 :$('#txtValorReferencia1').val(),
+                txtSugerencia1: $('#txtSugerencia1').val(),
+                txtValorReferencia2 :$('#txtValorReferencia2').val(),
+                txtSugerencia2: $('#txtSugerencia2').val(),
+                txtValorReferencia3 :$('#txtValorReferencia3').val(),
+                txtSugerencia3: $('#txtSugerencia3').val()},
+        success: function(data){
+          $('#ExcesoEnPrecio').text(data)
+          if($('#ExcesoEnPrecio').text()=="Excedio limite inferior del valor"){
+            $('#ExcesoEnPrecio').show()
+            }
+          else{
+            $('#ExcesoEnPrecio').hide()}}})
+        $.ajax({
+            data:{
+                txtCC_Nit :$('#txtCC_Nit').val(),
+                txtfechaEvento:$('#txtfechaEvento').val(),
+                txtfechaEvento:$('#txtfechaDevolver').val(),
+                txtAñoEntregar:$('#txtfechaRecoger').val(),
+                txtfechaRecogerVisible: $('#txtfechaRecogerVisible').val(),
+                txtfechaDevolverVisible: $('#txtfechaDevolverVisible').val(),
+                ReferenciaPrenda1: $('#ReferenciaPrenda1').val()},
+            type: 'POST',
+            url:'/IndicaroNoReserva',
+            success: function(data){
+            $('#EstaReservado_').text(data)
+            $('#EstaReservado_').show()}})
+      $.ajax({
+            data:{
+            prenda :$('#ReferenciaPrenda1').val()},
+            type: 'POST',
+            url:'/DimeValorReferencia1',
+            success: function(data){
+            $('#txtValorReferencia'+number).val(data);}})
+  $.ajax({
+            data:{
+            txtfac_prenda1 :$('#ReferenciaPrenda1').val()},
+            type: 'POST',
+            url:'/DimeDescripcion1',
+            success: function(data){
+            $('#txtDescripcion'+number).val(data);}})
+  $.ajax({
+            data:{txtfac_prenda1 :$('#ReferenciaPrenda1').val()},
+            type: 'POST',
+            url:'/DimeAccesorios1',
+            success: function(data){
+            $('#txtAccesorios'+number).val(data);                    
+  }})
+  $.ajax({
+            data:{fac_prenda :$('#ReferenciaPrenda1').val(),},
+            type: 'POST',
+            url:'/IndicarCantidad1',
+            success: function(data){
+            $('#cantidadPrenda'+number).val(data);}})
+    $.ajax({
+                data:{
+                prenda :$('#ReferenciaPrenda1').val(),
+                txtAñoRecoger:$('#txtAñoRecoger').val(),
+                txtDiaRecoger:$('#txtDiaRecoger').val(),
+                txtMesRecoger:$('#txtMesRecoger').val(),
+                txtDiaEntregar:$('#txtDiaEntregar').val(),
+                txtMesEntregar:$('#txtMesEntregar').val(),
+                txtAñoEntregar:$('#txtAñoEntregar').val(),
+                txtTipoPedido:$('#txtTipoPedido').val()},
+            type: 'POST',
+            url:'/IndicarSexo1',
+            success: function(data){
+            $('#LineaSexo1').val(data);}})}});

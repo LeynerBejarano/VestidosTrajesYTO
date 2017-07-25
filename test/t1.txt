@@ -1,0 +1,19 @@
+test:
+
+1)las fechas se ponen adecuadamente:
+	-
+	-
+	-
+2)cuando abro varias filas y luego trato de cerrarlas:
+	 no cierran varias,
+	 no salen unos ceros
+	 aparecen placeholder
+3) el auto completar con la referencia funciona adecuadamente
+4) las medidas y arreglos aparecen con todo
+5)todos los valores no dejan alterar el precio mas de 30% 
+6)guarda adecuadamente, y 
+	luego aparece lo guardado,
+	sin popner mas referencias
+	guarda la reserva
+	no deja alterar el total (por ende los detalles de la factura) 
+7)ingresa
