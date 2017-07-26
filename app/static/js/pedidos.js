@@ -388,12 +388,9 @@ $("#txtfechaEvento").on('input', function(event){
 })
 $('#txtCC_Nit').on('input', function(event){
     $.ajax({
-            
             data:{
               txtCC_Nit :$('#txtCC_Nit').val()
-
             },
-            
             //data : $('form').serialize(),
             type: 'POST',
             url:'/UsuarioNuevoViejo',
@@ -548,6 +545,8 @@ $('#SiguienteFactura').click(function(){
                         $('#cantidadRealPrenda2').val(data.fac_CantidadLLeva2)
                         $('#cantidadRealPrenda3').val(data.fac_CantidadLLeva3)
                         $('#cantidadRealPrenda4').val(data.fac_CantidadLLeva4)
+                        $('#idTablaReciboFactura  td').remove();
+                        CargarTablaRecibos(data.fac_numero)
                     for(var i = 1; i <= data.ReferenciaLista.length; i++){
                     $('#RowPrenda'+i.toString()).show()
                     $('#ReferenciaPrenda'+i.toString()).val(data.ReferenciaLista[i-1])
@@ -571,13 +570,11 @@ $('#SiguienteFactura').click(function(){
                       $("#detalles :input").prop("disabled", true);
                       $("#txtTotal").prop('disabled', true);
                      }
-
                          
   }
             //success: function(data) {
               //         window.location = Json.parse(data); 
                 // }
-
 
         })
          
@@ -1234,6 +1231,17 @@ $.ajax({
 function CambiarPassword(){
   CambiusContraseñus("cambiar contraseña",300,300)
 }
+function CargarTablaRecibos(datad){
+
+  $.ajax({
+        type:"post",
+        url:"/ReciboDeFactura",
+        data:{txtConsecutivoActual: datad},
+        success: function(data){
+          for(var i = 0; i < data.RecNumero.length; i++){
+            //$('#idTablaFacturaCedula tr:last').after('<tr><td>+data.FacNumero[i]+</td><td>+data.Valor[i]+</td><td>+data.Fecha[i]+</td><td>+data.Saldo[i]+</td></tr>');
+            $('#idTablaReciboFactura tr:last').after('<tr class="LineasTabla"><td class="LineasTabla"><a href="#" >'+data.RecNumero[i].toString()+'</a></td><td class="LineasTabla">'+data.Valor[i].toString()+'</td><td class="LineasTabla">'+data.Fecha[i].toString()+'</td><td class="LineasTabla">'+data.Saldo[i].toString()+'</td><td><button type="button" Onclick="Descargar_recibo('+data.RecNumero[i].toString()+')">Descargar</button></td></tr>');
+          }}});}
 function IngresarMedidas(titulo,ancho,alto,selector,input){
   $(selector).dialog({
     title:titulo,
@@ -1404,7 +1412,7 @@ function AutomatizarCortesia(x){
   }})
     }else{
     if($("#PasswordSAVED").val().toString() == "siEra"){
-          $("#txtValorReferencia"+number.toString()).val(0)
+          $("#txtValorReferencia"+number.toString()).val("0")
         }
     else{
          for(var i = 1; i <= 21; i++){

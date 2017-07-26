@@ -16,8 +16,9 @@
 
 </style>
 <body>
-            <!-- Simple Invoice - START -->
-<header>
+
+<fieldset>
+<legend ><h2> Vestidos Trajes y Togas</h2></legend>
 <table id="table-head">
     <tr>
         <!-- <td>
@@ -48,62 +49,71 @@
         </td>
     </tr>
     </table>
-</header>
-<br>
-<br>
 
-<div>
-<label style="font-weight: 900" >Fecha             </label>   <u>{{factura.fac_fechaFactura}}                                                                 </u>
-<label style="font-weight: 900" >Medio             </label>   <u>{{medio}}                                                                                    </u>
-<label style="font-weight: 900" >Tipo              </label>   <u>{{tipo}}                                                                                     </u>
-<label style="font-weight: 900" >Nombre            </label>   <u>{{cliente.cli_nombre}}                                                                       </u>
-<label style="font-weight: 900" >C.C.#             </label>   <u>{{factura.fac_cliente}}                                                                      </u>
-<label style="font-weight: 900" >Direccion         </label>   <u>{{cliente.cli_direccion}}                                                                    </u><br>
-<label style="font-weight: 900" >Atendido          </label>   <u>{{factura.fac_AtendidoPor}}                                                                  </u>
-<label style="font-weight: 900" >Telefono Oficina  </label>   <u>{% if cliente.cli_telefonoFijor %}{{cliente.cli_telefonoFijor}} {% else %} .......... {% endif %}
 
-{% if cliente.cli_telefonoFijo_ext %}, {{cliente.cli_telefonoFijo_ext}}  {% endif %}</u>
-<label style="font-weight: 900" >Telefono Casa     </label>   <u>{% if cliente.cli_telefono %}{{cliente.cli_telefono}} {% else %} .......... {% endif %}{% if cliente.cli_extension %}, {{cliente.cli_extension}} {% endif %}</u><br>
-<label style="font-weight: 900" >Celular           </label>   <u>{{cliente.cli_celular}}                                                                      </u>
-<label style="font-weight: 900" >Reclamar Mercancia</label>   <u>{{factura.fac_ReclamarMercanciaFecha}}                                                       </u>
-<label style="font-weight: 900" >Devolver Mercancia</label>   <u>{{factura.fac_DevolverMercanciaFecha}}                                                       </u>
-</div>
-
-<br>
-<br>
 <div class="test">
-<table >
+
+<table style="width:100%">
+
+<tr>
+  <td>Fecha</td>
+  <td>{{factura.fac_fechaFactura}}</td>
+  <td width="7%">Medio    </td>
+  <td width="7%">{{medio}}  </td>
+  <td width="7%">Tipo     </td>
+  <td>{{tipo}} </td>
+  <td>Nombre   </td>
+  <td>{{cliente.cli_nombre}} </td>
+  <td width="7%">C.C.#    </td>
+  <td width="11%">{{factura.fac_cliente}} </td>
+  <td>Direccion</td> 
+  <td width="11%">{{cliente.cli_direccion}} </td>
+</tr>
+<tr>
+    <td>Atendido </td>
+    <td>{{factura.fac_AtendidoPor}}</td>
+    <td>Telefono Oficina</td>
+    <td>{% if cliente.cli_telefonoFijor %}{{cliente.cli_telefonoFijor}} {% else %} .......... {% endif %}{% if cliente.cli_telefonoFijo_ext %}, {{cliente.cli_telefonoFijo_ext}}  {% endif %}</td>
+    <td width="7%">Telefono Casa     </td>
+    <td>{% if cliente.cli_telefono %}{{cliente.cli_telefono}} {% else %} .......... {% endif %}{% if cliente.cli_extension %}, {{cliente.cli_extension}} {% endif %}</td>
+    <td>Celular           </td>
+    <td>{{cliente.cli_celular}}</td>
+    <td width="7%">Reclamar Mercancia</td>
+    <td width="11%">{{factura.fac_ReclamarMercanciaFecha}} </td>
+    <td >Devolver Mercancia</td>
+    <td width="11%">{{factura.fac_DevolverMercanciaFecha}}</td> 
+</tr>
   <tr>
-    <th>
+    <td colspan="1">
       REF
-    </th>
-    <th>
+    </td>
+    <td colspan="3">
       ACCESORIOS
-    </th>
-    <th>
+    </td>
+    <td colspan="5">
       MEDIDAS Y ARREGLOS
-    </th>
-    <th>
+    </td>
+    <td colspan="3">
       VALOR UNITARIO
-    </th>
+    </td>
   </tr>
   {#....................................#}
   {% for det in detalles%}
   <tr>
-      <td>{{det.facdet_Referencia}}</td>
-      <td>{{det.facdet_Accesorios}}</td>
-      <td>{{det.facdet_MedidasyArreglos}}</td>
-      <td>{{det.facdet_precio}}</td>
+      <td colspan="1">{{det.facdet_Referencia}}</td>
+      <td colspan="3">{{det.facdet_Accesorios}}</td>
+      <td colspan="5">{{det.facdet_MedidasyArreglos}}</td>
+      <td colspan="3">{{det.facdet_precio}}</td>
   </tr>
   {% endfor %}
   <tr>
-    <td colspan="3">
+    <td colspan="9">
       Por cada día de retraso se cobrarán $ 10,000 presentar esta factura de venta y cedula para reclamar su mercancía, 
       Es indispensable firmar una letra de cambio por el valor comercial de las prendas' entregadas, Cualquier modificación
       a esta factura de venta deberá hacerse personalmente, No hay devolución de dinero, HORARIO DE ATENCiÓN: Lunes
       a Sábado de, 10:00 a.rn. a 7:00 p.rn. Jornada continua, ESTA FACTURA DE VENTA TIENE UNA CADUCIDAD DE 6 MESES,
     </td>
-    <td colspan="2">
+    <td  colspan="3">
             TOTAL $:            {{facturaTotalConCommas}} <br>    
             <br>
             <br>      
@@ -114,9 +124,9 @@
         {% endif %}
     </td>
   </tr>
-</table>  
+</table> 
+
 </div>
-
-
+</fieldset> 
     </body>
 </html>

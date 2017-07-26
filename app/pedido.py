@@ -1048,8 +1048,12 @@ def AlterarPrecioTreinta():
   PrecioReferencia = CantidadPrenda.query.get(request.form.get('ReferenciaPrenda')).cantidadPrenda_ValorReferencia
   precioAlterado = request.form.get('txtValorReferencia')
 
+  #if(int(str(request.form.get('txtValorReferencia')))) ==
   if(str(request.form.get('PasswordSAVED')) == "siEra"):
-    return jsonify({'precio':precioAlterado,'respuesta':'cambio permitido','input':request.form.get('w')})  
+    if(precioAlterado == None):
+      return jsonify({'precio':0,'respuesta':'cambio permitido','input':request.form.get('w')}) 
+    else:
+      return jsonify({'precio':precioAlterado,'respuesta':'cambio permitido','input':request.form.get('w')})  
   else:
     if((int(precioAlterado) +(0.30*PrecioReferencia))<PrecioReferencia and str(current_user.usu_login) != "john"):
       return jsonify({'precio':PrecioReferencia,'respuesta':'excedio el limite de 30%','input':request.form.get('w')})
@@ -1210,3 +1214,4 @@ def PonerOtros():
 @app.route('/UncheckDaPrice', methods=['GET','POST'])
 def UncheckDaPrice():
   return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == request.form.get('ReferenciaPrenda')).all()[0].cantidadPrenda_ValorReferencia)
+  #reverificarReserva
