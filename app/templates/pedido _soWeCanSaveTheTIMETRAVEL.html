@@ -226,13 +226,25 @@
                         <legend>Datos del cliente</legend>
                         <div class="row">
                             <div class="form-group">
+<<<<<<< HEAD
                             <label class="col-lg-1 control-label" for="nombre_enc">Nombre<span class="obligatorio">*</span></label>
+=======
+                                <label class="col-lg-1 control-label" for="identificacion_enc">C.C.<span class="obligatorio">*</span></label>
+                                <div class="col-md-2 ">
+                                    {{ form.identificacion_enc(class="form-control", placeholder="C.C.") }}
+                                    {% for error in form.identificacion_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <label class="col-lg-1 control-label" for="nombre_enc">Nombre<span class="obligatorio">*</span></label>
+>>>>>>> bfc9af53caa6cef49f623eeca57cb87fa5b8549a
                                 <div class="col-lg-2">
                                     {{ form.nombre_enc(class="form-control", placeholder="Nombre") }}
                                     {% for error in form.nombre_enc.errors %}
                                         <span style="color: red;">[{{ error }}]</span>
                                     {% endfor %}
                                 </div>
+<<<<<<< HEAD
                                 <label class="col-lg-1 control-label" for="identificacion_enc">C.C.<span class="obligatorio">*</span></label>
                                 <div class="col-md-2 ">
                                     {{ form.identificacion_enc(class="form-control", placeholder="C.C.") }}
@@ -258,10 +270,33 @@
                                     </div>
                                 </div>
                            
+=======
+                                <label class="col-lg-1 control-label" for="apellido_enc">Apellido<span class="obligatorio">*</span></label>
+                                <div class="col-lg-2">
+                                    {{ form.apellido_enc(class="form-control", placeholder="Apellido") }}
+                                    {% for error in form.apellido_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <label class="col-lg-1 control-label" for="cargo_enc">Cargo<span class="obligatorio">*</span></label>
+                                <div class="col-md-2 ">
+                                    {{ form.cargo_enc(class="form-control other")}}
+                                    {% for error in form.cargo_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                    {{ form.otro_cargo_enc(class="form-control", placeholder="¿Cuál?")}}
+                                    {% if not form.cargo_enc.errors %}
+                                        {% for error in form.otro_cargo_enc.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+>>>>>>> bfc9af53caa6cef49f623eeca57cb87fa5b8549a
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group">
+<<<<<<< HEAD
 
                                 <label class="col-lg-1 control-label" for="telefono_enc" style="white-space: nowrap;">Telefono fijo</label>
                                 <div class="col-md-2">
@@ -338,6 +373,87 @@
                                 
                                 
                             </div>
+=======
+                                <label class="col-lg-1 control-label" for="municipio_enc">Municipio<span class="obligatorio">*</span></label>
+                                <div class="col-md-2">
+                                    <div class="input-group">
+                                        {{ form.municipio_enc(class="form-control other") }}
+                                        <span class="input-group-addon" id="area_enc"></span>
+                                    </div>
+                                    {% for error in form.municipio_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                    {{ form.otro_municipio_enc(class="form-control", placeholder="¿Cuál?")}}
+                                    {% if not form.municipio_enc.errors %}
+                                        {% for error in form.otro_municipio_enc.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <label class="col-lg-1 control-label" for="barrio_enc">Barrio</label>
+                                <div class="col-md-2">
+                                    {{ form.barrio_enc(class="form-control", placeholder="Barrio") }}
+                                    {% for error in form.barrio_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <label class="col-lg-1 control-label" for="direccion_enc">Dirección</label>
+                                <div class="col-md-2">
+                                    {{ form.direccion_enc(class="form-control", placeholder="Direccion") }}
+                                    {% for error in form.direccion_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <label class="col-lg-1 control-label" for="celular_enc">Celular<span class="obligatorio">*</span></label>
+                                <div class="col-md-2">
+                                    {{ form.celular_enc(class="form-control", placeholder="Celular") }}
+                                    {% for error in form.celular_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-lg-1 control-label" for="telefono_enc" style="white-space: nowrap;">Telefono fijo</label>
+                                <div class="col-md-2">
+                                    {{ form.telefono_enc(class="form-control", placeholder="Telefono fijo") }}
+                                    {% for error in form.telefono_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-lg-1">
+                                    {{ form.extension_enc(class="form-control", placeholder="Ext.") }}
+                                    {% for error in form.extension_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <label class="col-lg-1 control-label" for="email_enc">Email<span class="obligatorio">*</span></label>
+                                <div class="col-md-2">
+                                    {{ form.email_enc(class="form-control", placeholder="Email") }}
+                                    {% for error in form.email_enc.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </div>
+                                <label class="col-lg-2 control-label"">Fecha de nacimiento</label>
+                                <div class="col-md-3 form-group">
+                                    {{ form.mes_enc.label(class="col-lg-1 control-label")}}
+                                    <div class="col-md-5">
+                                        {{ form.mes_enc(class="form-control", style="padding: 6px 6px;") }}
+                                        {% for error in form.mes_enc.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </div>
+                                    {{ form.dia_enc.label(class="col-lg-1 control-label")}}
+                                    <div class="col-md-4">
+                                        {{ form.dia_enc(class="form-control", style="padding: 6px 6px;") }}
+                                        {% for error in form.dia_enc.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+>>>>>>> bfc9af53caa6cef49f623eeca57cb87fa5b8549a
                         </div>
                         <div class="row">
                             <label class="col-lg-2 control-label" for="ins_nombre">Nombre institución</label>
@@ -370,7 +486,16 @@
                                     {% endfor %}
                                 {% endif %}
                             </div>
+<<<<<<< HEAD
                             
+=======
+                            <div class="col-lg-2" style="padding-left: 0;">
+                                <label class="col-lg-2 control-label" for="tipo_enc">Tipo</label>
+                                <div class="col-lg-9">
+                                    <input class="form-control" id="tipo_enc" type="text" readonly="readonly" placeholder="Tipo de cliente">
+                                </div>
+                            </div>
+>>>>>>> bfc9af53caa6cef49f623eeca57cb87fa5b8549a
                         </div>
                     </fieldset>
                     <fieldset>
@@ -403,6 +528,7 @@
                                     {% endfor %}
                                 {% endif %}
                             </div>
+<<<<<<< HEAD
                             <label class="col-lg-1 control-label" for="fecha_evento" style="white-space: nowrap;">Fecha del evento</label>
                             <div class="col-md-2">
                                 {{ form.fecha_evento(class="form-control") }}
@@ -516,6 +642,8 @@
                                 {% endfor %}
                             </div>   
                             </div>
+=======
+>>>>>>> bfc9af53caa6cef49f623eeca57cb87fa5b8549a
                             <label class="col-lg-1 control-label" for="ped_nivele" style="white-space: nowrap;">Nivel educativo<span class="obligatorio">*</span></label>
                             <div class="col-md-2">
                                 {{ form.ped_nivele(class="form-control other")}}
@@ -551,7 +679,17 @@
                                     <span style="color: red;">[{{ error }}]</span>
                                 {% endfor %}
                             </div>
+<<<<<<< HEAD
                             
+=======
+                            <label class="col-lg-1 control-label" for="fecha_evento" style="white-space: nowrap;">Fecha del evento</label>
+                            <div class="col-md-2">
+                                {{ form.fecha_evento(class="form-control") }}
+                                {% for error in form.fecha_evento.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </div>
+>>>>>>> bfc9af53caa6cef49f623eeca57cb87fa5b8549a
                             <label class="col-lg-1 control-label" for="hora_evento" style="white-space: nowrap;">Hora del evento</label>
                             <div class="col-md-2">
                                 {{ form.hora_evento(class="form-control") }}
@@ -560,10 +698,44 @@
                                 {% endfor %}
                             </div>
                         </div>
+<<<<<<< HEAD
                         
                         </div>
                         <div class="row">
                            
+=======
+                        <div class="row">
+                            <label class="col-lg-2 control-label" for="fecha_entrega" style="white-space: nowrap;">Fecha de entrega</label>
+                            <div class="col-md-2">
+                                {{ form.fecha_entrega(class="form-control") }}
+                                {% for error in form.fecha_entrega.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </div>
+                            <label class="col-lg-2 control-label" for="hora_entrega" style="white-space: nowrap;">Hora de entrega</label>
+                            <div class="col-md-2">
+                                {{ form.hora_entrega(class="form-control") }}
+                                {% for error in form.hora_entrega.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </div>
+                            {{form.tipo_entrega_ord.label(class="col-lg-2 control-label", style="white-space: nowrap;")}}
+                            <div class="col-md-2">
+                                {{ form.tipo_entrega_ord(class="form-control") }}
+                                {% for error in form.tipo_entrega_ord.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-lg-2 control-label" for="fecha_recogida" style="white-space: nowrap;">Fecha de devolución</label>
+                            <div class="col-md-2">
+                                {{ form.fecha_recogida(class="form-control") }}
+                                {% for error in form.fecha_recogida.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </div>
+>>>>>>> bfc9af53caa6cef49f623eeca57cb87fa5b8549a
                             <label class="col-lg-2 control-label" for="hora_recogida" style="white-space: nowrap;">Hora de devolución</label>
                             <div class="col-md-2">
                                 {{ form.hora_recogida(class="form-control") }}
