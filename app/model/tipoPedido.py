@@ -9,7 +9,7 @@ def to_iso(date):
         return None
 
 class TipoPedido(db.Model):
-    __tablename__ = 'par_tipoPedido'
+    __tablename__ = 'par_tipopedido'
     pedi_id = db.Column(db.Integer, primary_key = True, autoincrement=False)
     pedi_nombre = db.Column(db.String(100), nullable = False)
     
