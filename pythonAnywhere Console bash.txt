@@ -1,0 +1,23 @@
+03:50 ~/VestidosTrajesYT $ git clone VestidosTrajesYTO
+fatal: repository 'VestidosTrajesYTO' does not exist
+03:51 ~/VestidosTrajesYT $ mkvirtualenv --python=/usr/bin/python3.4 my-virtualenv  # use whichever python version you prefer
+Running virtualenv with interpreter /usr/bin/python3.4
+Using base prefix '/usr'
+New python executable in /home/LeynerBejarano/.virtualenvs/my-virtualenv/bin/python3.4
+Also creating executable in /home/LeynerBejarano/.virtualenvs/my-virtualenv/bin/python
+Installing setuptools, pip, wheel...done.
+virtualenvwrapper.user_scripts creating /home/LeynerBejarano/.virtualenvs/my-virtualenv/bin/predeactivate
+virtualenvwrapper.user_scripts creating /home/LeynerBejarano/.virtualenvs/my-virtualenv/bin/postdeactivate
+virtualenvwrapper.user_scripts creating /home/LeynerBejarano/.virtualenvs/my-virtualenv/bin/preactivate
+virtualenvwrapper.user_scripts creating /home/LeynerBejarano/.virtualenvs/my-virtualenv/bin/postactivate
+virtualenvwrapper.user_scripts creating /home/LeynerBejarano/.virtualenvs/my-virtualenv/bin/get_env_details
+(my-virtualenv) 03:53 ~/VestidosTrajesYT $ git clone https://github.com/LeynerBejarano/VestidosTrajesYTO.git
+Cloning into 'VestidosTrajesYTO'...
+remote: Counting objects: 5771, done.
+remote: Compressing objects: 100% (4817/4817), done.
+remote: Total 5771 (delta 869), reused 5761 (delta 859), pack-reused 0
+Receiving objects: 100% (5771/5771), 18.59 MiB | 2.62 MiB/s, done.
+Resolving deltas: 100% (869/869), done.
+Checking connectivity... done.
+Checking out files: 100% (5352/5352), done.
+(my-virtualenv) 04:58 ~/VestidosTrajesYT $ 

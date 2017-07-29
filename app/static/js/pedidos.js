@@ -950,7 +950,16 @@ $('#Descargar').click(function(){
               txtValorReferenciaArray:txtValorReferenciaArray   
             },
             type: 'POST',
-            url:'/insertarCliente'
+            url:'/RevisarQueFalto',
+            success:function(data){
+              if(data.FaltaronDaListNames.length > 1){
+                alert(FaltaronDaListNames)
+              }
+              else{
+                grabar()
+                alert("guardado adecuadamente")
+              }
+            }
         })
        // .done(function(data){
          //   if(data.error){
@@ -988,7 +997,142 @@ $('#txtTotal').on('change paste keyup', function(event){
   alert("cambio")
 });
 
+function grabar(){
+  if($('#txtMunicipio').is(':disabled')){
+        var muni =  $('#CiudadOtro').val()
+      }else{
+        var muni = $('#txtMunicipio').val()
+      }
+      if($('#txtMedioConocio').is(':disabled')){
+        var medium =  $('#Medio_comunicacionOtro').val()
+      }else{
+        var medium = $('#txtMedioConocio').val()
+      }
+      if($('#txtTipoEvento').is(':disabled')){
+        var type =  $('#Tipo_EventoOtro').val()
+      }else{
+        var type = $('#txtTipoEvento').val()
+      }
+         event.preventDefault();
+         var  ReferenciaPrendaArray  = []
+         var  txtDescripcionArray = []
+         var  txtAccesoriosArray = []
+         var  txtMedidasArreglosArray = []
+         var  EstiloArray = []
+         var  LineaSexoArray = []
+         var  txtValorReferenciaArray = []
+         for(var i = 1; i < 22 ; i++){
+            if($('#ReferenciaPrenda'+i.toString()).val()!=""){
+            ReferenciaPrendaArray.push($('#ReferenciaPrenda'+i.toString()).val())
+            txtDescripcionArray.push($('#txtDescripcion'+i.toString()).val())
+            txtAccesoriosArray.push($('#txtAccesorios'+i.toString()).val())
+            txtMedidasArreglosArray.push($('#txtMedidasArreglos'+i.toString()).val())
+            EstiloArray.push($('#Estilo'+i.toString()).val())
+            LineaSexoArray.push($('#LineaSexo'+i.toString()).val())
+            txtValorReferenciaArray.push($('#txtValorReferencia'+i.toString()).val())
+            }
+              }
+        $.ajax({
+            //data : $('form').serialize(),
+            data : {
 
+               txtConsecutivoManual: $('#txtConsecutivoManual').val(),
+               txtConsecutivo: $('#txtConsecutivo').val(),
+               txtNonmbreCliente: $('#txtNonmbreCliente').val(),
+               txtCC_Nit :$('#txtCC_Nit').val(),
+               txtDiaCumpleaños:$('#txtDiaCumpleaños').val(),
+               txtMesCumpleaños:$('#txtMesCumpleaños').val(),
+               txtTelefonoFijo:$('#txtTelefonoFijo').val(),
+               txtExtension:$('#txtExtension').val(),
+               txtTelefonoFijoOficina:$('#txtTelefonoFijoOficina').val(),
+               ExtOficina:$('#ExtOficina').val(),
+               txtCelular:$('#txtCelular').val(),
+               txtEmail:$('#txtEmail').val(),
+               txtDireccion:$('#txtDireccion').val(),
+
+               txtMunicipio:$('#txtMunicipio').val(),
+               txtBarrio:$('#txtBarrio').val(),
+               txtMunicipio:muni,
+               txtMedioConocio:medium ,
+              //txtAtendidoPor://$('#txtAtendidoPor').val(),
+              txtReferenciaNombre:$('#txtReferenciaNombre').val(),
+              txtReferenciaCelular:$('#txtReferenciaCelular').val(),
+              txtReferenciaTelefono:$('#txtReferenciaTelefono').val(),
+              txtTipoPedido:$('#txtTipoPedido').val(),
+              txtTipoEvento:type,
+              txtPedPoblacion:$('#txtPedPoblacion').val(),
+              txtDiaEvento:$('#txtDiaEvento').val(),
+              txtMesEvento:$('#txtMesEvento').val(),
+              txtAñoEvento:$('#txtAñoEvento').val(),
+              txtReferencia1:$('#ReferenciaPrenda1').val(),
+              txtDescripcion1:$('#txtDescripcion1').val(),
+              txtAccesorios1:$('#txtAccesorios1').val(),
+              txtMedidasArreglos1:$('#txtMedidasArreglos1').val(),
+              txtValorReferencia1:$('#txtValorReferencia1').val(),
+              txtReferencia2:$('#ReferenciaPrenda2').val(),
+              txtDescripcion2:$('#txtDescripcion2').val(),
+              txtAccesorios2:$('#txtAccesorios2').val(),
+              txtMedidasArreglos2:$('#txtMedidasArreglos2').val(),
+              txtValorReferencia2:$('#txtValorReferencia2').val(),
+              txtReferencia3:$('#ReferenciaPrenda3').val(),
+              txtDescripcion3:$('#txtDescripcion3').val(),
+              txtAccesorios3:$('#txtAccesorios3').val(),
+              txtMedidasArreglos3:$('#txtMedidasArreglos3').val(),
+              txtValorReferencia3:$('#txtValorReferencia3').val(),
+              txtReferencia4:$('#ReferenciaPrenda4').val(),
+              txtDescripcion4:$('#txtDescripcion4').val(),
+              txtAccesorios4:$('#txtAccesorios4').val(),
+              txtMedidasArreglos4:$('#txtMedidasArreglos4').val(),
+              txtValorReferencia4:$('#txtValorReferencia4').val(),
+              txtDiaRecoger:$('#txtDiaRecoger').val(),
+              txtDiaRecoger:$('#txtMesRecoger').val(),
+              txtDiaEntregar:$('#txtAñoEntregar').val(),
+              txtMesEntregar:$('#txtMesEntregar').val(),
+              txtAñoEntregar:$('#txtAñoEntregar').val(),
+              txtTotal:$('#txtTotal').val(),
+              txtAbono:$('#txtAbono').val(),
+              txtSaldo:$('#txtSaldo').val(),
+              txtRetefuente:$('#txtRetefuente').val(),
+              txtNota:$('#txtNota').val(),
+              txtHoraReclamarA:$('#txtHoraReclamarA').val(),
+              txtHoraReclamarB:$('#txtHoraReclamarB').val(),
+              txtHoraDevolverB:$('#txtHoraDevolverB').val(),
+              txtHoraDevolverA:$('#txtHoraDevolverA').val(),
+              txtfechaEvento: $('#txtfechaEvento').val(),
+              txtRetefuente:$('#txtRetefuente').val(),
+              txtfechaEvento:$('#txtfechaEvento').val(),
+              txtfechaRecoger:$('#txtfechaRecoger').val(),
+              txtfechaDevolver:$('#txtfechaDevolver').val(),
+              txtHoraDevolverB:$('#txtHoraDevolverB').val(),
+              txtHoraReclamarB:$('#txtHoraReclamarB').val(),
+              txtHoraDevolverA:$('#txtHoraDevolverA').val(),
+              txtHoraReclamarA:$('#txtHoraReclamarA').val(),
+              cantidadRealPrenda1:$('#cantidadRealPrenda1').val(),
+              cantidadRealPrenda2:$('#cantidadRealPrenda2').val(),
+              cantidadRealPrenda3:$('#cantidadRealPrenda3').val(),
+              cantidadRealPrenda4:$('#cantidadRealPrenda4').val(),
+              txtConsecutivoActual:$('#txtConsecutivoActual').val(),
+              ReferenciaPrendaArray:ReferenciaPrendaArray,
+              txtDescripcionArray:txtDescripcionArray,
+              txtAccesoriosArray:txtAccesoriosArray,
+              txtMedidasArreglosArray:txtMedidasArreglosArray,
+              EstiloArray:EstiloArray,
+              LineaSexoArray:LineaSexoArray,
+              txtValorReferenciaArray:txtValorReferenciaArray   
+            },
+            type: 'POST',
+            url:'/insertarCliente'
+        })
+       // .done(function(data){
+         //   if(data.error){
+           //     $('#errorAlert').text(data.error).show();
+            // //   $('#succesAlert').hide();
+            //}else {
+              //  $('#succesAlert').text(data.nombre).show();
+                //$('#errorAlert').hide();
+          //  }
+        };
+}
 
 function Recibo(titulo,ancho,alto){
   $("#idRecibo").dialog({

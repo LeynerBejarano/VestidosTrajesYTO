@@ -368,7 +368,7 @@ def descargar_recibo():
   pagina = render_template("recibo.html", recibo = recibo, cliente= cliente,hoy = hoy, reciTipoPedido = reciTipoPedido,ciudad = ciudad.ciu_nombre)
   config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-  pdf = api.from_string(pagina,path,configuration=config)
+  pdf = api.from_string(pagina,False,configuration=config)
   
  
   return Response(
@@ -457,7 +457,7 @@ def descargar_pdf():
   pagina = render_template("factura.html", factura = factura, cliente= cliente,hoy = hoy)
   config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-  pdf = api.from_string(pagina,path,configuration=config)
+  pdf = api.from_string(pagina,False,configuration=config)
   
  
   return Response(
@@ -672,7 +672,7 @@ def GenerarInformeTaller():
   pagina = render_template("Informe_Taller.html", ListFechaEntregar  = ListFechaEntregar,ListaHoraEntregar = ListaHoraEntregar,ListaFacturaNumero = ListaFacturaNumero,ListaDescripcion = ListaDescripcion,ListaAccesorios  = ListaAccesorios ,ListaMedidasArreglos =ListaMedidasArreglos, ListaReferencia=ListaReferencia,ListaEstilos=ListaEstilos)
   config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-  pdf = api.from_string(pagina,path,configuration=config)
+  pdf = api.from_string(pagina,False,configuration=config)
   
  
   return Response(
@@ -717,7 +717,7 @@ def GenerarInformeDiarioVersionUno():
   pagina = render_template("InformeDiarioVersionUno.html", ListaFacturasDiarios = ListaFacturasDiarios,Total = Total, Saldo = Saldo,TotalSemanal = TotalSemanal,TotalAnual = TotalAnual,TotalMensual =TotalMensual)
   config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-  pdf = api.from_string(pagina,path,configuration=config)
+  pdf = api.from_string(pagina,False,configuration=config)
   
  
   return Response(
@@ -805,7 +805,7 @@ def GenerarInformeDiarioVersionFoto():
   pagina = render_template("InformeDiarioVersionFoto.html",ValoresFactura= ValoresFactura, TotalDeColumnas = TotalDeColumnas,TotalAnual=TotalAnual,TotalMensual = TotalMensual,TotalSemanal =TotalSemanal, factura = factura, recibo = recibo,TotalFactura =TotalFactura,TotalRecibo = TotalRecibo,dia= now.day, mes=now.month, año= now.year )
   config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-  pdf = api.from_string(pagina,path,configuration=config)
+  pdf = api.from_string(pagina,False,configuration=config)
   
  
   return Response(
@@ -840,7 +840,7 @@ def GenerarLetra():
     pagina = render_template("letra.html",detalle= detalle, cliente = cliente,factura = factura, hoy = hoy,ValorDeLaFacturaEnLetras = ValorDeLaFacturaEnLetras, NumeroCommaSeparated =  NumeroCommaSeparated)
     config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-    pdf = api.from_string(pagina,path,configuration=config)
+    pdf = api.from_string(pagina,False,configuration=config)
     
    
     return Response(
@@ -918,7 +918,7 @@ def GenerarFactura():
   pagina = render_template("facturaVdos.html",detalles= detalles,cliente = cliente,factura = factura,medio =medio.medio_nombre, tipo = tipo.pedi_nombre, retefuente =   retefuente, facturaTotalConCommas = facturaTotalConCommas)
   config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-  pdf = api.from_string(pagina,path,configuration=config)
+  pdf = api.from_string(pagina,False,configuration=config)
   
  
   return Response(
@@ -1215,3 +1215,177 @@ def PonerOtros():
 def UncheckDaPrice():
   return jsonify(CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == request.form.get('ReferenciaPrenda')).all()[0].cantidadPrenda_ValorReferencia)
   #reverificarReserva
+
+@app.route('/RevisarQueFalto', methods=['GET','POST'])
+def RevisarQueFalto():
+  FaltaronDaList = []
+  FaltaronDaListNames = []
+  FaltaronDaList.append("le faltaron estos campos")
+  FaltaronDaListNames.append("le faltaron estos campos")
+  nombre = request.form.get('txtNonmbreCliente')
+  if nombre:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("nombre")
+  else:
+    FaltaronDaList.append("no")
+  CcNit = request.form.get("txtCC_Nit")
+  if CcNit:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  DiaCumpleaños = request.form.get("txtDiaCumpleaños")
+  if DiaCumpleaños:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  MesCumpleaños = request.form.get('txtMesCumpleaños')#[]
+  if MesCumpleaños:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  TelFijo = request.form.get("txtTelefonoFijo")
+  if TelFijo:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  Ext = request.form.get("Ext")
+  if Ext:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  TelFijoOficina = request.form.get("txtTelefonoFijoOficina")
+  ExtOficina = request.form.get("ExtOficina")
+  Celular = request.form.get("txtCelular")
+  if Celular:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  Email = request.form.get('txtEmail')#[]
+  if Email:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  Direccion = request.form.get('txtDireccion')#[]
+  if Direccion:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  if request.form.get('txtMunicipio'):
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  if(str(request.form.get('txtMunicipio')).isdigit()):
+    Municipio = request.form.get('txtMunicipio')
+  else:
+    Municipio = Ciudad.query.filter(Ciudad.ciu_nombre == str(request.form.get('txtMunicipio'))).all()[0].ciu_id
+  Barrio = request.form.get('txtBarrio')#[]
+  if(str(request.form.get('txtMedioConocio')).isdigit()):
+    MedioConocio = request.form.get('txtMedioConocio')
+  else:
+    MedioConocio = MedioConocio.query.filter(MedioConocio.medio_nombre == str(request.form.get('txtMedioConocio'))).all()[0].medio_id
+  if Barrio:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  Poblacion = request.form.get('txtPedPoblacion')
+  if Poblacion:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  #
+  #
+  #
+  TipoPedido = request.form.get('txtTipoPedido')
+  if(str(request.form.get('txtTipoEvento')).isdigit()):
+    TipoEvento = request.form.get('txtTipoEvento')
+  else:
+    TipoEvento = Evento.query.filter(Evento.eve_nombre == str(request.form.get('txtTipoEvento'))).all()[0].eve_id
+  if TipoPedido:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  if TipoEvento:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  DiaEvento = request.form.get('txtDiaEvento')
+  MesEvento = request.form.get('txtMesEvento')
+  AñoEvento = request.form.get('txtAñoEvento')
+  Referencia1 = request.form.get('txtReferencia1')
+  Descripcion1 = request.form.get('txtDescripcion1')
+  Accesorios1 = request.form.get('txtAccesorios1')
+  MedidasArreglos1 = request.form.get('txtMedidasArreglos1')
+  ValorReferencia1 = request.form.get('txtValorReferencia1')
+  Referencia2 = request.form.get('txtReferencia2')
+  Descripcion2 = request.form.get('txtDescripcion2')
+  Accesorios2 = request.form.get('txtAccesorios2')
+  MedidasArreglos2 = request.form.get('txtMedidasArreglos2')
+  ValorReferencia2 = request.form.get('txtValorReferencia2')
+  Referencia3 = request.form.get('txtReferencia3')
+  Descripcion3 = request.form.get('txtDescripcion3')
+  Accesorios3 = request.form.get('txtAccesorios3')
+  MedidasArreglos3 = request.form.get('txtMedidasArreglos3')
+  ValorReferencia3 = request.form.get('txtValorReferencia3')
+  Referencia4 = request.form.get('txtReferencia4')
+  Descripcion4 = request.form.get('txtDescripcion4')
+  Accesorios4 = request.form.get('txtAccesorios4')
+  MedidasArreglos4 = request.form.get('txtMedidasArreglos4')
+  ValorReferencia4 = request.form.get('txtValorReferencia4')
+  #
+  DiaRecoger = request.form.get('txtDiaRecoger')
+  MesRecoger = request.form.get('txtMesRecoger')
+  AñoRecoger = request.form.get('txtAñoRecoger')
+  DiaEntregar = request.form.get('txtDiaEntregar')
+  MesEntregar = request.form.get('txtMesEntregar')
+  AñoEntregar =  request.form.get('txtAñoEntregar')
+  Saldo = request.form.get('txtSaldo')
+  Abono =  request.form.get('txtAbono')
+  Retefuente = request.form.get('txtRetefuente')
+  ReferenciaNombre = request.form.get('txtReferenciaNombre')#[]
+  ReferenciaCelular = request.form.get('txtReferenciaCelular')#[]
+  ReferenciaTelefono = request.form.get('txtReferenciaTelefono')#[]
+  Nota = request.form.get('txtNota')#[]
+  #
+  ConsecutivoManual = request.form.get('txtConsecutivoManual')#[]z
+  Consecutivo = request.form.get('txtConsecutivo')#[]z
+  ConsecutivoActual = request.form.get('txtConsecutivoActual')
+  hoy = "{:%d.%m.%Y}".format(datetime.now())
+  fac_fechaFactura = hoy
+  fac_horasCadaReclamarMH = request.form.get('txtHoraReclamarA')
+  fac_horasReclamarCadaH = request.form.get('txtHoraReclamarB')
+  fac_horasDevolverCadaH  = request.form.get('txtHoraDevolverB')
+  fac_horasCadaDevolverMH = request.form.get('txtHoraDevolverA')
+  eventoFecha = str(request.form.get('txtfechaEvento'))
+  Retefuente = request.form.get('txtRetefuente')
+  fac_eventoFecha = str(request.form.get('txtfechaEvento'))
+  if fac_eventoFecha:
+    FaltaronDaList.append("si")
+    FaltaronDaListNames.append("txtCC_Nit")
+  else:
+    FaltaronDaList.append("no")
+  fac_ReclamarMercanciaFecha = str(request.form.get('txtfechaRecoger'))
+  fac_DevolverMercanciaFecha  = str(request.form.get('txtfechaDevolver'))
+  fac_horasDevolverCadaH = request.form.get('txtHoraDevolverB')
+  fac_horasReclamarCadaH = request.form.get('txtHoraReclamarB')
+  fac_horasCadaDevolverMH   = request.form.get('txtHoraDevolverA')
+  fac_horasCadaReclamarMH = request.form.get('txtHoraReclamarA')
+  fac_CantidadLLeva1 = request.form.get('cantidadRealPrenda1')
+  fac_CantidadLLeva2 = request.form.get('cantidadRealPrenda2')
+  fac_CantidadLLeva3 = request.form.get('cantidadRealPrenda3')
+  fac_CantidadLLeva4 = request.form.get('cantidadRealPrenda4')
+
+  return jsonisy({'FaltaronDaList':FaltaronDaList,'FaltaronDaListNames':FaltaronDaListNames})
+
