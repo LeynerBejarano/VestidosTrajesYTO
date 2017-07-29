@@ -1123,16 +1123,7 @@ function grabar(){
             type: 'POST',
             url:'/insertarCliente'
         })
-       // .done(function(data){
-         //   if(data.error){
-           //     $('#errorAlert').text(data.error).show();
-            // //   $('#succesAlert').hide();
-            //}else {
-              //  $('#succesAlert').text(data.nombre).show();
-                //$('#errorAlert').hide();
-          //  }
         };
-}
 
 function Recibo(titulo,ancho,alto){
   $("#idRecibo").dialog({
