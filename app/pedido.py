@@ -176,6 +176,21 @@ def pedidos():
     if usuario:
       return render_template('pedido.html',datos = datos,hoy = hoy, form = form ,clases = clases,tallas = tallas, cedulas = cedulas,cliente = request.args.get('cliente'),pedido = request.args.get('pedido'))
 
+
+##### Generador de PDF's
+def create_pdf(pdf_data, filename):
+    pdf = open(os.path.join(app.config['UPLOAD_FOLDER'], 'pdf/' + filename), 'wb')
+    pisa.CreatePDF(BytesIO(pdf_data.encode('utf-8')), pdf)
+    pdf.close() 
+
+    pdf = BytesIO()
+    pisa.CreatePDF(BytesIO(pdf_data.encode('utf-8')), pdf)
+    return pdf
+
+@app.route('/uploads/<filename>')
+def download_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'] + 'pdf/', filename, as_attachment=True)
+
 @app.route('/insertarCliente', methods=['GET','POST'])
 def insertarCliente():
 
@@ -363,7 +378,7 @@ def descargar_recibo():
 
   
   #pdf = create_pdf(render_template("factura.html", factura = factura, cliente = cliente, path = os.path.abspath(os.path.dirname(__file__))), file)
-
+  """
   path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/FRecibofactura.pdf'
   pagina = render_template("recibo.html", recibo = recibo, cliente= cliente,hoy = hoy, reciTipoPedido = reciTipoPedido,ciudad = ciudad.ciu_nombre)
   config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
@@ -376,6 +391,9 @@ def descargar_recibo():
         mimetype="application/pdf",
         headers={"Content-disposition:":
                  "attachment; filename=factura.html"})
+  """
+  pdf = create_pdf(render_template("recibo.html", recibo = recibo, cliente= cliente,hoy = hoy, reciTipoPedido = reciTipoPedido,ciudad = ciudad.ciu_nombre, path = os.path.abspath(os.path.dirname(__file__))), file)
+  return pdf
 
 @app.route('/_descargar_pdf', methods=['GET','POST'])
 def descargar_pdf():
