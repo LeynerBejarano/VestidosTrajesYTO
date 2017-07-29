@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class MedioConocio(db.Model):
-    __tablename__ = 'par_tMedioComunicacion'
+    __tablename__ = 'par_tmediocomunicacion'
     medio_id = db.Column(db.Integer, primary_key = True, autoincrement=True)
     medio_nombre = db.Column(db.String(100))
 
