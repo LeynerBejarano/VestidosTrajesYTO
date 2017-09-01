@@ -13,10 +13,25 @@
     border-collapse: collapse;
     border-radius: 20px;
 }
+ div.test td{
+     word-wrap:break-word;
+ }
+@page {
+  size: A4;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+}
+@media print {
+  html, body {
+    width: 210mm;
+    height: 297mm;
+  }
 
 </style>
 <body>
-
+<div class="page">
 <fieldset>
 <legend ><h2> Vestidos Trajes y Togas</h2></legend>
 <table id="table-head">
@@ -33,13 +48,13 @@
             <span style="color: red">N° {{factura.fac_numero}}</span>
         </td>
         <td>
-            
+
         </td>
         <td>
-            
+
         </td>
         <td>
-            
+
         </td>
         <td id="info-head">
             Cra 76 N° 29 - 24 Belen Medellin <br>
@@ -53,7 +68,7 @@
 
 <div class="test">
 
-<table style="width:100%">
+<table style="table-layout:fixed;width:100%">
 
 <tr>
   <td>Fecha</td>
@@ -66,7 +81,7 @@
   <td>{{cliente.cli_nombre}} </td>
   <td width="7%">C.C.#    </td>
   <td width="11%">{{factura.fac_cliente}} </td>
-  <td>Direccion</td> 
+  <td>Direccion</td>
   <td width="11%">{{cliente.cli_direccion}} </td>
 </tr>
 <tr>
@@ -81,7 +96,7 @@
     <td width="7%">Reclamar Mercancia</td>
     <td width="11%">{{factura.fac_ReclamarMercanciaFecha}} </td>
     <td >Devolver Mercancia</td>
-    <td width="11%">{{factura.fac_DevolverMercanciaFecha}}</td> 
+    <td width="11%">{{factura.fac_DevolverMercanciaFecha}}</td>
 </tr>
   <tr>
     <td colspan="1">
@@ -108,15 +123,15 @@
   {% endfor %}
   <tr>
     <td colspan="9">
-      Por cada día de retraso se cobrarán $ 10,000 presentar esta factura de venta y cedula para reclamar su mercancía, 
+      Por cada día de retraso se cobrarán $ 10,000 presentar esta factura de venta y cedula para reclamar su mercancía,
       Es indispensable firmar una letra de cambio por el valor comercial de las prendas' entregadas, Cualquier modificación
       a esta factura de venta deberá hacerse personalmente, No hay devolución de dinero, HORARIO DE ATENCiÓN: Lunes
       a Sábado de, 10:00 a.rn. a 7:00 p.rn. Jornada continua, ESTA FACTURA DE VENTA TIENE UNA CADUCIDAD DE 6 MESES,
     </td>
     <td  colspan="3">
-            TOTAL $:            {{facturaTotalConCommas}} <br>    
+            TOTAL $:            {{facturaTotalConCommas}} <br>
             <br>
-            <br>      
+            <br>
 
         {% if retefuente %}
 
@@ -124,9 +139,10 @@
         {% endif %}
     </td>
   </tr>
-</table> 
+</table>
 
 </div>
-</fieldset> 
+</fieldset>
+</div>
     </body>
 </html>

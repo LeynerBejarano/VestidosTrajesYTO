@@ -5,9 +5,10 @@ SECRET_KEY = 'wacor-is-a-god'
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-UPLOAD_FOLDER = basedir + '/uploads/'
+UPLOAD_FOLDER = '/home/vttpythonanywhere/vtt/VestidosTrajesYTO/uploads/'
 #'mysql+pymysql://losdelastogas:togas2016@losdelastogas.mysql.pythonanywhere-services.com/losdelastogas$ikotia'
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost/luifer'
+#mysql+pymysql://root@localhost/luifer
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://vttpythonanywher:vttdbpass@vttpythonanywhere.mysql.pythonanywhere-services.com/vttpythonanywher$ikotia'
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'repository')
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 

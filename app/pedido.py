@@ -6,6 +6,7 @@ from calendar import monthrange, month_name
 from zipfile import ZipFile
 from werkzeug import secure_filename
 from xhtml2pdf import pisa
+from flask_weasyprint import HTML, render_pdf
 from io import BytesIO, StringIO
 from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import func
@@ -70,6 +71,8 @@ from app.utils import numero_a_letras, timeRange, get_temporada, text_to_time
 from pdfkit import api
 from flask import make_response
 from flask import send_file,Response
+import PyPDF2
+import glob
 import locale
 
 
@@ -118,36 +121,36 @@ def pedidos():
 
     #### Agregar entradas a los FieldList solo cuando se carga la pagina, para evitar datos duplicados en la validacion
 
-    
-        
+
+
 
     ### Volcado de datos en el fieldlist Detalles
 
-    
 
-      
+
+
 
       ###Estilos
 
     ##fecha actual
     hoy = "{:%d.%m.%Y}".format(datetime.now())
 
-      
+
 
 
 
 
     choices = [(v.usu_login, v.usu_nombre + ' ' + v.usu_apellido if v.usu_estado == 1 else 'Inactivo - ' + v.usu_nombre + ' ' + v.usu_apellido) for v in vendedores]
     form.vendedor.choices = choices
-    choices = [(ti.pedi_id, ti.pedi_nombre) for ti in tipoPedido or []] + [(-1, 'Otro')]
-    form.fac_tipoPedido.choices = choices
-    form.fac_tipoPedido.default = 8
-    form.process()
-    choices = [(m.medio_id, m.medio_nombre) for m in medioConocio or []] + [(-1, 'Otro')]
-    form.cli_medioConocio.choices = choices
     choices = [(c.ciu_id, c.ciu_nombre) for c in ciudades or []] + [(-1, 'Otro')]
     form.ciudad.choices = choices
     form.ciudad.default = 16
+    form.process()
+    choices = [(m.medio_id, m.medio_nombre) for m in medioConocio or []] + [(-1, 'Otro')]
+    form.cli_medioConocio.choices = choices
+    choices = [(ti.pedi_id, ti.pedi_nombre) for ti in tipoPedido or []] + [(-1, 'Otro')]
+    form.fac_tipoPedido.choices = choices
+    form.fac_tipoPedido.default = 8
     form.process()
     form.ins_ciudad.choices = choices
     choices = [(e.eve_id, e.eve_nombre) for e in eventos or []] + [(-1, 'Otro')]
@@ -166,37 +169,42 @@ def pedidos():
     form.dia_Devolver.choices = [(i, str(i)) for i in range(1,32) or []]
     form.año_Entregar.choices = [(i, str(i)) for i in range(2014,2023) or []]
     form.año_Devolver.choices = [(i, str(i)) for i in range(2014,2023) or []]
-    
-      
+
+
 
     ####### SUBMIT ######
-    
-    
-    usuario = current_user.usu_login 
+
+
+    usuario = current_user.usu_login
     if usuario:
       return render_template('pedido.html',datos = datos,hoy = hoy, form = form ,clases = clases,tallas = tallas, cedulas = cedulas,cliente = request.args.get('cliente'),pedido = request.args.get('pedido'))
 
 
+
 ##### Generador de PDF's
 def create_pdf(pdf_data, filename):
+    """
     pdf = open(os.path.join(app.config['UPLOAD_FOLDER'], 'pdf/' + filename), 'wb')
     pisa.CreatePDF(BytesIO(pdf_data.encode('utf-8')), pdf)
-    pdf.close() 
+    pdf.close()
 
     pdf = BytesIO()
     pisa.CreatePDF(BytesIO(pdf_data.encode('utf-8')), pdf)
+    """
+    pdf = HTML(pdf_data).write_pdf()
     return pdf
 
-@app.route('/uploads/<filename>')
-def download_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'] + 'pdf/', filename, as_attachment=True)
+
+@app.route('/uploads', methods=['GET','POST'])
+def download_file():
+    return send_from_directory(app.config['UPLOAD_FOLDER'] + 'pdf/', request.form.get("filename"), as_attachment=True)
 
 @app.route('/insertarCliente', methods=['GET','POST'])
 def insertarCliente():
 
-  
+
   nombre = request.form.get('txtNonmbreCliente')
-  
+
   CcNit = request.form.get("txtCC_Nit")
   DiaCumpleaños = request.form.get("txtDiaCumpleaños")
   MesCumpleaños = request.form.get('txtMesCumpleaños')#[]
@@ -286,7 +294,7 @@ def insertarCliente():
   fac_CantidadLLeva3 = request.form.get('cantidadRealPrenda3')
   fac_CantidadLLeva4 = request.form.get('cantidadRealPrenda4')
   Total = 0
-  
+
   for a in request.form.getlist('txtValorReferenciaArray[]',type= str):
     if a:
       Total = Total + int(a)
@@ -311,7 +319,7 @@ def insertarCliente():
   if Cliente.query.get(CcNit) is None:
     new_cli = Cliente(CcNit, nombre, Municipio, Direccion, Email, Celular, TelFijo, Ext, TelFijoOficina , ExtOficina, Barrio, MedioConocio, MesCumpleaños, DiaCumpleaños)
     db.session.add(new_cli)
-    db.session.commit() 
+    db.session.commit()
   else:
     Cliente.query.filter(Cliente.cli_identificacion == CcNit).update({Cliente.cli_nombre: nombre, Cliente.cli_ciudad: Municipio , Cliente.cli_direccion: Direccion, Cliente.cli_email : Email, Cliente.cli_celular:  Celular, Cliente.cli_telefono: TelFijo, Cliente.cli_extension: Ext, Cliente.cli_telefonoFijo: TelFijoOficina, Cliente.cli_telefonoFijo_ext: ExtOficina,Cliente.cli_barrio: Barrio, Cliente.cli_medioConocio: MedioConocio, Cliente.cli_modifica: current_user.usu_login , Cliente.cli_nacido_mes: MesCumpleaños, Cliente.cli_nacido_dia: DiaCumpleaños, Cliente.cli_fecha_mod: datetime.now(timezone('America/Bogota'))}, synchronize_session=False)
     db.session.commit()
@@ -345,28 +353,28 @@ def insertarCliente():
       if (Recibo.query.filter(Recibo.reci_Factura == int(request.form.get('txtConsecutivoActual'))).all() is None):
         Factura.query.filter(Factura.fac_numero == Consecutivo).update({Factura.fac_Saldo : Total},synchronize_session=False)
         db.session.commit()
-  
+
 
 
   """
   entonces necesito Cambiar
 
-      
+
   """
 
 
   return jsonify(request.form.getlist('LineaSexoArray[]', type = str))
-  
- 
+
+
 
 @app.route('/descargar_recibo', methods=['GET','POST'])
 def descargar_recibo():
 
-  file = 'factura.pdf'
+
   #return jsonify(result = True)
   Consecutivo = request.form.get('ConsecutivoN')
-  
-  recibo = Recibo.query.get(int(request.form.get('reciboNumero')))  
+
+  recibo = Recibo.query.get(int(request.form.get('reciboNumero')))
   cliente = Cliente.query.get(request.form.get('txtCC_Nit'))
   hoy = "{:%d.%m.%Y}".format(datetime.now())
   reciTipoPedido = TipoPedido.query.get(recibo.reci_FacturaTipo)
@@ -374,26 +382,39 @@ def descargar_recibo():
   ciudad = Ciudad.query.get(cliente.cli_ciudad)
 
 
+  save_path = '/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/recibo/'
+  completeName = os.path.join(save_path,"recibotemp.txt")
+  file1 = open(completeName, "w")
+  file1.write(str(request.form.get('reciboNumero'))+"&&"+str(request.form.get('txtCC_Nit'))+"&&"+str(hoy)+"&&"+str(reciTipoPedido)+"&&"+str(cliente.cli_ciudad))
+  file1.close()
 
-
-  
-  #pdf = create_pdf(render_template("factura.html", factura = factura, cliente = cliente, path = os.path.abspath(os.path.dirname(__file__))), file)
-  """
-  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/FRecibofactura.pdf'
   pagina = render_template("recibo.html", recibo = recibo, cliente= cliente,hoy = hoy, reciTipoPedido = reciTipoPedido,ciudad = ciudad.ciu_nombre)
-  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+  page = HTML(string=pagina).write_pdf('/home/vttpythonanywhere/vtt/VestidosTrajesYTO/uploads/pdf/recibo.pdf')
+  otherPage =render_pdf(HTML(string=pagina))
 
-  pdf = api.from_string(pagina,False,configuration=config)
-  
- 
-  return Response(
-        pdf,
-        mimetype="application/pdf",
-        headers={"Content-disposition:":
-                 "attachment; filename=factura.html"})
-  """
-  pdf = create_pdf(render_template("recibo.html", recibo = recibo, cliente= cliente,hoy = hoy, reciTipoPedido = reciTipoPedido,ciudad = ciudad.ciu_nombre, path = os.path.abspath(os.path.dirname(__file__))), file)
-  return pdf
+  valores = os.path.join('/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/recibo/recibotemp.txt')
+  filehandle1 = open(valores)
+  valores= str(filehandle1.read()).split("&&")
+
+  return otherPage
+
+@app.route('/descargar_recibo_abrir', methods=['GET','POST'])
+def descargar_recibo_abrir():
+
+  valores = os.path.join('/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/recibo/recibotemp.txt')
+  filehandle1 = open(valores)
+  valores= str(filehandle1.read()).split("&&")
+
+  recibo = Recibo.query.get(int(valores[0]))
+  cliente = Cliente.query.get(valores[1])
+  hoy = "{:%d.%m.%Y}".format(datetime.now())
+  reciTipoPedido = valores[3]
+  ciudad = Ciudad.query.get(valores[4])
+
+  pagina = render_template("recibo.html", recibo = recibo, cliente= cliente,hoy = hoy, reciTipoPedido = reciTipoPedido,ciudad = ciudad.ciu_nombre)
+  otherPage =render_pdf(HTML(string=pagina))
+
+  return otherPage
 
 @app.route('/_descargar_pdf', methods=['GET','POST'])
 def descargar_pdf():
@@ -401,7 +422,7 @@ def descargar_pdf():
   file = 'factura.pdf'
   #return jsonify(result = True)
   nombre = request.form.get('txtNonmbreCliente')
-  
+
   CcNit = request.form.get("txtCC_Nit")
   DiaCumpleaños = request.form.get("txtDiaCumpleaños")
   MesCumpleaños = request.form.get('txtMesCumpleaños')#[]
@@ -469,32 +490,33 @@ def descargar_pdf():
   hoy = "{:%d.%m.%Y}".format(datetime.now())
 
 
-  
+
+  save_path = '/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/factura/'
+  completeName = os.path.join(save_path,"facturatemp.txt")
+  file1 = open(completeName, "w")
+  file1.write(str(request.form.get('txtConsecutivo'))+"&&"+str(request.form.get('txtCC_Nit')))
+  file1.close()
+
   #pdf = create_pdf(render_template("factura.html", factura = factura, cliente = cliente, path = os.path.abspath(os.path.dirname(__file__))), file)
-  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/Ffactura.pdf'
-  pagina = render_template("factura.html", factura = factura, cliente= cliente,hoy = hoy)
-  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
-
-  pdf = api.from_string(pagina,False,configuration=config)
-  
- 
-  return Response(
-        pdf,
-        mimetype="application/pdf",
-        headers={"Content-disposition:":
-                 "attachment; filename=factura.html"})
-  """"""
-  #response = make_response(pdf)
+  otherPage =render_pdf(HTML(string=pagina))
 
 
-  #response.headers["Content-Disposition"] = "attachment; filename=Ffactura.pdf"
-  #response.mimetype='application/pdf'
-  #return send_from_directory('C:\\Users\\Cidenet\\Documents\\VirutalEnvs\\ikotia\\ikotia\\uploads\\pdf\\','Ffactura.pdf', as_attachment=True)
+  return otherPage
 
-#@app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
-#def download(filename):
-#    uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
- #   return send_from_directory(directory=uploads, filename=filename)
+@app.route('/descargar_pdf_abrir', methods=['GET','POST'])
+def descargar_pdf_abrir():
+
+  valores = os.path.join('/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/factura/facturatemp.txt')
+  filehandle1 = open(valores)
+  valores= str(filehandle1.read()).split("&&")
+  factura = Factura.query.get(valore[0])
+  cliente = Cliente.query.get(valores[1])
+  hoy = "{:%d.%m.%Y}".format(datetime.now())
+  pagina = render_template("factura.html", factura = factura, cliente = cliente,hoy =hoy)
+  otherPage =render_pdf(HTML(string=pagina))
+
+  return otherPage
+
 
 @app.route('/retornar')
 def retornar():
@@ -502,9 +524,9 @@ def retornar():
 
 @app.route('/siguienteFactura', methods=['GET','POST'])
 def siguienteFactura():
-  
+
   Factura_actual = int(request.form.get('txtConsecutivo'))
-  Factura_actual+1   
+  Factura_actual+1
   factura = Factura.query.get(str(Factura_actual))
   cliente = Cliente.query.get(str(factura.fac_cliente))
   recibo = Recibo.query.filter(Recibo.reci_Factura == int(Factura_actual)).all
@@ -536,43 +558,43 @@ def siguienteFactura():
   for lista in FacturaDetalle.query.filter(FacturaDetalle.facdet_Factura==Factura_actual).all():
     ReferenciaLista.append(lista.facdet_Referencia)
     DescripcionLista.append(lista.facdet_Descripcion)
-    AccesoriosLista.append(lista.facdet_Accesorios) 
+    AccesoriosLista.append(lista.facdet_Accesorios)
     MedidasYarreglos.append(lista.facdet_MedidasyArreglos)
-    EstilosLista.append(lista.facdet_estilo) 
-    ValorREferencia.append(lista.facdet_precio) 
-    LineaSExo.append(lista.facdet_linea) 
+    EstilosLista.append(lista.facdet_estilo)
+    ValorREferencia.append(lista.facdet_precio)
+    LineaSExo.append(lista.facdet_linea)
 
-  
+
   return jsonify({'cli_nacido_dia':cliente.cli_nacido_dia,'cli_nacido_mes':cliente.cli_nacido_mes,'fechaFinal':fechaFinal,'fechaInicio':fechaInicio,'invalidar':invalidar,'LineaSExo':LineaSExo,'ValorREferencia':ValorREferencia,'EstilosLista':EstilosLista,'MedidasYarreglos':MedidasYarreglos,'AccesoriosLista':AccesoriosLista,'DescripcionLista':DescripcionLista,'ReferenciaLista':ReferenciaLista,'fac_numero':str(factura.fac_numero),'fac_cliente':str(factura.fac_cliente),'fac_tipoPedido':str(factura.fac_tipoPedido),'fac_ReferenciaNombre':str(factura.fac_ReferenciaNombre),'fac_ReferenciaCelular':str(factura.fac_ReferenciaCelular),'fac_ReferenciaMedio': str(factura.fac_ReferenciaMedio), 'fac_poblacion':str(factura.fac_poblacion), 'fac_evento':str(factura.fac_evento),'fac_eventoFecha':str(factura.fac_eventoFecha), 'fac_eventoDia':str(factura.fac_eventoDia), 'fac_eventoMes':str(factura.fac_eventoMes), 'fac_eventoAño': str(factura.fac_eventoAño), 'fac_Total':factura.fac_Total,  'fac_Saldo':factura.fac_Saldo, 'fac_Retefuente': factura.fac_Retefuente ,'fac_ReclamarMercanciaFecha':factura.fac_ReclamarMercanciaFecha,  'fac_DevolverMercanciaDia':factura.fac_DevolverMercanciaDia, 'fac_DevolverMercanciaMes':factura.fac_DevolverMercanciaMes, 'fac_DevolverMercanciaAño':factura.fac_DevolverMercanciaAño,'fac_DevolverMercanciaFecha':factura.fac_DevolverMercanciaFecha , 'fac_AtendidoPor': factura.fac_AtendidoPor,'fac_consecutivoManual':str(factura.fac_consecutivoManual),'cli_identificacion': cliente.cli_identificacion, 'cli_nombre': cliente.cli_nombre, 'cli_ciudad':cliente.cli_ciudad, 'cli_direccion': cliente.cli_direccion, 'cli_email':cliente.cli_email, 'cli_celular':cliente.cli_celular, 'cli_telefono':cliente.cli_telefono,'cli_extension':cliente.cli_extension,'cli_telefonoOfi':cliente.cli_telefonoFijo,'cli_ExtOfi':cliente.cli_telefonoFijo_ext ,'cli_cargo':cliente.cli_cargo, 'cli_barrio':cliente.cli_barrio, 'cli_medioConocio':cliente.cli_medioConocio,'fac_fechaFactura':factura.fac_fechaFactura})
 
 @app.route('/CuantosRecibos', methods=['GET','POST'])
 def CuantosRecibos():
   Factura_actual = int(request.form.get('txtConsecutivo'))
-  Factura_actual+1   
+  Factura_actual+1
   recibo = len(Recibo.query.filter(Recibo.reci_Factura == int(Factura_actual)).all())
-  return jsonify(recibo) 
+  return jsonify(recibo)
 
 @app.route('/MostrarRecibo', methods=['GET','POST'])
 def MostrarRecibo():
-  Factura_actual = int(request.form.get('txtConsecutivo'))  
+  Factura_actual = int(request.form.get('txtConsecutivo'))
   txtReciboActual_Relacivo = int(request.form.get('txtReciboActual_Relacivo')) - 1
   recibo = Recibo.query.filter(Recibo.reci_Factura == int(Factura_actual)).all()[txtReciboActual_Relacivo]
   ciudad = Ciudad.query.get(recibo.reci_ciudad)
-  Ciudad_Fecha = str(ciudad.ciu_nombre)+' '+str(recibo.reci_fecha) 
+  Ciudad_Fecha = str(ciudad.ciu_nombre)+' '+str(recibo.reci_fecha)
   return jsonify({'fechaInicio':fechaInicio,'fechaFinal':fechaFinal,'reci_numero':str(recibo.reci_numero),'reci_Factura':str(recibo.reci_Factura),'reci_valor':str(recibo.reci_valor),'reci_ciudad':str(recibo.reci_ciudad),'reci_fecha':str(recibo.reci_fecha),'reci_Total': str(recibo.reci_Total), 'reci_AporteEnLetras':str(recibo.reci_AporteEnLetras), 'reci_Concepto':str(recibo.reci_Concepto),'reci_FacturaTipo':str(recibo.reci_FacturaTipo), 'reci_nuevoSaldo':str(recibo.reci_nuevoSaldo), 'reci_CCNit': str(recibo.reci_CCNit), 'Ciudad_Fecha': Ciudad_Fecha, 'RecibimosDe': str(recibo.reci_RecibimosDe)})
 
 @app.route('/NuevoSaldo', methods=['GET','POST'])
 def NuevoSaldo():
 
- valor_recibo = int(request.form.get('txtReciValor')) 
- Factura_actual = int(request.form.get('txtConsecutivo')) 
+ valor_recibo = int(request.form.get('txtReciValor'))
+ Factura_actual = int(request.form.get('txtConsecutivo'))
  factura = Factura.query.get(str(Factura_actual))
  return jsonify(int(factura.fac_Saldo)-valor_recibo)
 
- 
+
 @app.route('/UsuarioNuevoViejo', methods=['GET','POST'])
 def UsuarioNuevoViejo():
-  
+
   CcNit = request.form.get("txtCC_Nit")
   cliente = Cliente.query.get(CcNit)
   if Cliente.query.get(CcNit) is not None:
@@ -602,7 +624,7 @@ def FechaEntreFechas(start, end, delta):
 
 @app.route('/GuardarRecibo', methods=['GET','POST'])
 def GuardarRecibo():
-  
+
   reci_Factura = request.form.get('txtConsecutivo')
   reci_valor = request.form.get('txtReciValor')
   hoy = datetime.now()
@@ -614,7 +636,7 @@ def GuardarRecibo():
   reci_FacturaTipo = request.form.get('txtTipoPedido')
   reci_nuevoSaldo = request.form.get('txtReciSuNuevoSaldoEs')
   reci_CCNit = request.form.get('txtReciSuNuevoSaldoEs')
-  
+
   new_reci = Recibo(reci_Factura,reci_valor,reci_ciudad, hoy,reci_Total,reci_AporteEnLetras,reci_Concepto,reci_FacturaTipo,reci_nuevoSaldo,reci_CCNit, reci_RecibimosDe)
   db.session.add(new_reci)
   db.session.commit()
@@ -628,7 +650,7 @@ def ReciboPorConceptoDe():
   reci_Factura = int(request.form.get('txtConsecutivo'))
   valor_Recibo = int(request.form.get('txtReciValor'))
   catidadRealProductoPaVender = int(Factura.query.filter(Factura.fac_numero == int(reci_Factura)).all()[0].fac_Saldo)
-  if(valor_Recibo  > catidadRealProductoPaVender):  
+  if(valor_Recibo  > catidadRealProductoPaVender):
    return jsonify("el recibo es mayor a lo que falta en la fsctura")
   else:
     if(valor_Recibo -catidadRealProductoPaVender < 0):
@@ -638,20 +660,35 @@ def ReciboPorConceptoDe():
 
 @app.route('/NumeroEnLetras', methods=['GET','POST'])
 def NumeroEnLetras():
-  valor_Recibo = int(request.form.get('txtReciValor')) 
+  valor_Recibo = int(request.form.get('txtReciValor'))
   return jsonify(num2words(valor_Recibo, lang='es'))
-  
+
 @app.route('/FacturaActual', methods=['GET','POST'])
 def FacturaActual():
   return jsonify({'uno':str(int(str(db.session.query(db.func.max(Factura.fac_numero)).all()[0]).replace("(", "").replace(")", "").replace(",", ""))+1)})
 
-  
+
 
 @app.route('/GenerarInformeTaller', methods=['GET','POST'])
 def GenerarInformeTaller():
-  FechaTallerInicio= request.form.get('txtFechaTallerInicio')
+
+  save_path = '/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/informeTaller/'
+  completeName = os.path.join(save_path,"informetallertemp.txt")
+  file1 = open(completeName, "w")
+  file1.write(str(request.form.get('txtFechaTallerInicio'))+"&&"+str(request.form.get('txtFechaTallerFinal')))
+  file1.close()
+
+
+@app.route('/GenerarInformeTaller_abrir', methods=['GET','POST'])
+def GenerarInformeTaller_abrir():
+
+  valores = os.path.join('/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/informeTaller/informetallertemp.txt')
+  filehandle1 = open(valores)
+  valores= str(filehandle1.read()).split("&&")
+
+  FechaTallerInicio= valores[0]
   FechaTallerInicio = date(int(FechaTallerInicio[6:10]), int(FechaTallerInicio[3:5]), int(FechaTallerInicio[0:2]))
-  FechaTallerFinal= request.form.get('txtFechaTallerFinal')
+  FechaTallerFinal= valores[1]
   FechaTallerFinal = date(int(FechaTallerFinal[6:10]), int(FechaTallerFinal[3:5]), int(FechaTallerFinal[0:2]))
   ListaFacturas = Factura.query.filter(Factura.fac_ReclamarMercanciaFecha > FechaTallerInicio).filter(Factura.fac_ReclamarMercanciaFecha < FechaTallerFinal).all()
   ListFechaEntregar = []
@@ -683,22 +720,10 @@ def GenerarInformeTaller():
         if(ListaFacturas[a].fac_horasReclamarCadaMH > 11):
           ListaHoraEntregar.append(str(ListaFacturas[a].fac_horasCadaReclamarMH-12)+"pm")
 
-       
-
-  #pdf = create_pdf(render_template("factura.html", factura = factura, cliente = cliente, path = os.path.abspath(os.path.dirname(__file__))), file)
-  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/InformeTaller.pdf'
   pagina = render_template("Informe_Taller.html", ListFechaEntregar  = ListFechaEntregar,ListaHoraEntregar = ListaHoraEntregar,ListaFacturaNumero = ListaFacturaNumero,ListaDescripcion = ListaDescripcion,ListaAccesorios  = ListaAccesorios ,ListaMedidasArreglos =ListaMedidasArreglos, ListaReferencia=ListaReferencia,ListaEstilos=ListaEstilos)
-  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+  otherPage =render_pdf(HTML(string=pagina))
 
-  pdf = api.from_string(pagina,False,configuration=config)
-  
- 
-  return Response(
-        pdf,
-        mimetype="application/pdf",
-        headers={"Content-disposition:":
-                 "attachment; filename=InformeTaller.pdf"})
-
+  return otherPage
 
 @app.route('/GenerarInformeDiarioVersionUno', methods=['GET','POST'])
 def GenerarInformeDiarioVersionUno():
@@ -713,7 +738,7 @@ def GenerarInformeDiarioVersionUno():
   Saldo = 0
 
   ListaFacturasDiarios = Factura.query.filter(Factura.fac_ReclamarMercanciaFecha > FechaTallerInicio).filter(Factura.fac_ReclamarMercanciaFecha < FechaTallerFinal).all()
-  
+
   FechaDiarioInicio = (date.today()-timedelta(days=7)).isoformat()
   ListaFacturasSemana = Factura.query.filter(Factura.fac_ReclamarMercanciaFecha > FechaTallerInicio).filter(Factura.fac_ReclamarMercanciaFecha < FechaTallerFinal).all()
   for a in ListaFacturasSemana:
@@ -736,13 +761,13 @@ def GenerarInformeDiarioVersionUno():
   config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
   pdf = api.from_string(pagina,False,configuration=config)
-  
- 
+
+
   return Response(
         pdf,
         mimetype="application/pdf",
         headers={"Content-disposition:":
-                 "attachment; filename=factura.html"})   
+                 "attachment; filename=factura.html"})
 
 @app.route('/GenerarInformeDiarioVersionFoto', methods=['GET','POST'])
 def GenerarInformeDiarioVersionFoto():
@@ -775,7 +800,7 @@ def GenerarInformeDiarioVersionFoto():
 
   if(now.day == 1 and now.day == 1):
     FechaDiarioInicioAnual = date.today()
-  else:  
+  else:
     FechaDiarioInicioAnual = date(now.year,(now.month-1),(now.day-1))
   TotalFactura = 0
   TotalRecibo = 0
@@ -790,7 +815,7 @@ def GenerarInformeDiarioVersionFoto():
   recibo = Recibo.query.filter(Recibo.reci_fecha >= FechaDiarioInicio).filter(Recibo.reci_fecha <= FechaDiarioFinal).all()
   for a in recibo:
     TotalRecibo = TotalRecibo + a.reci_valor
-  
+
   facturaSemanal = Factura.query.filter(Factura.fac_fechaFactura >= FechaDiarioInicioSemana).filter(Factura.fac_fechaFactura <= FechaDiarioFinal).all()
   for c in facturaSemanal:
     TotalSemanal = TotalSemanal + c.fac_Total
@@ -800,7 +825,7 @@ def GenerarInformeDiarioVersionFoto():
   for d in facturaMensual:
     TotalMensual = TotalMensual + d.fac_Total
 
-  
+
   facturaAnual = Factura.query.filter(Factura.fac_fechaFactura >= FechaDiarioInicioAnual).filter(Factura.fac_fechaFactura <= FechaDiarioFinal).all()
   for e in facturaAnual:
     TotalAnual = TotalAnual + e.fac_Total
@@ -816,23 +841,16 @@ def GenerarInformeDiarioVersionFoto():
   else:
     TotalDeColumnas = len(recibo)
 
-     
 
-  
-  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/InformeDiario.pdf'
+
+
+
   pagina = render_template("InformeDiarioVersionFoto.html",ValoresFactura= ValoresFactura, TotalDeColumnas = TotalDeColumnas,TotalAnual=TotalAnual,TotalMensual = TotalMensual,TotalSemanal =TotalSemanal, factura = factura, recibo = recibo,TotalFactura =TotalFactura,TotalRecibo = TotalRecibo,dia= now.day, mes=now.month, año= now.year )
-  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+  otherPage =render_pdf(HTML(string=pagina))
 
-  pdf = api.from_string(pagina,False,configuration=config)
-  
- 
-  return Response(
-        pdf,
-        mimetype="application/pdf",
-        headers={"Content-disposition:":
-                 "attachment; filename=factura.html"})
+  return otherPage
 
-@app.route('/group', methods=['GET','POST'])  
+@app.route('/group', methods=['GET','POST'])
 def group(number):
     s = '%d' % number
     groups = []
@@ -842,9 +860,12 @@ def group(number):
     return s + ','.join(reversed(groups))
 
 
-  
+
 @app.route('/GenerarLetra', methods=['GET','POST'])
 def GenerarLetra():
+
+
+
   consecutivo = int(request.form.get('txtConsecutivoActual'))
   factura = Factura.query.get(consecutivo)
   detalle = FacturaDetalle.query.filter(FacturaDetalle.facdet_Factura == factura.fac_numero).all()
@@ -854,20 +875,39 @@ def GenerarLetra():
     hoy =  datetime.now(timezone('America/Bogota'))
     NumeroCommaSeparated = "{:,}".format(factura.fac_Total)
 
-    path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/Letra.pdf'
-    pagina = render_template("letra.html",detalle= detalle, cliente = cliente,factura = factura, hoy = hoy,ValorDeLaFacturaEnLetras = ValorDeLaFacturaEnLetras, NumeroCommaSeparated =  NumeroCommaSeparated)
-    config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+    save_path = '/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/letra/'
+    completeName = os.path.join(save_path,"letratemp.txt")
+    file1 = open(completeName, "w")
+    file1.write(str(request.form.get('txtConsecutivoActual'))+"&&"+"no")
+    file1.close()
 
-    pdf = api.from_string(pagina,False,configuration=config)
-    
-   
-    return Response(
-          pdf,
-          mimetype="application/pdf",
-          headers={"Content-disposition:":
-                   "attachment; filename=factura.html"})  
+    pagina = render_template("letra.html",detalle= detalle, cliente = cliente,factura = factura, hoy = hoy,ValorDeLaFacturaEnLetras = ValorDeLaFacturaEnLetras, NumeroCommaSeparated =  NumeroCommaSeparated)
+
+
+
+    return jsonify("ejecutando ")
   else:
-     return jsonify("Factura inexistente") 
+     return jsonify("Factura inexistente")
+
+@app.route('/GenerarLetra_abrir', methods=['GET','POST'])
+def GenerarLetra_abrir():
+
+  valores = os.path.join('/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/letra/letratemp.txt')
+  filehandle1 = open(valores)
+  valores= str(filehandle1.read()).split("&&")
+
+  consecutivo = int(valores[0])
+  factura = Factura.query.get(consecutivo)
+  detalle = FacturaDetalle.query.filter(FacturaDetalle.facdet_Factura == factura.fac_numero).all()
+  cliente = Cliente.query.get(int(factura.fac_cliente))
+  ValorDeLaFacturaEnLetras = num2words(factura.fac_Total, lang='es')
+  hoy =  datetime.now(timezone('America/Bogota'))
+  NumeroCommaSeparated = "{:,}".format(factura.fac_Total)
+
+  pagina = render_template("letra.html",detalle= detalle, cliente = cliente,factura = factura, hoy = hoy,ValorDeLaFacturaEnLetras = ValorDeLaFacturaEnLetras, NumeroCommaSeparated =  NumeroCommaSeparated)
+  otherPage =render_pdf(HTML(string=pagina))
+
+  return otherPage
 
 @app.route('/PonerPuntosDeMil', methods=['GET','POST'])
 def PonerPuntosDeMil():
@@ -890,18 +930,18 @@ def BBuscarFacturaRelativo():
 
 @app.route('/PonerDiaDosDiasAparte', methods=['GET','POST'])
 def PonerDiaDosDiasAparte():
-  locale.setlocale(locale.LC_TIME, "vie")
+
   hoy = date.today()
   fac_eventoFecha = request.form.get('txtfechaEvento')
-  
+
   if(date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2])) == hoy):
-    DosDiasAtras = date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2]))  
+    DosDiasAtras = date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2]))
   else:
     if hoy == date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2]))+ timedelta(days=1):
       DosDiasAtras = hoy
-    else: 
+    else:
       DosDiasAtras = date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2])) - timedelta(days=2)
-  
+
   DosDiasAdelante = date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2])) + timedelta(days=2)
   if(hoy==date(int(fac_eventoFecha[6:10]), int(fac_eventoFecha[3:5]), int(fac_eventoFecha[0:2]))- timedelta(days=1)):
     DosDiasAtras = hoy
@@ -927,24 +967,39 @@ def BuscarReserva():
 def GenerarFactura():
   factura = Factura.query.get(int(request.form.get('txtConsecutivoActual')))
   cliente = Cliente.query.get(int(factura.fac_cliente))
-  path = 'C:/Users/Cidenet/Documents/VirutalEnvs/ikotia/ikotia/app/uploads/pdfs/Fffactura.pdf'
   medio = MedioConocio.query.get(int(cliente.cli_medioConocio))
   tipo = TipoPedido.query.get(int(factura.fac_tipoPedido))
   detalles = FacturaDetalle.query.filter(FacturaDetalle.facdet_Factura == factura.fac_numero).all()
   retefuente = request.form.get('txtRetefuente')
   facturaTotalConCommas = "{:,}".format(factura.fac_Total)
+
+  save_path = '/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/factura/'
+  completeName = os.path.join(save_path,"facturaDostemp.txt")
+  file1 = open(completeName, "w")
+  file1.write(str(request.form.get('txtConsecutivoActual'))+"&&"+str(request.form.get('txtRetefuente')))
+  file1.close()
+
+
+
+@app.route('/GenerarFactura_abrir', methods=['GET','POST'])
+def GenerarFactura_abrir():
+
+  valores = os.path.join('/home/vttpythonanywhere/vtt/VestidosTrajesYTO/tempText/factura/facturaDostemp.txt')
+  filehandle1 = open(valores)
+  valores= str(filehandle1.read()).split("&&")
+  factura = Factura.query.get(int(valores[0]))
+  cliente = Cliente.query.get(int(factura.fac_cliente))
+  medio = MedioConocio.query.get(int(cliente.cli_medioConocio))
+  tipo = TipoPedido.query.get(int(factura.fac_tipoPedido))
+  detalles = FacturaDetalle.query.filter(FacturaDetalle.facdet_Factura == factura.fac_numero).all()
+  retefuente = valores[1]
+  facturaTotalConCommas = "{:,}".format(factura.fac_Total)
   pagina = render_template("facturaVdos.html",detalles= detalles,cliente = cliente,factura = factura,medio =medio.medio_nombre, tipo = tipo.pedi_nombre, retefuente =   retefuente, facturaTotalConCommas = facturaTotalConCommas)
-  config = api.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-  pdf = api.from_string(pagina,False,configuration=config)
-  
- 
-  return Response(
-        pdf,
-        mimetype="application/pdf",
-        headers={"Content-disposition:":
-                 "attachment; filename=factura.html"})
+  pagina = render_template("facturaVdos.html",detalles= detalles,cliente = cliente,factura = factura,medio =medio.medio_nombre, tipo = tipo.pedi_nombre, retefuente =   retefuente, facturaTotalConCommas = facturaTotalConCommas)
+  otherPage =render_pdf(HTML(string=pagina))
 
+  return otherPage
 
 @app.route('/FacturasDeCedula', methods=['GET','POST'])
 def FacturasDeCedula():
@@ -1016,7 +1071,7 @@ def PonerMedidaYArreglo():
     LFCintura = " "
   else:
     LFCintura = str(LFCintura)
-  LFCadera = request.form.get('LFCadera') 
+  LFCadera = request.form.get('LFCadera')
   if LFCadera is None:
     LFCadera = " "
   else:
@@ -1032,33 +1087,14 @@ def PonerMedidaYArreglo():
   else:
     MujerArreglo = str(MujerArreglo)
 
-  if LMLargoManga:
-    StringMasculino = "Largo manga:"+LMLargoManga+",Cintura:"+LMCintura+",Largo pantalon:"+LMLargoPantalon+",Arreglo:"+HombreArreglo
-    return jsonify({'datus':StringMasculino,'input':InputMeter})
-  if LMCintura:
-    StringMasculino = "Largo manga:"+LMLargoManga+",Cintura:"+LMCintura+",Largo pantalon:"+LMLargoPantalon+",Arreglo:"+HombreArreglo
-    return jsonify({'datus':StringMasculino,'input':InputMeter})
-  if LMLargoPantalon:
-    StringMasculino = "Largo manga:"+LMLargoManga+",Cintura:"+LMCintura+",Largo pantalon:"+LMLargoPantalon+",Arreglo:"+HombreArreglo
-    return jsonify({'datus':StringMasculino,'input':InputMeter})
-  if HombreArreglo:
-    StringMasculino = "Largo manga:"+LMLargoManga+",Cintura:"+LMCintura+",Largo pantalon:"+LMLargoPantalon+",Arreglo:"+HombreArreglo
-    return jsonify({'datus':StringMasculino,'input':InputMeter})
-  if LFBusto:
-    StringFemenino = "Busto:"+LFBusto+",Cintura:"+LFCintura+",Cadera:"+LFCadera+",Largo total:"+LFLargoTotal+",Arreglo:"+MujerArreglo
-    return jsonify({'datus':StringFemenino,'input':InputMeter}) 
-  if LFCintura:
+
+
+  if request.form.get('sexus') =="LineaFemenina":
     StringFemenino = "Busto:"+LFBusto+",Cintura:"+LFCintura+",Cadera:"+LFCadera+",Largo total:"+LFLargoTotal+",Arreglo:"+MujerArreglo
     return jsonify({'datus':StringFemenino,'input':InputMeter})
-  if LFCadera:
-    StringFemenino = "Busto:"+LFBusto+",Cintura:"+LFCintura+",Cadera:"+LFCadera+",Largo total:"+LFLargoTotal+",Arreglo:"+MujerArreglo
-    return jsonify({'datus':StringFemenino,'input':InputMeter})
-  if LFLargoTotal:
-    StringFemenino = "Busto:"+LFBusto+",Cintura:"+LFCintura+",Cadera:"+LFCadera+",Largo total:"+LFLargoTotal+",Arreglo:"+MujerArreglo
-    return jsonify({'datus':StringFemenino,'input':InputMeter})
-  if MujerArreglo:
-    StringFemenino = "Busto:"+LFBusto+",Cintura:"+LFCintura+",Cadera:"+LFCadera+",Largo total:"+LFLargoTotal+",Arreglo:"+MujerArreglo
-    return jsonify({'datus':StringFemenino,'input':InputMeter})  
+  else:
+    StringMasculino = "Largo manga:"+LMLargoManga+",Cintura:"+LMCintura+",Largo pantalon:"+LMLargoPantalon+",Arreglo:"+HombreArreglo
+    return jsonify({'datus':StringMasculino,'input':InputMeter})
 
 @app.route('/AlterarPrecioTreinta', methods=['GET','POST'])
 def AlterarPrecioTreinta():
@@ -1069,9 +1105,9 @@ def AlterarPrecioTreinta():
   #if(int(str(request.form.get('txtValorReferencia')))) ==
   if(str(request.form.get('PasswordSAVED')) == "siEra"):
     if(precioAlterado == None):
-      return jsonify({'precio':0,'respuesta':'cambio permitido','input':request.form.get('w')}) 
+      return jsonify({'precio':0,'respuesta':'cambio permitido','input':request.form.get('w')})
     else:
-      return jsonify({'precio':precioAlterado,'respuesta':'cambio permitido','input':request.form.get('w')})  
+      return jsonify({'precio':precioAlterado,'respuesta':'cambio permitido','input':request.form.get('w')})
   else:
     if((int(precioAlterado) +(0.30*PrecioReferencia))<PrecioReferencia and str(current_user.usu_login) != "john"):
       return jsonify({'precio':PrecioReferencia,'respuesta':'excedio el limite de 30%','input':request.form.get('w')})
@@ -1098,9 +1134,9 @@ def ObtenerTotal():
     total = total + a
 
   return jsonify(total)
-  
+
 @app.route('/AutomatizarPrenda', methods=['GET','POST'])
-def AutomatizarPrenda(): 
+def AutomatizarPrenda():
   descripcion = CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == request.form.get('txtReferencia')).all()[0].cantidadPrenda_descripcion
   accesorios = CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == request.form.get('txtReferencia')).all()[0].cantidadPrenda_Accesorios
   valor = CantidadPrenda.query.filter(CantidadPrenda.cantidadPrenda_id == request.form.get('txtReferencia')).all()[0].cantidadPrenda_ValorReferencia
@@ -1118,7 +1154,7 @@ def AutomatizarPrenda():
   fecha_a_reservarCORAZONLIST =[]
   fecha_a_reservarOUTSIDELIST =[]
   FINALlist = []
-  
+
   if(fac_DevolverMercanciaFecha[0:3] == "201" ):
     fac_DevolverMercanciaFecha=date(int(fac_DevolverMercanciaFecha[0:4]),int(fac_DevolverMercanciaFecha[5:7]),int(fac_DevolverMercanciaFecha[8:10]))+timedelta(days=2)
     fac_DevolverMercanciaFechaExacto= date(int(fac_DevolverMercanciaFechaExacto[0:4]),int(fac_DevolverMercanciaFechaExacto[5:7]),int(fac_DevolverMercanciaFechaExacto[8:10]))
@@ -1141,7 +1177,7 @@ def AutomatizarPrenda():
     if reser.ReservasPrenda_devolucion > hoy:
       ListaDeRangos.append(FechaEntreFechas(reser.ReservasPrenda_entrega,reser.ReservasPrenda_devolucion,timedelta(days=1)))
       for lista in ListaDeRangos:
-        if (bool(set(fecha_a_reservarDosDiasLIST) & set(lista))):#hasta aqui funciona perfecto ahora necesito saber 
+        if (bool(set(fecha_a_reservarDosDiasLIST) & set(lista))):#hasta aqui funciona perfecto ahora necesito saber
           for last in  ReservasPrenda.query.filter( ReservasPrenda.ReservasPrenda_entrega_nombre_talla_color == int(request.form.get('txtReferencia'))).filter(ReservasPrenda.ReservasPrenda_devolucion > hoy).all():
             FINALlist.append(FechaEntreFechas(last.ReservasPrenda_entrega, last.ReservasPrenda_devolucion, timedelta(days=1)))
             for fechaFin in FINALlist:
@@ -1149,18 +1185,18 @@ def AutomatizarPrenda():
                 reservaResulT = "Reservado, coincide con la factura: "+str(last.ReservasPrenda_factura)+"  cuyo dia de devolucion es: "+str(last.ReservasPrenda_devolucion)
                 break
           #for heart in  FechaEntreFechas(fac_ReclamarMercanciaFechaExacto, fac_DevolverMercanciaFechaExacto, timedelta(days=1)):
-            
-  
+
+
   return jsonify({"descripcion": descripcion ,"accesorios": accesorios,"valor_sugerido": valor,"sexo": sexo,"fecha_prueba1":fac_ReclamarMercanciaFecha,"fecha_prueba2":fac_DevolverMercanciaFecha,"reservaResulT":reservaResulT})
 
 @app.route('/ValorTotalEnLetras', methods=['GET','POST'])
-def ValorTotalEnLetras(): 
+def ValorTotalEnLetras():
   total = 0
   for a in request.form.getlist('txtValoresReferenciaArray[]',type= str):
     if (a.isdigit()):
       total = total + int(a)
   return jsonify({"letras":num2words(total, lang='es'),"numeros":total})
-  
+
 @app.route('/QuitarHoraReservada', methods=['GET','POST'])
 def QuitarHoraReservada():
 
@@ -1168,7 +1204,7 @@ def QuitarHoraReservada():
   fac_ReclamarMercanciaFecha = str(request.form.get('txtfechaRecoger'))
 
   ListaDeHoras = []
-  
+
   if(fac_ReclamarMercanciaFecha[0:3] == "201" ):
     if(int(fac_ReclamarMercanciaFecha[5:7]) > 9):
       tempo_rada = "alta"
@@ -1194,8 +1230,8 @@ def QuitarHoraReservada():
 @app.route('/VendedorIngresandoPassWord', methods=['GET','POST'])
 def VendedorIngresandoPassWord():
   PassSkill.query.filter(PassSkill.PassSKill_id == 1).update({PassSkill.PassSKill_text : request.form.get('PasswordSkillOwner')})
-  db.session.commit() 
-  return jsonify ("contraseña cambiada") 
+  db.session.commit()
+  return jsonify ("contraseña cambiada")
 
 @app.route('/CambiarContraseñaDeSistema', methods=['GET','POST'])
 def CambiarContraseñaDeSistema():
@@ -1217,13 +1253,13 @@ def PonerOtros():
   if(str(request.form.get('opcionOtru')) == "ciudad"):
     newcity = Ciudad(str(request.form.get('CiudadOtro')),1,1,1,str(current_user),str(current_user))
     db.session.add(newcity)
-    db.session.commit() 
+    db.session.commit()
 
   if(str(request.form.get('opcionOtru')) == "MedioComuni"):
     comuni = MedioConocio(request.form.get('Medio_comunicacionOtro'))
     db.session.add(comuni)
-    db.session.commit() 
-    
+    db.session.commit()
+
   if(str(request.form.get('opcionOtru')) == "TipoEvento"):
     eeeve = Evento(request.form.get('Tipo_EventoOtro'))
     db.session.add(eeeve)
@@ -1239,88 +1275,73 @@ def RevisarQueFalto():
   FaltaronDaList = []
   FaltaronDaListNames = []
   FaltaronDaList.append("le faltaron estos campos")
-  FaltaronDaListNames.append("le faltaron estos campos")
+  FaltaronDaListNames.append("le faltaron estos campos----->>")
   nombre = request.form.get('txtNonmbreCliente')
   if nombre:
     FaltaronDaList.append("si")
-    FaltaronDaListNames.append("nombre")
   else:
     FaltaronDaList.append("no")
+    FaltaronDaListNames.append("nombre")
   CcNit = request.form.get("txtCC_Nit")
   if CcNit:
     FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
   else:
     FaltaronDaList.append("no")
+    FaltaronDaListNames.append("txtCC_Nit")
   DiaCumpleaños = request.form.get("txtDiaCumpleaños")
   if DiaCumpleaños:
     FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
   else:
     FaltaronDaList.append("no")
+    FaltaronDaListNames.append("Dia de cumpleaños")
   MesCumpleaños = request.form.get('txtMesCumpleaños')#[]
   if MesCumpleaños:
     FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
   else:
     FaltaronDaList.append("no")
+    FaltaronDaListNames.append("Mes de cumpleaños")
   TelFijo = request.form.get("txtTelefonoFijo")
   if TelFijo:
     FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
   else:
     FaltaronDaList.append("no")
+    FaltaronDaListNames.append("Telefono fijo")
   Ext = request.form.get("Ext")
-  if Ext:
-    FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
-  else:
-    FaltaronDaList.append("no")
   TelFijoOficina = request.form.get("txtTelefonoFijoOficina")
   ExtOficina = request.form.get("ExtOficina")
   Celular = request.form.get("txtCelular")
   if Celular:
     FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
   else:
     FaltaronDaList.append("no")
+    FaltaronDaListNames.append("celular")
   Email = request.form.get('txtEmail')#[]
   if Email:
     FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
   else:
     FaltaronDaList.append("no")
+    FaltaronDaListNames.append("Email")
   Direccion = request.form.get('txtDireccion')#[]
-  if Direccion:
-    FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
-  else:
-    FaltaronDaList.append("no")
-  if request.form.get('txtMunicipio'):
-    FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
-  else:
-    FaltaronDaList.append("no")
   if(str(request.form.get('txtMunicipio')).isdigit()):
     Municipio = request.form.get('txtMunicipio')
   else:
     Municipio = Ciudad.query.filter(Ciudad.ciu_nombre == str(request.form.get('txtMunicipio'))).all()[0].ciu_id
   Barrio = request.form.get('txtBarrio')#[]
+  if Barrio:
+    FaltaronDaList.append("si")
+  else:
+    FaltaronDaList.append("no")
+    FaltaronDaListNames.append("Barrio")
   if(str(request.form.get('txtMedioConocio')).isdigit()):
     MedioConocio = request.form.get('txtMedioConocio')
   else:
     MedioConocio = MedioConocio.query.filter(MedioConocio.medio_nombre == str(request.form.get('txtMedioConocio'))).all()[0].medio_id
-  if Barrio:
+  if MedioConocio:
     FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
   else:
     FaltaronDaList.append("no")
-  Poblacion = request.form.get('txtPedPoblacion')
-  if Poblacion:
-    FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
-  else:
-    FaltaronDaList.append("no")
+    FaltaronDaListNames.append("Medio comunicacion")
+
   #
   #
   #
@@ -1329,16 +1350,11 @@ def RevisarQueFalto():
     TipoEvento = request.form.get('txtTipoEvento')
   else:
     TipoEvento = Evento.query.filter(Evento.eve_nombre == str(request.form.get('txtTipoEvento'))).all()[0].eve_id
-  if TipoPedido:
-    FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
-  else:
-    FaltaronDaList.append("no")
   if TipoEvento:
     FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
   else:
     FaltaronDaList.append("no")
+    FaltaronDaListNames.append("tipo evento")
   DiaEvento = request.form.get('txtDiaEvento')
   MesEvento = request.form.get('txtMesEvento')
   AñoEvento = request.form.get('txtAñoEvento')
@@ -1391,9 +1407,9 @@ def RevisarQueFalto():
   fac_eventoFecha = str(request.form.get('txtfechaEvento'))
   if fac_eventoFecha:
     FaltaronDaList.append("si")
-    FaltaronDaListNames.append("txtCC_Nit")
   else:
     FaltaronDaList.append("no")
+    FaltaronDaListNames.append("fecha del evento")
   fac_ReclamarMercanciaFecha = str(request.form.get('txtfechaRecoger'))
   fac_DevolverMercanciaFecha  = str(request.form.get('txtfechaDevolver'))
   fac_horasDevolverCadaH = request.form.get('txtHoraDevolverB')
@@ -1405,5 +1421,5 @@ def RevisarQueFalto():
   fac_CantidadLLeva3 = request.form.get('cantidadRealPrenda3')
   fac_CantidadLLeva4 = request.form.get('cantidadRealPrenda4')
 
-  return jsonisy({'FaltaronDaList':FaltaronDaList,'FaltaronDaListNames':FaltaronDaListNames})
+  return jsonify({'FaltaronDaList':FaltaronDaList,'FaltaronDaListNames':FaltaronDaListNames})
 

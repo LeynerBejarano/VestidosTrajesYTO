@@ -20,7 +20,7 @@
  <div class="dropdown">
   <button class="dropbtn">Recibos</button>
   <div class="dropdown-content">
-    <a  id="idReciboButton"  href="#">Ingresar Recibo</a>
+    <a id="idReciboButton"  href="#">Ingresar Recibo</a>
     <a  id="idReciboPorFacturaButton" href="#">Recibo por Factura</a>
   </div>
 </div>
@@ -30,7 +30,7 @@
   <input  class="form-control" type ="text" name = "txtConsecutivoActual" id="txtConsecutivoActual" placeholder=" " id="txtConsecutivoActual" style="float:right;"/>
  </div>
   <div class="col-sm-4" >
-<legend class="scheduler-border">TRAJES VESTIDOS Y TOGAS</legend>
+<legend class="scheduler-border">VESTIDOS TRAJES Y TOGAS</legend>
 </div>
   <div class="col-sm-2"  style="float:right;">
   <label >Buscar consecutivo</label>
@@ -59,13 +59,13 @@
             <th><input type = "text" name = "txtDia" placeholder="Dia " class="txtEntregar" id = "txtDia" style="width: 45px"/></th>
             <th><input type = "text" name = "txtMes" placeholder="Mes " class="txtEntregar" id = "txtMes" style="width: 45px"/></th>
             <th><input type = "text" name = "txtAño" placeholder="Año " class="txtEntregar" id = "txtAño" style="width: 45px"/></th>
-          </tr>          
+          </tr>
         </table>
   </div>
 </div>
 <br>
 <!--    class="control-label col-sm-2"-->
- 
+
 
 <div class="row">
 <div class="col-sm-2 ">
@@ -73,12 +73,12 @@
         <!--span id="CC_Nit" class="label label-default" >CC/Nit</span-->
          <input type = "text" name = "txtCC_Nit" id="txtCC_Nit" class="form-control"/>
          <span id="NuevoViejo" class="label label-primary" style="display: none"></span>
-        </div> 
+        </div>
   <div class="col-sm-2 ">
           <!--span id="Nombre" class="label label-default" >Nombre y Apellido</span-->
           <label  class=" col-form-label">Nombre y apellido</label>
           <input type = "text" name = "txtNonmbreCliente" id="txtNonmbreCliente" class="form-control"/>
-          </div> 
+          </div>
 
         <div class="col-sm-2">
 
@@ -88,28 +88,28 @@
           {{form.dia_Devolver(id = "txtDiaCumpleaños")}}
           {{form.EntregarMes(id = "txtMesCumpleaños")}}
           </div>
- </div> 
- 
+ </div>
+
         <div class="col-sm-2 ">
          <span id="Telefono_fijo" class="label label-default" >Telefono fijo y Ext (casa)</span>
           <input type ="text" name = "txtTelefonoFijo"  id="txtTelefonoFijo"/>
           <input type ="text" name = "txtExtension" id = "txtExtension"   style="width: 45px" id="txtExtension"/>
-          </div> 
+          </div>
 
           <div class="col-sm-2 ">
          <span id="Telefono_fijo" class="label label-default" >Telefono fijo y Ext (Oficina)</span>
           <input type ="text" name = "txtTelefonoFijoOficina"  id="txtTelefonoFijoOficina"/>
           <input type ="text" name = "ExtOficina" id = "ExtOficina"  style="width: 45px" />
-          </div> 
+          </div>
 
           <div class="col-sm-2 ">
           <span id="celular" class="label label-default" >Celular</span>
          <input type ="text" name = "txtCelular"  id="txtCelular"/>
           </div>
-          
+
 </div>
 <br>
-        
+
 <div class="row">
 <div class="col-sm-2 ">
         <span id="direccion" class="label label-default" >Direccion</span>
@@ -123,39 +123,39 @@
         <span id="ciudad" class="label label-default" >Ciudad</span>
          {{form.ciudad(class="form-control",id="txtMunicipio")}}
          <span id="MetroPol" class="label label-warning" style="display: none"></span>
-          </div>            
+          </div>
  <div class="col-sm-2 ">
         <span id="Medio de comunicacion" class="label label-default" style="width: 85px" >Medio_comunicacion</span>
          {{form.cli_medioConocio( id = "txtMedioConocio")}}
-         </div>       
+         </div>
 <div class="col-sm-2 ">
         <span id="AtendidoPorSpan" class="label label-default">Atendido por</span>
          {{form.vendedor( id = "txtAtendidoPor" )}}
-         </div>       
+         </div>
   <div class="col-sm-2 ">
            <span id="email" class="label label-default" >Email</span>
           <input type ="text" name = "txtEmail"  id="txtEmail"/>
-          </div>      
+          </div>
   </div>
   <br>
 <div class="row">
 
  <div class="col-sm-2 ">
           <span id="NombreReferenciaSpan" class="label label-default">Nombre_Referencia</span>
-         <input type ="text" name = "txtReferenciaNombre" plaholder="Nombre de la Referencia" id="txtReferenciaNombre"/> 
-         </div>   
+         <input type ="text" name = "txtReferenciaNombre" plaholder="Nombre de la Referencia" id="txtReferenciaNombre"/>
+         </div>
 <div class="col-sm-2 ">
         <span id="CelularReferenciaSpan" class="label label-default">Celular_Referencia</span>
-         <input type ="text" name = "txtReferenciaCelular" plaholder="Celular de la Referencia" id="txtReferenciaCelular"/> 
-         </div>  
+         <input type ="text" name = "txtReferenciaCelular" plaholder="Celular de la Referencia" id="txtReferenciaCelular"/>
+         </div>
 <div class="col-sm-2 ">
           <span id="TelefonoReferenciaSpan" class="label label-default">Telefono Fijo Referencia</span>
-         <input type ="text" name = "txtReferenciaTelefono" plaholder="Telefono de la Referencia" id="txtReferenciaTelefono"/> 
-         </div> 
+         <input type ="text" name = "txtReferenciaTelefono" plaholder="Telefono de la Referencia" id="txtReferenciaTelefono"/>
+         </div>
           <div class="col-sm-2 ">
         <span id="TipodePedidoSpan" class="label label-default" >Tipo de Factura</span>
          {{form.fac_tipoPedido( id = "txtTipoPedido")}}
-         </div> 
+         </div>
          <div class="col-sm-2 ">
          <span id="PoblacionSpan" class="label label-default">Poblacion</span>
          {{form.ped_poblacion( id = "txtPedPoblacion")}}
@@ -163,7 +163,7 @@
          <div class="col-sm-2 ">
          <span id="TipoEventoSpan" class="label label-default">Tipo Evento</span>
           {{form.ped_evento( id = "txtTipoEvento")}}
-          </div>     
+          </div>
 </div>
 <br>
  <div class="row">
@@ -172,19 +172,19 @@
           <input type = "text" name = "txtfechaEvento" id= "txtfechaEvento" onblur="QuitarHora()"/>
          <span id="Dia_Evento" class="label label-default" style="display:none">Dia_Evento</span>
          <input type = "text" name = "txtDiaEvento"  id="txtDiaEvento" onchange="AlterarFechasParaReserva()" style="display:none"/>
-         </div> 
+         </div>
         <div id="divRecogerMercancia" class="col-sm-2" >
         <span id="Recoger_Mercancia" class="label label-default">Recoger Mercancia</span>
         <table>
           <tr>
-            <th></th> 
-            <th style="display:none" id="txtReclamarB">{{form.fac_horasReclamarCadaH(id="txtHoraReclamarB")}}</th> 
-            <th style="display:none" id="txtReclamarA">{{form.fac_horasCadaReclamarMH(id="txtHoraReclamarA")}}</th> 
-            <th style="display:none"><input type="text" name="txtfechaRecogerVisible" id="txtfechaRecogerVisible" value=""/></th> 
-            <th ><input type="text" name="txtfechaRecoger" id="txtfechaRecoger" value="" onblur="QuitarHora()" onchange="VerificarFecha(this.id)" onchange="AlterarFechasParaReserva()" size="9"/></th>  
+            <th></th>
+            <th style="display:none" id="txtReclamarB">{{form.fac_horasReclamarCadaH(id="txtHoraReclamarB")}}</th>
+            <th style="display:none" id="txtReclamarA">{{form.fac_horasCadaReclamarMH(id="txtHoraReclamarA")}}</th>
+            <th style="display:none"><input type="text" name="txtfechaRecogerVisible" id="txtfechaRecogerVisible" value=""/></th>
+            <th ><input type="text" name="txtfechaRecoger" id="txtfechaRecoger" value="" onblur="QuitarHora()" onchange="VerificarFecha(this.id)" onchange="AlterarFechasParaReserva()" size="9"/></th>
           </tr>
           </table>
-</div> 
+</div>
 <div id="divDevolverMercancia" class="col-sm-2">
 <span id="Devolver_Mercancia" class="label label-default">Devolver Mercancia</span>
 <input type="text" name="txtfechaDevolver" id="txtfechaDevolver" onchange="AlterarFechasParaReserva()" value=""/>
@@ -197,7 +197,7 @@
 <div class="col-sm-2">
   <button type="button" id="QuitarFila" onclick="DisminuirFilaFila()">Quitar Fila</button>
 </div>
-</div> 
+</div>
     <div>
       <span style="display:none" id="ExcesoEnPrecio" class="label label-default"></span>
       <span style="display:none" id="EstaReservado_1" class="label label-warning"></span>
@@ -221,12 +221,12 @@
       <span style="display:none" id="EstaReservado_19" class="label label-warning"></span>
       <span style="display:none" id="EstaReservado_20" class="label label-warning"></span>
       <span style="display:none" id="EstaReservado_21" class="label label-warning"></span>
-    </div> 
-  </div> 
+    </div>
+  </div>
     <div id ="detalles">
          <table style="width:100%">
           <tr>
-            <th><span id="Referencia_" class="label label-default"> #</span></th>     
+            <th><span id="Referencia_" class="label label-default"> #</span></th>
             <th><span id="Descripcion_" class="label label-default">Descripcion</span></th>
             <th><span id="Accesorios_" class="label label-default">Accesorios</span></th>
             <th><span id="Medidas_y_Arreglos_" class="label label-default">Medidas y Arreglos</span></th>
@@ -266,7 +266,7 @@
             <td><input type = "text" name = "txtAccesorios3"  class="txtAccesorios"       id = "txtAccesorios3"/></td>
             <td><input type = "text" name = "txtMedidasArreglos3"                 id = "txtMedidasArreglos3" onfocus="alerta(this.id)" size="38"/></td>
             <td style="display:none"><input type = "text" name = "Estilo3"   id = "Estilo3" /></td>
-            <td style="display:none"><input type = "text" name = "LineaSexo3"   id = "LineaSexo3" size="8"/></td>    
+            <td style="display:none"><input type = "text" name = "LineaSexo3"   id = "LineaSexo3" size="8"/></td>
             <td><input type = "text" name = "txtValorReferencia3"  class="txtValorReferencia" id = "txtValorReferencia3" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
             <td><input type="checkbox" class="filled-in" id="Cortesia3"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
           </tr>
@@ -444,7 +444,7 @@
             <td ><input id="ReferenciaPrenda18" size="1" onchange="AutomatizarConRefyReser(this.id)"></input></td>
             <td><input type = "text" name = "txtDescripcion18"  class="txtDescripcion" id = "txtDescripcion18" size="64"/></td>
             <td><input type = "text" name = "txtAccesorios18"  class="txtAccesorios" id = "txtAccesorios18"/></td>
-            <td><input type = "text" name = "txtMedidasArreglos18"  class="txtMedidasArreglos"  id = "txtMedidasArreglos18"  onfocus="alerta(this.id)" size="38"/></td> 
+            <td><input type = "text" name = "txtMedidasArreglos18"  class="txtMedidasArreglos"  id = "txtMedidasArreglos18"  onfocus="alerta(this.id)" size="38"/></td>
             <td style="display:none"><input type = "text" name = "Estilo18"   id = "Estilo18" /></td>
             <td style="display:none"><input type = "text" name = "LineaSexo18"   id = "LineaSexo18"  size="8"/></td>
             <td><input type = "text" name = "txtValorReferencia18"  class="txtValorReferencia" id = "txtValorReferencia18" size="8" onchange="AlterarPrecio(this.id)" value="0"/></td>
@@ -497,7 +497,7 @@
             <td style="display:none"><input type = "text" name = "LineaSexo22"   id = "LineaSexo22" size="8"/></td>
             <td><input type = "text" name = "txtValorReferencia22"  class="txtValorReferencia" id = "txtValorReferencia22" onchange="AlterarPrecio(this.id)" value="0" /></td>
             <td><input type="checkbox" class="filled-in" id="Cortesia22"  size="2" onchange="AutomatizarCortesia(this.id)"></td>
-          </tr>        
+          </tr>
         </table>
         </div>
 <br>
@@ -519,13 +519,13 @@
         </table>
         Nota
         <textarea id="txtNota" name="txtNota">
-         
+
         </textarea>
-        <button id="idReciboButtonDOS" style="float:right">Ingresar Recibo </button>
+        <a id="idReciboButtonDOS" style="float:right">Ingresar Recibo </a>
          <table id="idTablaReciboFactura" style="float:right">
             <tr class="TablaRecibo">
                 <th>
-                Recibo 
+                Recibo
                 </th>
                 <th>
                   Valor
@@ -537,13 +537,13 @@
                   Saldo
                 </th>
                 <th>
-                  
+
                 </th>
               </tr>
           </table>
 
 
- 
+
          <section id="mensaje"></section>
          <input type="button"  id="idButtonGrabar"  value="Grabar" />
          <!--button type="button" id="Descargar">Descargar</button-->
@@ -563,7 +563,7 @@
             <table id="idTablaReciboFacturaDOS">
             <tr class="TablaRecibo">
                 <th>
-                Recibo 
+                Recibo
                 </th>
                 <th>
                   Valor
@@ -575,7 +575,7 @@
                   Saldo
                 </th>
                 <th>
-                  
+
                 </th>
               </tr>
           </table>
@@ -595,7 +595,7 @@
         <section id="idMostrarRecibo" style="display: none">
           <form id="frmLoginMostrar">
             <section>Valor</section>
-            <section><input type="text" id="txtReciValorMostrar" name="txtReciValorMostrar" value="" placeholder="Ingrese el valor" disabled/></section>  
+            <section><input type="text" id="txtReciValorMostrar" name="txtReciValorMostrar" value="" placeholder="Ingrese el valor" disabled/></section>
             <section>Su saldo despues de este recibo</section>
             <section><input type="text" id="txtReciSuNuevoSaldoEsMostrar" name="txtReciSuNuevoSaldoEsMostrar" value="" disabled/></section>
           </form>
@@ -603,7 +603,7 @@
         <section id="idInformeTaller" style="display: none">
           <form id="frmFechasTaller">
             <section>Fecha Inicio</section>
-            <section><input type="text" id="txtFechaTallerInicio" name="txtFechaTallerInicio" value=""/></section>  
+            <section><input type="text" id="txtFechaTallerInicio" name="txtFechaTallerInicio" value=""/></section>
             <section>Fecha Final</section>
             <section><input type="text" id="txtFechaTallerFinal" name="txtFechaTallerFinal" value=""/></section>
           </form>
@@ -611,7 +611,7 @@
         <section id="idInformeDiarioFoto" style="display: none">
           <form id="frmInformeDiarioFoto">
             <section>Rango de tiempo</section>
-            <section>{{form.RangoHorasInformeDiario(id ="txtRangoInformeDiarioFoto")}}</section>  
+            <section>{{form.RangoHorasInformeDiario(id ="txtRangoInformeDiarioFoto")}}</section>
           </form>
         </section>
         <section id="idPopUpFacturasCedula" style="display: none; border-collapse: collapse">

@@ -13,23 +13,20 @@ var cerrar=1;
 var LAId="ee";
 
 $(document).ready(function(){
-  $.ajax({         
+  $.ajax({
             type: 'POST',
             url:'/FacturaActual',
             success: function(data){
-            $('#txtConsecutivoActual').val(data.uno);                  
+            $('#txtConsecutivoActual').val(data.uno);
   }});
-  $.ajax({         
+  $.ajax({
             type: 'POST',
             url:'/MostrarBotonCambiadorDePass',
             success: function(data){
-              if(data.toString() =="mostrar"){
-                $('#idButtonMeterPassWord').show();
-              }else{
-                $('#idButtonCambiarWord').show();
-              }
-                              
-  }});
+              if(data.toString() =="mostrar"){ $('#idButtonMeterPassWord').show();
+              }else{$('#idButtonCambiarWord').show();}}});
+
+
 
 
 var año = (new Date().getFullYear()).toString()
@@ -39,14 +36,14 @@ var todayDate = new Date();
 
 if (todayDate > TempoAlta_InicioFecha || Tempoalta_FinFecha > todayDate) {
   $('#txtEntregarB').show()
-  $('#txtReclamarB').show()  
+  $('#txtReclamarB').show()
 }
 else{
   $('#txtEntregarA').show()
   $('#txtReclamarA').show()
 };
 /*
-$("#txtfechaEvento").on("input",function(){  
+$("#txtfechaEvento").on("input",function(){
        $.ajax({
         type:"post",
         url:"/QuitarHoraReservada",
@@ -60,44 +57,44 @@ $("#txtfechaEvento").on("input",function(){
            for(var i = 0; i < data.lista.length; i++){
 
               $('#txtHoraReclamarA option[value="'+data.lista[i]+'"]').prop("disabled", true);
-              } 
+              }
               $('#txtHoraReclamarA').show()
               $('#txtHoraReclamarA').hide()
             }else{
               for(var i = 0; i < data.lista.length; i++){
 
               $('#txtHoraReclamarB option[value="'+data.lista[i]+'"]').prop("disabled", true);
-              } 
+              }
               $('#txtHoraReclamarA').hide()
               $('#txtHoraReclamarA').show()
             }
-          
+
         }
         else{
               if(data.tempo_evento == "alta"){
            for(var i = 0; i < data.lista.length; i++){
 
               $('#txtHoraReclamarA option[value="'+data.lista[i]+'"]').prop("disabled", true);
-              } 
+              }
               $('#txtHoraReclamarA').show()
               $('#txtHoraReclamarA').hide()
             }else{
               for(var i = 0; i < data.lista.length; i++){
 
               $('#txtHoraReclamarB option[value="'+data.lista[i]+'"]').prop("disabled", true);
-              } 
+              }
               $('#txtHoraReclamarA').hide()
               $('#txtHoraReclamarA').show()
             }
 
           }
         }
-          
-      }); 
-       
+
+      });
+
 });
 */
-function QuitarHora(recibi){  
+function QuitarHora(recibi){
   var recibido = recibi
        $.ajax({
         type:"post",
@@ -111,58 +108,63 @@ function QuitarHora(recibi){
            for(var i = 0; i < data.lista.length; i++){
 
               $('#txtHoraReclamarA option[value="'+data.lista[i]+'"]').prop("disabled", true);
-              } 
+              }
               $('#txtHoraReclamarA').show()
               $('#txtHoraReclamarA').hide()
             }else{
               for(var i = 0; i < data.lista.length; i++){
 
               $('#txtHoraReclamarB option[value="'+data.lista[i]+'"]').prop("disabled", true);
-              } 
+              }
               $('#txtHoraReclamarA').hide()
               $('#txtHoraReclamarA').show()
             }
-          
+
         }
         else{
               if(data.tempo_evento == "alta"){
            for(var i = 0; i < data.lista.length; i++){
 
               $('#txtHoraReclamarA option[value="'+data.lista[i]+'"]').prop("disabled", true);
-              } 
+              }
               $('#txtHoraReclamarA').show()
               $('#txtHoraReclamarA').hide()
             }else{
               for(var i = 0; i < data.lista.length; i++){
 
               $('#txtHoraReclamarB option[value="'+data.lista[i]+'"]').prop("disabled", true);
-              } 
+              }
               $('#txtHoraReclamarA').hide()
               $('#txtHoraReclamarA').show()
             }
 
           }
         }
-          
-      }); 
-       
+
+      });
+
 }
-$("#txtMunicipio").on("change",function(){  
+$("#txtMunicipio").on("change",function(){
   if($("#txtMunicipio").val().toString() =="-1"){
     Ingresar_Otros("Indique que ciudad",300,300,"#idCiudadOtro","ciudad")
     $("#txtMunicipio").prop('disabled', true);
 }});
-$("#txtMedioConocio").on("change",function(){  
+$("#txtMedioConocio").on("change",function(){
   if($("#txtMedioConocio").val().toString() =="-1"){
     Ingresar_Otros("Indique que Medio de Comunicacion",300,300,"#idMedio_comunicacionOtro","MedioComuni")
     $("#txtMedioConocio").prop('disabled', true);
 }});
-$("#txtTipoEvento").on("change",function(){  
+$("#txtTipoEvento").on("change",function(){
   if($("#txtTipoEvento").val().toString() =="-1"){
     Ingresar_Otros("Indique que tipo de evento",300,300,"#idTipo_EventoOtro","TipoEvento")
     $("#txtTipoEvento").prop('disabled', true);
 }});
-$("#idReciboButton").on("click",function(){  
+$("#idReciboButton").on("click",function(){
+  $('#txtConsecutivoRecibo').val($('#txtConsecutivo').val())
+  $('#txtTipoPedidoRecibo').val($('#txtTipoPedido').val())
+    Recibo("Ingresar Recibo",400,250);
+  });
+$("#idReciboButtonDOS").on("click",function(){
   $('#txtConsecutivoRecibo').val($('#txtConsecutivo').val())
   $('#txtTipoPedidoRecibo').val($('#txtTipoPedido').val())
     Recibo("Ingresar Recibo",400,250);
@@ -171,22 +173,31 @@ $("#idInformeTallerButton").on("click",function(){
   IngesarFechasTaller("Ingresar Fechas",400,250);
   });
 $("#idInformeDiarioButton").on("click",function(){
-    $.ajax({
-        type:"post",
-        url:"/GenerarInformeDiarioVersionFoto",
-        success: function(data){
+    var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/GenerarInformeDiarioVersionFoto");
+        xhr.responseType = "blob";
+        xhr.onload = function () {
+            var blob = new Blob([this.response], {type: 'application/pdf'});
+            let a = document.createElement("a");
+            a.style = "display: none";
+            document.body.appendChild(a);
+            let url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = 'informeDiario.pdf'
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+        xhr.send();
 
-        }
-      });
 });
 
 $('#Retefuente_tiene').on("change",function() {
     var total = parseInt($('#txtTotal').val())
         if(this.checked) {
-         $('#txtRetefuente').val(total * 0.04)  
+         $('#txtRetefuente').val(total * 0.04)
         }else{
           $('#txtRetefuente').val("")
-        }       
+        }
 });
 $('#idFacturaPorCedulaButton').on("click",function() {
       $.ajax({
@@ -229,18 +240,47 @@ $('#idFacturaButton').click(function(){
                 txtRetefuente: $('#txtRetefuente').val()
         }
       })
-  }); 
+    var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/GenerarFactura_abrir");
+        xhr.responseType = "blob";
+        xhr.onload = function () {
+            var blob = new Blob([this.response], {type: 'application/pdf'});
+            let a = document.createElement("a");
+            a.style = "display: none";
+            document.body.appendChild(a);
+            let url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = 'factura.pdf'
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+        xhr.send();
+  });
 
-$("#idLetraButton").on("click",function(){ 
+$("#idLetraButton").on("click",function(){
       $.ajax({
         type:"post",
         url:"/GenerarLetra",
         data:{
                 txtConsecutivoActual :$('#txtConsecutivoActual').val()
         }
-
       });
-}); 
+      var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/GenerarLetra_abrir");
+        xhr.responseType = "blob";
+        xhr.onload = function () {
+            var blob = new Blob([this.response], {type: 'application/pdf'});
+            let a = document.createElement("a");
+            a.style = "display: none";
+            document.body.appendChild(a);
+            let url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = 'letra.pdf'
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+        xhr.send();
+});
 $('#txtfechaEvento').on('change', function(event){
   $.ajax({
         type:"post",
@@ -256,13 +296,13 @@ $('#txtfechaEvento').on('change', function(event){
           QuitarHora(data.DosDiasAtrasString)
         }
       })
-}); 
+});
 $('#txtfechaRecoger').on('input', function(event){
   $('#txtfechaRecogerVisible').val($('#txtfechaRecoger').val())
-}); 
+});
 $('#txtfechaDevolver').on('input', function(event){
   $('#txtfechaDevolverVisible').val($('#txtfechaDevolver').val())
-}); 
+});
 
 if($('#FechaDePedido').val()=="" ){
     $('#DivPriFechaFactura').show()
@@ -276,7 +316,7 @@ $('#txtMunicipio').on('change', function(event){
 if ( ($('#txtDiaRecoger').val() != '') && ($('#txtMesRecoger').val() != '') && ($('#txtAñoRecoger').val() != '') && ($('#txtDiaEntregar').val() != '') && ($('#txtMesEntregar').val() != '') && ($('#txtAñoEntregar').val() != '') ){
 
     $.ajax({
-            
+
             data:{
                 txtCC_Nit :$('#txtCC_Nit').val(),
                 txtfac_prenda1: $('#txtfac_prenda1').val(),
@@ -309,14 +349,14 @@ if ( ($('#txtDiaRecoger').val() != '') && ($('#txtMesRecoger').val() != '') && (
               $('#txtMedioConocio').val(data.medioConocio)
               $('#txtDiaCumpleaños').val(data.nacido_dia)
               $('#txtMesCumpleaños').val(data.nacido_mes)
-              
+
             }
-                        
+
   }
         })
 }
 
-}) 
+})
 $("#idTotalButton").on('click', function(event){
   var  txtValoresReferenciaArray = []
            for(var i = 1; i < 22 ; i++){
@@ -324,7 +364,7 @@ $("#idTotalButton").on('click', function(event){
             txtValoresReferenciaArray.push($('#txtValorReferencia'+i.toString()).val())
             }
               }
-     $.ajax({   
+     $.ajax({
             data:{
                 txtValoresReferenciaArray :txtValoresReferenciaArray
             },
@@ -333,14 +373,14 @@ $("#idTotalButton").on('click', function(event){
             success: function(data){
             $('#txtTotal').val(data.numeros)
             $('#idTotalenTexto').val(data.letras)
-                        
+
   }
-        }) 
+        })
 })
-  /*  
+  /*
 if( ($('#txtDiaRecoger').val() != '') && ($('#txtMesRecoger').val() != '') && ($('#txtAñoRecoger').val() != '') && ($('#txtDiaEntregar').val() != '') && ($('#txtMesEntregar').val() != '') && ($('#txtAñoEntregar').val() != '')  ) {
   $.ajax({
-            
+
             data:{
                 txtDiaRecoger : $('#txtDiaRecoger').val(),
                 txtMesRecoger: $('#txtMesRecoger').val(),
@@ -350,37 +390,37 @@ if( ($('#txtDiaRecoger').val() != '') && ($('#txtMesRecoger').val() != '') && ($
                 txtAñoEntregar : $('#txtAñoEntregar').val(),
                 txtPrenda: $('#txtPrenda').val()
             },
-            
+
             //data : $('form').serialize(),
             type: 'POST',
             url:'/UsuarioNuevoViejo',
           success: function(data){
             $('#NuevoViejo').text(data)
             $('#NuevoViejo').show()
-                        
+
   }
             //success: function(data) {
-              //         window.location = Json.parse(data); 
+              //         window.location = Json.parse(data);
                 // }
 
-        })  
+        })
 
 } */
 
 $("#txtfechaEvento").on('input', function(event){
       $.ajax({
-            
+
             data:{
                 txtCC_Nit :$('#txtCC_Nit').val()
             },
-            
+
             //data : $('form').serialize(),
             type: 'POST',
             url:'/UsuarioNuevoViejo',
           success: function(data){
             $('#NuevoViejo').text(data)
             $('#NuevoViejo').show()
-                        
+
   }
 
         })
@@ -410,24 +450,24 @@ $('#txtCC_Nit').on('input', function(event){
             $('#txtMunicipio').val(data.ciudad)
             $('#txtEmail').val(data.email)
             $('#txtMedioConocio').val(data.medioConocio)
-                        
+
   }
 
         })
 
         $.ajax({
-            
+
             data:{
                 txtCC_Nit :$('#txtCC_Nit').val()
 
             },
-            
+
             //data : $('form').serialize(),
             type: 'POST',
             url:'/BuscarNumeroDeFacturas',
           success: function(data){
             $('#txtTotalFacturaCliente').val(data)
-                        
+
   }
 
         })
@@ -436,28 +476,42 @@ $('#txtCC_Nit').on('input', function(event){
 })
 $('#txtFacturaActual_Relacivo').on('input', function(event){
   $.ajax({
-            
+
             data:{
                 txtFacturaActual_Relacivo :$('#txtFacturaActual_Relacivo').val(),
                 txtCC_Nit :$('#txtCC_Nit').val()
 
             },
-            
+
             //data : $('form').serialize(),
             type: 'POST',
             url:'/BuscarFacturaRelativo',
           success: function(data){
             $('#txtConsecutivo').val(data)
-                        
+
   }
 
         })
 })
 
 $('#SiguienteFactura').click(function(){
+$('#idTablaReciboFactura  td').remove();
+$.ajax({
+        type:"post",
+        url:"/ReciboDeFactura",
+        data:{
+                txtConsecutivoActual: $('#txtConsecutivoActual').val()
+        },
+        success: function(data){
+          for(var i = 0; i < data.RecNumero.length; i++){
+            //$('#idTablaFacturaCedula tr:last').after('<tr><td>+data.FacNumero[i]+</td><td>+data.Valor[i]+</td><td>+data.Fecha[i]+</td><td>+data.Saldo[i]+</td></tr>');
+            $('#idTablaReciboFactura tr:last').after('<tr class="LineasTabla"><td class="LineasTabla"><a href="#" >'+data.RecNumero[i].toString()+'</a></td><td class="LineasTabla">'+data.Valor[i].toString()+'</td><td class="LineasTabla">'+data.Fecha[i].toString()+'</td><td class="LineasTabla">'+data.Saldo[i].toString()+'</td><td><button type="button" Onclick="Descargar_recibo('+data.RecNumero[i].toString()+')">Descargar</button></td></tr>');
+          }
+        }
+      });
 
         $.ajax({
-            
+
             data:{
                 txtCC_Nit :$('#txtCC_Nit').val(),
                 txtConsecutivo: $('#txtConsecutivo').val()
@@ -466,7 +520,7 @@ $('#SiguienteFactura').click(function(){
             //data : $('form').serialize(),
             type: 'POST',
             url:'/siguienteFactura',
-            
+
              success: function(data){
                         $('#txtConsecutivo').val(data.fac_numero)
                         $('#txtConsecutivoManual').val(data.fac_consecutivoManual)
@@ -486,7 +540,7 @@ $('#SiguienteFactura').click(function(){
                         $('#txtExtension').val(data.cli_extension)
                         $('#txtCelular').val(data.cli_celular)
                         $('#txtEmail').val(data.cli_email)
-                        $('#txtDireccion').val(data.cli_direccion)   
+                        $('#txtDireccion').val(data.cli_direccion)
                         $('#txtMunicipio').val(data.cli_ciudad)
                         $('#txtMedioConocio').val(data.cli_medioConocio)
                         $('#txtBarrio').val(data.cli_barrio)
@@ -539,7 +593,7 @@ $('#SiguienteFactura').click(function(){
                         $('#txtfechaRecoger').val(data.fechaInicio)
                         $('#txtfechaDevolver').val(data.fechaFinal)
                         $('#txtNota').val(data.fac_nota)
-                        $('#FechaDePedido').val(data.ac_fechaFactura) 
+                        $('#FechaDePedido').val(data.ac_fechaFactura)
                         $('#txtConsecutivoActual').val(data.fac_numero)
                         $('#cantidadRealPrenda1').val(data.fac_CantidadLLeva1)
                         $('#cantidadRealPrenda2').val(data.fac_CantidadLLeva2)
@@ -551,7 +605,7 @@ $('#SiguienteFactura').click(function(){
                     $('#RowPrenda'+i.toString()).show()
                     $('#ReferenciaPrenda'+i.toString()).val(data.ReferenciaLista[i-1])
                     $('#txtDescripcion'+i.toString()).val(data.DescripcionLista[i-1])
-                    $('#txtAccesorios'+i.toString()).val(data.AccesoriosLista[i-1])    
+                    $('#txtAccesorios'+i.toString()).val(data.AccesoriosLista[i-1])
                     $('#txtValorReferencia'+i.toString()).val(data.ValorREferencia[i-1])
                     $('#LineaSexo'+i.toString()).val(data.LineaSExo[i-1])
                     $('#Estilo'+i.toString()).val(data.EstilosLista[i-1])
@@ -561,7 +615,7 @@ $('#SiguienteFactura').click(function(){
                       if($('#ReferenciaPrenda'+i.toString()).val() == ""){
                          $('#RowPrenda'+i.toString()).hide()
                       }
-                     
+
                      }
                      if($('#ReferenciaPrenda1').val() == ""){
                       $('#RowPrenda1').show()
@@ -570,20 +624,20 @@ $('#SiguienteFactura').click(function(){
                       $("#detalles :input").prop("disabled", true);
                       $("#txtTotal").prop('disabled', true);
                      }
-                         
+
   }
             //success: function(data) {
-              //         window.location = Json.parse(data); 
+              //         window.location = Json.parse(data);
                 // }
 
         })
-         
+
     })
 
 $('#SiguienteFactura').click(function(){
 
         $.ajax({
-            
+
             data:{
                 txtCC_Nit :$('#txtCC_Nit').val(),
                 txtConsecutivo: $('#txtConsecutivo').val()
@@ -593,22 +647,22 @@ $('#SiguienteFactura').click(function(){
             type: 'POST',
             url:'/CuantosRecibos',
              success: function(data){
-                        $('#txtTotalDeRecibos_Relacivo').val(data) 
+                        $('#txtTotalDeRecibos_Relacivo').val(data)
 
   }
             //success: function(data) {
-              //         window.location = Json.parse(data); 
+              //         window.location = Json.parse(data);
                 // }
 
 
         })
-         
+
     })
 
 $('#MostrarRecibo').click(function(){
 
         $.ajax({
-            
+
             data:{
                 txtReciboActual_Relacivo :$('#txtReciboActual_Relacivo').val(),
                 txtConsecutivo: $('#txtConsecutivo').val()
@@ -630,18 +684,18 @@ $('#MostrarRecibo').click(function(){
                         MostrarRecibo("Recibo para mostrar",400,400);
   }
             //success: function(data) {
-              //         window.location = Json.parse(data); 
+              //         window.location = Json.parse(data);
                 // }
 
 
         })
-         
+
     })
 
 $('#GuardarRecibo').click(function(){
 
         $.ajax({
-            
+
             data:{
                 txtConsecutivo :$('#txtConsecutivo').val(),
                 txtReciValor: $('#txtReciValor').val(),
@@ -657,21 +711,21 @@ $('#GuardarRecibo').click(function(){
             //data : $('form').serialize(),
             type: 'POST',
             url:'/siguienteFactura',
-            
+
              success: function(data){
-                                              
+
   }
             //success: function(data) {
-              //         window.location = Json.parse(data); 
+              //         window.location = Json.parse(data);
                 // }
 
 
         })
-         
+
     })
   $('#txtReciValor').on('keyup', function(event){
     $.ajax({
-            
+
             data:{
                 txtConsecutivo :$('#txtConsecutivo').val(),
                 txtReciValor: $('#txtReciValor').val()
@@ -679,23 +733,23 @@ $('#GuardarRecibo').click(function(){
             //data : $('form').serialize(),
             type: 'POST',
             url:'/NuevoSaldo',
-            
+
              success: function(data){
-              $('#txtReciSuNuevoSaldoEs').val(data)                                
+              $('#txtReciSuNuevoSaldoEs').val(data)
   }
             //success: function(data) {
-              //         window.location = Json.parse(data); 
+              //         window.location = Json.parse(data);
                 // }
 
 
         })
-         
+
     })
 
   $('#txtReciValor').on('keyup', function(event){
 
         $.ajax({
-            
+
             data:{
                 txtConsecutivo :$('#txtConsecutivo').val(),
                 txtReciValor: $('#txtReciValor').val()
@@ -703,35 +757,35 @@ $('#GuardarRecibo').click(function(){
             //data : $('form').serialize(),
             type: 'POST',
             url:'/ReciboPorConceptoDe',
-            
+
              success: function(data){
-              $('#txtReciPorconceptode').val(data)                                 
+              $('#txtReciPorconceptode').val(data)
   }
             //success: function(data) {
-              //         window.location = Json.parse(data); 
+              //         window.location = Json.parse(data);
                 // }
 
 
         })
         $.ajax({
-            
+
             data:{
                 txtReciValor: $('#txtReciValor').val()
             },
             //data : $('form').serialize(),
             type: 'POST',
             url:'/NumeroEnLetras',
-            
+
              success: function(data){
-              $('#txtReciSuSaldoEnLetras').val(data)                                 
+              $('#txtReciSuSaldoEnLetras').val(data)
           }
             //success: function(data) {
-              //         window.location = Json.parse(data); 
+              //         window.location = Json.parse(data);
                 // }
 
 
         })
-         
+
     })
 
 
@@ -739,7 +793,7 @@ $('#GuardarRecibo').click(function(){
 $('#Descargar').click(function(){
 
         $.ajax({
-            
+
             data:{
             txtNonmbreCliente: $('#txtNonmbreCliente').val(),
                txtCC_Nit :$('#txtCC_Nit').val(),
@@ -748,7 +802,7 @@ $('#Descargar').click(function(){
                txtTelefonoFijo:$('#txtTelefonoFijo').val(),
                txtExtension:$('#txtExtension').val(),
                //txtTelefonoFijo:$('#txtTelefonoFijo').val(data.cli_telefono),
-               //txtExtension:$('#txtExtension').val(data.cli_extension),           
+               //txtExtension:$('#txtExtension').val(data.cli_extension),
                txtCelular:$('#txtCelular').val(),
                txtEmail:$('#txtEmail').val(),
                txtDireccion:$('#txtDireccion').val(),
@@ -800,30 +854,36 @@ $('#Descargar').click(function(){
               txtRetefuente:$('#txtRetefuente').val(),
               txtNota:$('#txtNota').val()
             },
-            
+
             //data : $('form').serialize(),
             type: 'POST',
-            url:'/_descargar_pdf'
-          /*   success: function(data){
-                        var file_path = data;
-                        var a = document.createElement('A');
-                        a.href = file_path;
-                        a.download = file_path.substr(file_path.lastIndexOf('/') + 1);
+            url:'/_descargar_pdf',
+            success: function(data){
+                var xhr = new XMLHttpRequest();
+                    xhr.open("GET", "/descargar_pdf_abrir");
+                    xhr.responseType = "blob";
+                    xhr.onload = function () {
+                        var blob = new Blob([this.response], {type: 'application/pdf'});
+                        let a = document.createElement("a");
+                        a.style = "display: none";
                         document.body.appendChild(a);
+                        let url = window.URL.createObjectURL(blob);
+                        a.href = url;
+                        a.download = 'factura.pdf'
                         a.click();
-                        document.body.removeChild(a);
-  }*/
-            //success: function(data) {
-              //         window.location = Json.parse(data); 
-                // }
+                        window.URL.revokeObjectURL(url);
+                    };
+                    xhr.send();
+  }
+
 
         })
-         
+
     })
 
-     
-       
-   
+
+
+
 
 
     $('#idButtonGrabar').on('click', function(event){
@@ -947,13 +1007,13 @@ $('#Descargar').click(function(){
               txtMedidasArreglosArray:txtMedidasArreglosArray,
               EstiloArray:EstiloArray,
               LineaSexoArray:LineaSexoArray,
-              txtValorReferenciaArray:txtValorReferenciaArray   
+              txtValorReferenciaArray:txtValorReferenciaArray
             },
             type: 'POST',
             url:'/RevisarQueFalto',
             success:function(data){
               if(data.FaltaronDaListNames.length > 1){
-                alert(FaltaronDaListNames)
+                alert(data.FaltaronDaListNames)
               }
               else{
                 grabar()
@@ -1118,7 +1178,7 @@ function grabar(){
               txtMedidasArreglosArray:txtMedidasArreglosArray,
               EstiloArray:EstiloArray,
               LineaSexoArray:LineaSexoArray,
-              txtValorReferenciaArray:txtValorReferenciaArray   
+              txtValorReferenciaArray:txtValorReferenciaArray
             },
             type: 'POST',
             url:'/insertarCliente'
@@ -1136,11 +1196,11 @@ function Recibo(titulo,ancho,alto){
       Cancelar:function(){
         $(this).dialog('close');
       }
-    }   
+    }
   });
 }
 
-function Ingresar_recibo(){  
+function Ingresar_recibo(){
 
     $.ajax({
         type:"post",
@@ -1161,26 +1221,50 @@ function Ingresar_recibo(){
         },
         success:function(resultado){
           alert(resultado);
-         
+
         }
       });
-    
-  
+    $('#idTablaReciboFactura  td').remove();
+    $.ajax({
+        type:"post",
+        url:"/ReciboDeFactura",
+        data:{
+                txtConsecutivoActual: $('#txtConsecutivoActual').val()
+        },
+        success: function(data){
+          for(var i = 0; i < data.RecNumero.length; i++){
+            //$('#idTablaFacturaCedula tr:last').after('<tr><td>+data.FacNumero[i]+</td><td>+data.Valor[i]+</td><td>+data.Fecha[i]+</td><td>+data.Saldo[i]+</td></tr>');
+            $('#idTablaReciboFactura tr:last').after('<tr class="LineasTabla"><td class="LineasTabla"><a href="#" >'+data.RecNumero[i].toString()+'</a></td><td class="LineasTabla">'+data.Valor[i].toString()+'</td><td class="LineasTabla">'+data.Fecha[i].toString()+'</td><td class="LineasTabla">'+data.Saldo[i].toString()+'</td><td><button type="button" Onclick="Descargar_recibo('+data.RecNumero[i].toString()+')">Descargar</button></td></tr>');
+          }
+        }
+      });
+
 }
-function Descargar_recibo(reciboNum){  
+function Descargar_recibo(reciboNum){
  var reciboNumero = reciboNum;
  var ConsecutivoN = $('#txtConsecutivoActual').val();
     $.ajax({
         type:"post",
         url:"/descargar_recibo",
-        data:{
-                ConsecutivoN :ConsecutivoN,
+        data:{  ConsecutivoN :ConsecutivoN,
                 reciboNumero: reciboNumero,
-                txtCC_Nit: $('#txtCC_Nit').val()
-        }
+                txtCC_Nit: $('#txtCC_Nit').val()}
       });
-    
-  
+      var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/descargar_recibo_abrir");
+        xhr.responseType = "blob";
+        xhr.onload = function () {
+            var blob = new Blob([this.response], {type: 'application/pdf'});
+            let a = document.createElement("a");
+            a.style = "display: none";
+            document.body.appendChild(a);
+            let url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = 'recibo.pdf'
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+        xhr.send();
 }
 
 function MostrarRecibo(titulo,ancho,alto){
@@ -1196,7 +1280,7 @@ function MostrarRecibo(titulo,ancho,alto){
       }
     }
 
-    }) 
+    })
   };
   function IngesarFechasTaller(titulo,ancho,alto){
   $("#idInformeTaller").dialog({
@@ -1209,10 +1293,10 @@ function MostrarRecibo(titulo,ancho,alto){
       Cancelar:function(){
         $(this).dialog('close');
       }
-    }   
+    }
   });
 }
-function GenerarInformeTaller(){  
+function GenerarInformeTaller(){
 
     $.ajax({
         type:"post",
@@ -1222,8 +1306,22 @@ function GenerarInformeTaller(){
                 txtFechaTallerFinal: $('#txtFechaTallerFinal').val()
         }
       });
-    
-  
+    var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/GenerarInformeTaller_abrir");
+        xhr.responseType = "blob";
+        xhr.onload = function () {
+            var blob = new Blob([this.response], {type: 'application/pdf'});
+            let a = document.createElement("a");
+            a.style = "display: none";
+            document.body.appendChild(a);
+            let url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = 'informeTaller.pdf'
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+        xhr.send();
+
 }
 
 function MostrarPopUpFacturaCC(titulo,ancho,alto){
@@ -1287,7 +1385,7 @@ $.ajax({
                         $('#txtExtension').val(data.cli_extension)
                         $('#txtCelular').val(data.cli_celular)
                         $('#txtEmail').val(data.cli_email)
-                        $('#txtDireccion').val(data.cli_direccion)   
+                        $('#txtDireccion').val(data.cli_direccion)
                         $('#txtMunicipio').val(data.cli_ciudad)
                         $('#txtMedioConocio').val(data.cli_medioConocio)
                         $('#txtBarrio').val(data.cli_barrio)
@@ -1339,7 +1437,7 @@ $.ajax({
                         $('#txtfechaRecoger').val(data.fac_ReclamarMercanciaFecha)
                         $('#txtfechaDevolver').val(data.fac_DevolverMercanciaFecha)
                         $('#txtNota').val(data.fac_nota)
-                        $('#FechaDePedido').val(data.ac_fechaFactura) 
+                        $('#FechaDePedido').val(data.ac_fechaFactura)
                         $('#txtConsecutivoActual').val(data.fac_numero)
                         $('#cantidadRealPrenda1').val(data.fac_CantidadLLeva1)
                         $('#cantidadRealPrenda2').val(data.fac_CantidadLLeva2)
@@ -1350,7 +1448,7 @@ $.ajax({
                         for(var i = 1; i < data.ReferenciaLista.length; i++){
                     $('#ReferenciaPrenda'+i.toString()).val(data.ReferenciaLista[i])
                     $('#txtDescripcion'+i.toString()).val(data.DescripcionLista[i])
-                    $('#txtAccesorios'+i.toString()).val(data.AccesoriosLista[i])    
+                    $('#txtAccesorios'+i.toString()).val(data.AccesoriosLista[i])
                     $('#txtValorReferencia'+i.toString()).val(data.ValorREferencia[i])
                     $('#LineaSexo'+i.toString()).val(data.LineaSExo)
                     $('#Estilo'+i.toString()).val(data.EstilosLista[i])
@@ -1377,7 +1475,7 @@ function CargarTablaRecibos(datad){
             //$('#idTablaFacturaCedula tr:last').after('<tr><td>+data.FacNumero[i]+</td><td>+data.Valor[i]+</td><td>+data.Fecha[i]+</td><td>+data.Saldo[i]+</td></tr>');
             $('#idTablaReciboFactura tr:last').after('<tr class="LineasTabla"><td class="LineasTabla"><a href="#" >'+data.RecNumero[i].toString()+'</a></td><td class="LineasTabla">'+data.Valor[i].toString()+'</td><td class="LineasTabla">'+data.Fecha[i].toString()+'</td><td class="LineasTabla">'+data.Saldo[i].toString()+'</td><td><button type="button" Onclick="Descargar_recibo('+data.RecNumero[i].toString()+')">Descargar</button></td></tr>');
           }}});}
-function IngresarMedidas(titulo,ancho,alto,selector,input){
+function IngresarMedidas(titulo,ancho,alto,selector,input,sexo){
   $(selector).dialog({
     title:titulo,
       width:ancho,
@@ -1398,7 +1496,8 @@ function IngresarMedidas(titulo,ancho,alto,selector,input){
                 LFCintura: $('#LFCintura').val(),
                 LFCadera: $('#LFCadera').val(),
                 LFLargoTotal: $('#LFLargoTotal').val(),
-                MujerArreglo: $('#MujerArreglo').val()
+                MujerArreglo: $('#MujerArreglo').val(),
+                sexus: sexo
         },
         success: function(data){
           $('#'+data.input).val(data.datus)
@@ -1417,12 +1516,12 @@ function IngresarMedidas(titulo,ancho,alto,selector,input){
 
        $(this).dialog('close');
       },
-      Cancelar:function(){ 
+      Cancelar:function(){
       cerrar = 0
         $(this).dialog('close');
 
       }
-    }   
+    }
   });
 }
 function CambiusContraseñus(titulo,ancho,alto){
@@ -1443,7 +1542,7 @@ function CambiusContraseñus(titulo,ancho,alto){
         success: function(data){
           alert(data)
         }
- 
+
       });
 }}})}
 function CuadritoMeterContraseña(titulo,ancho,alto){
@@ -1500,7 +1599,7 @@ function alerta(x){
     {
       number = x.toString().slice((x.length)-2,(x.length))
     }
-    
+
     if (cerrar==0){
          $(':focus').blur()
           cerrar = 1
@@ -1508,19 +1607,19 @@ function alerta(x){
     }
     else{
           if($('#LineaSexo'+number).val() =="LineaMasculina") {
-          IngresarMedidas("Medidas Linea Masculina",300,300,"#idMedidasLineaMasculina",x.toString())
+          IngresarMedidas("Medidas Linea Masculina",300,300,"#idMedidasLineaMasculina",x.toString(),$('#LineaSexo'+number).val())
         }
         else{
           var selector = "#idMedidasLineaFemenina"
-           IngresarMedidas("Medidas Linea Femenina",300,300,"#idMedidasLineaFemenina",x.toString())
+           IngresarMedidas("Medidas Linea Femenina",300,300,"#idMedidasLineaFemenina",x.toString(),$('#LineaSexo'+number).val())
         }
-    } 
+    }
     }
 
 };
 function AutomatizarCortesia(x){
   //$(this).prop('checked', true);
-  
+
     $('#InputMeter').val(x)
     var number;
     var temp = x.toString().slice((x.length)-1,(x.length));
@@ -1530,20 +1629,20 @@ function AutomatizarCortesia(x){
     else
     {
       number = x.toString().slice((x.length)-2,(x.length))
-    } 
+    }
     var novias = 0
     var corNum = 0
     var RegaloJohn = 0
     if($("#"+x.toString()).is(':checked')){
-        $.ajax({    
+        $.ajax({
       data:{
         ReferenciaPrenda: $('#ReferenciaPrenda'+number).val(),
         PasswordSAVED: $('#PasswordSAVED').val()
     },
     type: 'POST',
-    url:'/AlterarPrecioTreinta',          
+    url:'/AlterarPrecioTreinta',
      success: function(data){
-      $('#txtValorReferencia'+number).val(data.precio)                                  
+      $('#txtValorReferencia'+number).val(data.precio)
   }})
     }else{
     if($("#PasswordSAVED").val().toString() == "siEra"){
@@ -1555,13 +1654,13 @@ function AutomatizarCortesia(x){
             novias = novias + 1;
           }}
         for(var i = 1; i <= 21; i++){
-         if($("#Cortesia"+i.toString()).is(':checked')){ 
+         if($("#Cortesia"+i.toString()).is(':checked')){
           corNum = corNum + 1;
         } }
         if((novias*3) <= corNum){
           $('#'+x.toString()).prop('checked', false);
           alert("entro a la parte que lo deja uncheck")
-        } 
+        }
         else{
           $("#txtValorReferencia"+number.toString()).val('0')
         }}}}
@@ -1586,7 +1685,7 @@ function MostrarOcultarTrBelow(w){
     else{
       $('#RowPrenda'+number).hide()
     }
- } 
+ }
  function AlterarPrecio(w){
     var number;
     var temp = w.toString().slice((w.length)-2,(w.length));
@@ -1598,7 +1697,7 @@ function MostrarOcultarTrBelow(w){
     {
       number = w.toString().slice((w.length)-1,(w.length))
     }
-  $.ajax({    
+  $.ajax({
     data:{
         ReferenciaPrenda: $('#ReferenciaPrenda'+number).val(),
         txtValorReferencia: $('#txtValorReferencia'+number).val(),
@@ -1606,12 +1705,12 @@ function MostrarOcultarTrBelow(w){
         PasswordSAVED: $('#PasswordSAVED').val()
     },
     type: 'POST',
-    url:'/AlterarPrecioTreinta',          
+    url:'/AlterarPrecioTreinta',
      success: function(data){
       $('#txtValorReferencia'+number).val(data.precio)
       if(data.respuesta.toString() != "cambio permitido"){
-        alert(data.respuesta)  
-      }                                     
+        alert(data.respuesta)
+      }
   }
 })
  }
@@ -1631,7 +1730,7 @@ function MostrarOcultarTrBelow(w){
     if($("#txtValorReferencia"+i.toString()).val() != ""){
       total = total + parseInt($("#txtValorReferencia"+i.toString()).val())
     }
-  } 
+  }
   $("#txtTotal").val(total.toString())
  }
 function MeterPassword(){
@@ -1639,29 +1738,29 @@ function MeterPassword(){
 }
 /*
 function AlterarFechasParaReserva(){
-    $.ajax({    
+    $.ajax({
     data:{
         txtReferencia: $('#ReferenciaPrenda'+number).val(),
         txtfechaRecoger:$('#txtfechaRecoger').val(),
         txtfechaDevolver:$('#txtfechaDevolver').val()
     },
     type: 'POST',
-    url:'/AutomatizarPrenda',          
+    url:'/AutomatizarPrenda',
      success: function(data){
       $('#txtDescripcion'+number).val(data.descripcion)
-      $('#txtAccesorios'+number).val(data.accesorios) 
-      $('#txtValorReferencia'+number).val(data.valor_sugerido) 
-      $('#LineaSexo'+number).val(data.sexo)   
+      $('#txtAccesorios'+number).val(data.accesorios)
+      $('#txtValorReferencia'+number).val(data.valor_sugerido)
+      $('#LineaSexo'+number).val(data.sexo)
       //alert(data.fecha_prueba1)
-      //alert(data.fecha_prueba2)   
+      //alert(data.fecha_prueba2)
       if(data.reservaResulT != "no"){
-        $('#EstaReservado_'+number).text(data.reservaResulT)  
+        $('#EstaReservado_'+number).text(data.reservaResulT)
          $('#EstaReservado_'+number).show()
       }
       else{
-        $('#EstaReservado_'+number).text("")  
+        $('#EstaReservado_'+number).text("")
          $('#EstaReservado_'+number).hide()
-      }                      
+      }
   }
 })
 }
@@ -1677,43 +1776,43 @@ function AutomatizarConRefyReser(w){
     {
       number = w.toString().slice((w.length)-1,(w.length))
     }
-    $.ajax({    
+    $.ajax({
     data:{
         txtReferencia: $('#ReferenciaPrenda'+number).val(),
         txtfechaRecoger:$('#txtfechaRecoger').val(),
         txtfechaDevolver:$('#txtfechaDevolver').val()
     },
     type: 'POST',
-    url:'/AutomatizarPrenda',          
+    url:'/AutomatizarPrenda',
      success: function(data){
       $('#txtDescripcion'+number).val(data.descripcion)
-      $('#txtAccesorios'+number).val(data.accesorios) 
-      $('#txtValorReferencia'+number).val(data.valor_sugerido) 
-      $('#LineaSexo'+number).val(data.sexo)   
+      $('#txtAccesorios'+number).val(data.accesorios)
+      $('#txtValorReferencia'+number).val(data.valor_sugerido)
+      $('#LineaSexo'+number).val(data.sexo)
       //alert(data.fecha_prueba1)
-      //alert(data.fecha_prueba2)   
+      //alert(data.fecha_prueba2)
       if(data.reservaResulT != "no"){
-        $('#EstaReservado_'+number).text(data.reservaResulT)  
+        $('#EstaReservado_'+number).text(data.reservaResulT)
          $('#EstaReservado_'+number).show()
       }
       else{
-        $('#EstaReservado_'+number).text("")  
+        $('#EstaReservado_'+number).text("")
          $('#EstaReservado_'+number).hide()
-      }                      
+      }
   }
 })
 
 }
 
 function ValorTotalEnLetras(){
-      $.ajax({    
+      $.ajax({
     data:{
         txtTotal: $('#txtTotal').val()
     },
     type: 'POST',
-    url:'/ValorTotalEnLetras',          
+    url:'/ValorTotalEnLetras',
      success: function(data){
-      $('#txtTotalLetras').val(data)               
+      $('#txtTotalLetras').val(data)
   }
 })
 }
@@ -1729,7 +1828,7 @@ function RealOcultar(w){
       number = w.toString().slice((w.length)-1,(w.length))
     }
     $('#ReferenciaPrenda'+number).hide()
-    $('#idRowPrendaButton'+number).hide() 
+    $('#idRowPrendaButton'+number).hide()
 }
 
 function AdherirFila(){
